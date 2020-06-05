@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:converters="clr-namespace:BrainGames.Converters"
+             mc:Ignorable="d"
+             x:Class="BrainGames.Views.ItemsPage"
+             Title="InspectionTime"
+             x:Name="BrowseItemsPage"
+             Visual="Material">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" Clicked="AddItem_Clicked" />
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <Grid.Resources>
+            <converters:InverseBoolConverter x:Key="not"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" BackgroundColor="Gray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="fpsLabel" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Stim Dur: " FontSize="Small" Margin="0,0"/>
+<!--            <Label x:Name="corLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="Start" FontSize="Small" Margin="0,0"/>-->
+            <Label x:Name="asdLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Avg Dur: " FontSize="Small" Margin="0,0"/>
+            <Label x:Name="itLabel" Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="Start" FontSize="Small" Text="Est IT: " TextColor="LightGray" Margin="0,0"/>
+        </Grid>
+        <!--        <skia:SKCanvasView x:Name="canvasView" Grid.Row="1" PaintSurface="OnPainting"/>-->
+        <skia:SKGLView x:Name="canvasView" Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" PaintSurface="OnPainting"/>
+        <Button Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" 
+                Command="{Binding ReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
+        <Button Grid.Row="2" Grid.Column="0" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="LeftButton_Clicked" Command="{Binding LeftButtonCommand}"
+                IsVisible="{Binding IsRunning}" Text="Left"/>
+        <Button Grid.Row="2" Grid.Column="1" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="RightButton_Clicked" Command="{Binding RightButtonCommand}"
+                IsVisible="{Binding IsRunning}" Text="Right"/>
+    </Grid>    
+</ContentPage>

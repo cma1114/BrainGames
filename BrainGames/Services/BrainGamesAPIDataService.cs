@@ -1,0 +1,71 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
+using BrainGames.Models;
+
+namespace BrainGames.Services
+{
+    public class BrainGamesAPIDataService : BaseHttpService, IBrainGamesDataService
+    {
+        readonly Uri _baseUri;
+        readonly IDictionary<string, string> _headers;
+
+        public BrainGamesAPIDataService(Uri baseUri)
+        {
+            _baseUri = baseUri;
+            _headers = new Dictionary<string, string>();
+
+            // TODO: Add header with auth-based token in chapter 7
+            _headers.Add("zumo-api-version", "2.0.0");
+        }
+
+        public async Task<IList<DataSchemas.ITGameRecordSchema>> GetITGameRecordEntriesAsync()
+        {
+            var url = new Uri(_baseUri, "/tables/bgitgamerecord");
+            var response = await SendRequestAsync<DataSchemas.ITGameRecordSchema[]>(url, HttpMethod.Get, _headers);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.ITGameRecordSchema> AddITGameRecordEntryAsync(DataSchemas.ITGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bgitgamerecord");
+            var response = await SendRequestAsync<DataSchemas.ITGameRecordSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.ITGameRecordSchema> UpdateITGameRecordEntryAsync(DataSchemas.ITGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bgitgamerecord/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.ITGameRecordSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.UserSchema> AddUserEntryAsync(DataSchemas.UserSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bguser");
+            var response = await SendRequestAsync<DataSchemas.UserSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.BrainGameSessionSchema> AddBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bgsession");
+            var response = await SendRequestAsync<DataSchemas.BrainGameSessionSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+        public async Task<DataSchemas.BrainGameSessionSchema> UpdateBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bgsession/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.BrainGameSessionSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+    }
+}
