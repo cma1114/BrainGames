@@ -67,13 +67,6 @@ namespace BrainGames.ViewModels
             set { SetProperty(ref _isRunning, value); }
         }
 
-        private bool _showReact = false;
-        public bool ShowReact
-        {
-            get => _showReact;
-            set { SetProperty(ref _showReact, value); }
-        }
-
         private double _avgRT = 0;
         public double AvgRT
         {
@@ -117,7 +110,7 @@ namespace BrainGames.ViewModels
             cuminconcorrt = App.mum.st_cuminconcorrt;
 
             if (cortrialcnt > 0) AvgRT = cumcorrt / cortrialcnt;
-            if (corcontrialcnt > 0 && corincontrialcnt > 0) DifRT = cumconcorrt / corcontrialcnt - cuminconcorrt / corincontrialcnt;
+            if (corcontrialcnt > 0 && corincontrialcnt > 0) DifRT = cuminconcorrt / corincontrialcnt - cumconcorrt / corcontrialcnt;
         }
 
 
@@ -226,7 +219,7 @@ namespace BrainGames.ViewModels
                         var l = ctcnts.Where(x => x < maxwccnt).ToList();
                         l.Shuffle();
                         cv = l[0];
-                        wctnts.Add(ctcnts[cv]);
+                        wctnts.Add(cv);
                         ctcnts.Remove(cv);
                     }
                 }
@@ -271,7 +264,7 @@ namespace BrainGames.ViewModels
                 {
                     int ridx = idxs[MasterUtilityModel.RandomNumber(0, idxs.Count)];
                     textcolors[ridx] = (textcolortypes)colorwords.IndexOf(wms[i]);
-                    idxs.RemoveAt(ridx);
+                    idxs.Remove(ridx);
                 }
                 //now do incongruent
                 for (int j = 0; j < wcnts[i] - wctnts[i]; j++)
@@ -283,14 +276,12 @@ namespace BrainGames.ViewModels
                         cidx = MasterUtilityModel.RandomNumber(0, colorwords.Count());
                     } while (cidx == colorwords.IndexOf(wms[i]));
                     textcolors[ridx] = (textcolortypes)cidx;
-                    idxs.RemoveAt(ridx);
+                    idxs.Remove(ridx);
                 }
 
             }
             //////////////////////////////////////////
             #endregion
-
-            ShowReact = true;
 
             IsRunning = true;
         }

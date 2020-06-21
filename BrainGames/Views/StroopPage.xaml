@@ -31,26 +31,26 @@
                 </Grid.ColumnDefinitions>
                 <Label x:Name="rtLabel" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="RT: " FontSize="Small" Margin="0,0"/>
                 <Label x:Name="artLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Avg RT: " FontSize="Small" Margin="0,0"/>
-                <Label x:Name="difLabel" Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="C-I Dif: " FontSize="Small" Margin="0,0"/>
+                <Label x:Name="difLabel" Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="I-C Dif: " FontSize="Small" Margin="0,0"/>
             </Grid>
             <skia:SKGLView x:Name="canvasView" Grid.Row="1" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0,0" PaintSurface="OnPainting"/>
             <Button Grid.Row="2" HeightRequest="100" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0"
                 Command="{Binding ReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready" BackgroundColor="Green"/>
-            <Grid Grid.Row="2" IsVisible="{Binding ShowReact}">
+            <Grid Grid.Row="2" IsVisible="{Binding IsRunning}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button1Command}"
-                    IsVisible="{Binding ShowReact}" Text="R"/>
-                <Button Grid.Column="1" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button2Command}"
-                    IsVisible="{Binding ShowReact}" Text="G"/>
-                <Button Grid.Column="2" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button3Command}"
-                    IsVisible="{Binding ShowReact}" Text="B"/>
-                <Button Grid.Column="3" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button4Command}"
-                    IsVisible="{Binding ShowReact}" Text="Y"/>
+                <Button Grid.Column="0" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button1Command}"
+                    IsVisible="{Binding IsRunning}" Text="R"/>
+                <Button Grid.Column="1" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button2Command}"
+                    IsVisible="{Binding IsRunning}" Text="G"/>
+                <Button Grid.Column="2" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button3Command}"
+                    IsVisible="{Binding IsRunning}" Text="B"/>
+                <Button Grid.Column="3" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button4Command}"
+                    IsVisible="{Binding IsRunning}" Text="Y"/>
             </Grid>
         </Grid>
     </ContentPage.Content>

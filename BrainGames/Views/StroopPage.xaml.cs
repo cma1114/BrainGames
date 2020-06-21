@@ -95,7 +95,7 @@ namespace BrainGames.Views
 
             if (viewModel.DifRT != 0)
             {
-                difLabel.Text = "C-I Dif: " + Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
+                difLabel.Text = "I-C Dif: " + Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
             }
 
             redword = MakeWord(viewModel.colorwords[(int)StroopViewModel.textcolortypes.red]);
@@ -146,12 +146,12 @@ namespace BrainGames.Views
                     }
                 }
                 if (viewModel.cortrialcnt > 0) viewModel.AvgRT = viewModel.cumcorrt / viewModel.cortrialcnt;
-                if (viewModel.corcontrialcnt > 0 && viewModel.corincontrialcnt > 0) viewModel.DifRT = viewModel.cumconcorrt / viewModel.corcontrialcnt - viewModel.cuminconcorrt / viewModel.corincontrialcnt;
+                if (viewModel.corcontrialcnt > 0 && viewModel.corincontrialcnt > 0) viewModel.DifRT = viewModel.cuminconcorrt / viewModel.corincontrialcnt - viewModel.cumconcorrt / viewModel.corcontrialcnt;
 
                 viewModel.trialctr++;
                 rtLabel.Text = "RT: " + viewModel.ReactionTime.ToString("N0", CultureInfo.InvariantCulture) + " ms";
                 artLabel.Text = "Avg RT: " + (viewModel.AvgRT > 0 ? Math.Round(viewModel.AvgRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms" : "");
-                difLabel.Text = "C-I Dif: " + (viewModel.DifRT != 0 ? Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms" : "");
+                difLabel.Text = "I-C Dif: " + (viewModel.DifRT != 0 ? Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms" : "");
                 clicked = true;
 
                 viewModel.ReactButton(viewModel.trialctr, viewModel.ReactionTime, viewModel.AvgRT, viewModel.DifRT, viewModel.words[viewModel.blocktrialctr - 1], viewModel.colorwords[(int)viewModel.textcolors[viewModel.blocktrialctr - 1]], congruent, viewModel.cor);
