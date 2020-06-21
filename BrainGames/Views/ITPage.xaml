@@ -6,13 +6,13 @@
              xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              xmlns:converters="clr-namespace:BrainGames.Converters"
              mc:Ignorable="d"
-             x:Class="BrainGames.Views.ItemsPage"
-             Title="InspectionTime"
-             x:Name="BrowseItemsPage"
+             x:Class="BrainGames.Views.ITPage"
+             Title="Inspection Time"
+             x:Name="InspectionTimePage"
              Visual="Material">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Clicked="AddItem_Clicked" />
+        <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
     </ContentPage.ToolbarItems>
 
     <Grid>

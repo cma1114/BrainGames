@@ -13,6 +13,22 @@ using BrainGames.Services;
 
 namespace BrainGames.Utility
 {
+    public static class Utilities
+    {
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = MasterUtilityModel.RandomNumber(0, n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+    }
+
     public class MasterUtilityModel
     {
         public static SQLiteAsyncConnection conn;
@@ -23,6 +39,26 @@ namespace BrainGames.Utility
         public double it_laststimtime = 0;
         public int it_trialctr = 0;
         public int it_reversalctr = 0;
+        public int rt_trialctr = 0 ;
+        public double rt_ss1_cumrt = 0;
+        public double rt_ss2_cumcorrt = 0;
+        public double rt_ss4_cumcorrt = 0;
+        public int rt_ss1_trialcnt = 0;
+        public int rt_ss2_trialcnt = 0;
+        public int rt_ss2_cortrialcnt = 0;
+        public int rt_ss4_trialcnt = 0;
+
+        public int st_trialctr = 0;
+        public double st_cumcorrt = 0;
+        public int st_cortrialcnt = 0;
+        public int st_contrialcnt = 0;
+        public double st_cumconcorrt = 0;
+        public int st_corcontrialcnt = 0;
+        public int st_incontrialcnt = 0;
+        public double st_cuminconcorrt = 0;
+        public int st_corincontrialcnt = 0;
+
+        public int rt_ss4_cortrialcnt = 0;
         public static string DeviceId;
         object locker = new object();
         //Function to get random number
@@ -84,9 +120,8 @@ namespace BrainGames.Utility
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
                 SyncLocalDBwithServer(conn);
 
-
+            #region itgr
             List<DataSchemas.ITGameRecordSchema> itgrs = new List<DataSchemas.ITGameRecordSchema>();
-
             bool exists;
             try
             {
@@ -120,22 +155,79 @@ namespace BrainGames.Utility
             catch (Exception ex)
             {
                 Console.WriteLine("exists5");
-                return;
+//                return;
             }
 
-            if (itgrs.Count() == 0) return;
-
-            itgrs.OrderBy(x => x.datetime);
-            it_corarr = new List<bool>();
-            it_empstimtimearr = new List<double>();
-            foreach (DataSchemas.ITGameRecordSchema grs in itgrs)
+            if (itgrs.Count() > 0)
             {
-                it_corarr.Add(grs.cor);
-                it_empstimtimearr.Add(grs.empstimtime);
+
+                itgrs.OrderBy(x => x.datetime);
+                it_corarr = new List<bool>();
+                it_empstimtimearr = new List<double>();
+                foreach (DataSchemas.ITGameRecordSchema grs in itgrs)
+                {
+                    it_corarr.Add(grs.cor);
+                    it_empstimtimearr.Add(grs.empstimtime);
+                }
+                it_trialctr = itgrs.Max(x => x.trialnum);
+                it_reversalctr = itgrs.Max(x => x.reversalctr);
+                it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
             }
-            it_trialctr = itgrs.Max(x => x.trialnum);
-            it_reversalctr = itgrs.Max(x => x.reversalctr);
-            it_laststimtime = itgrs[itgrs.Count()-1].stimtime;
+            #endregion
+
+            #region rtgr
+            List<DataSchemas.RTGameRecordSchema> rtgrs = new List<DataSchemas.RTGameRecordSchema>();
+            try { 
+                conn_sync.CreateTable<DataSchemas.RTGameRecordSchema>();
+                rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
+            }
+            catch (Exception ex2)
+            {
+                ;
+            }
+            if (rtgrs.Count() > 0)
+            {
+                rtgrs.OrderBy(x => x.datetime);
+                rt_trialctr = rtgrs.Max(x => x.trialnum);
+                //                rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
+                rt_ss1_cumrt = rtgrs.Where(x => x.boxes == 1).Sum(x => x.reactiontime);
+                rt_ss1_trialcnt = rtgrs.Where(x => x.boxes == 1).Count();
+                rt_ss2_trialcnt = rtgrs.Where(x => x.boxes == 2).Count();
+                rt_ss2_cortrialcnt = rtgrs.Where(x => x.boxes == 2 && x.cor == true).Count();
+                rt_ss2_cumcorrt = rtgrs.Where(x => x.boxes == 2 && x.cor == true).Sum(x => x.reactiontime);
+                rt_ss4_trialcnt = rtgrs.Where(x => x.boxes == 4).Count();
+                rt_ss4_cortrialcnt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Count();
+                rt_ss4_cumcorrt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Sum(x => x.reactiontime);
+            }
+            #endregion
+
+            #region stroopgr
+            List<DataSchemas.StroopGameRecordSchema> stgrs = new List<DataSchemas.StroopGameRecordSchema>();
+            try
+            {
+                conn_sync.CreateTable<DataSchemas.StroopGameRecordSchema>();
+                stgrs = conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema");
+            }
+            catch (Exception ex2)
+            {
+                ;
+            }
+            if (stgrs.Count() > 0)
+            {
+                stgrs.OrderBy(x => x.datetime);
+                st_trialctr = stgrs.Max(x => x.trialnum);
+                //                rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
+                st_cortrialcnt = stgrs.Where(x => x.cor == true).Count();
+                st_cumcorrt = stgrs.Where(x => x.cor == true).Sum(x => x.reactiontime);
+
+                st_contrialcnt = stgrs.Where(x => x.congruent == true).Count();
+                st_corcontrialcnt = stgrs.Where(x => x.congruent == true && x.cor == true).Count();
+                st_incontrialcnt = stgrs.Where(x => x.congruent == false).Count();
+                st_corincontrialcnt = stgrs.Where(x => x.congruent == false && x.cor == true).Count();
+                st_cumconcorrt = stgrs.Where(x => x.congruent == true && x.cor == true).Sum(x => x.reactiontime);
+                st_cuminconcorrt = stgrs.Where(x => x.congruent == false && x.cor == true).Sum(x => x.reactiontime);
+            }
+            #endregion
         }
 
         private async void SyncLocalDBwithServer(SQLiteAsyncConnection db)
@@ -269,6 +361,253 @@ namespace BrainGames.Utility
                 ;
             }
             #endregion
+
+
+            #region RTGameRecordSchema;
+            ///////  CheckServerForDBUpdates
+            try { await db.CreateTableAsync<DataSchemas.RTGameRecordSchema>(); }
+            catch (Exception ex2)
+            {
+                ;
+            }
+            Task<List<DataSchemas.RTGameRecordSchema>> t_q_rt = null;
+            List<DataSchemas.RTGameRecordSchema> q_rt = new List<DataSchemas.RTGameRecordSchema>();
+            lock (locker)
+            {
+                t_q_rt = db.QueryAsync<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
+            }
+            try
+            {
+                q_rt = t_q_rt.Result;
+            }
+            catch (Exception ex)
+            {
+                dbexception = true;
+            }
+
+            List<DataSchemas.RTGameRecordSchema> BGRTUserRecords = new List<DataSchemas.RTGameRecordSchema>();
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable bguserrecord = Client.GetTable("BGRTGameRecord");
+                //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
+                JToken untypedItems;
+                List<DataSchemas.RTGameRecordSchema> tmpitems = new List<DataSchemas.RTGameRecordSchema>();
+                int pagesize = 50, ctr = 0;
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+                try
+                {
+                    do
+                    {
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+                        for (int j = 0; j < untypedItems.Count(); j++)
+                        {
+                            BGRTUserRecords.Add(untypedItems[j].ToObject<DataSchemas.RTGameRecordSchema>());
+                        }
+                    } while (untypedItems.Count() > 0);
+
+                    bool added = false;
+                    for (int i = 0; i < BGRTUserRecords.Count; i++)
+                    {
+                        if (dbexception || (!q_rt.Any(x => x.Id == BGRTUserRecords[i].Id)))//if the local db doesn't have this user record, add it
+                        {
+                            try
+                            {
+                                await db.InsertAsync(BGRTUserRecords[i]);
+                                added = true;
+                            }
+                            catch (Exception exA)
+                            {
+                                added = false;
+                            }
+
+                        }
+                    }
+                    if (added)
+                    {
+                        List<DataSchemas.RTGameRecordSchema> rtgrs = new List<DataSchemas.RTGameRecordSchema>();
+                        rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
+                        rtgrs.OrderBy(x => x.datetime);
+                        rt_trialctr = rtgrs.Max(x => x.trialnum);
+                        //rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
+                        rt_ss1_cumrt = rtgrs.Where(x => x.boxes == 1).Sum(x => x.reactiontime);
+                        rt_ss1_trialcnt = rtgrs.Where(x => x.boxes == 1).Count();
+                        rt_ss2_trialcnt = rtgrs.Where(x => x.boxes == 2).Count();
+                        rt_ss2_cortrialcnt = rtgrs.Where(x => x.boxes == 2 && x.cor == true).Count();
+                        rt_ss2_cumcorrt = rtgrs.Where(x => x.boxes == 2 && x.cor == true).Sum(x => x.reactiontime);
+                        rt_ss4_trialcnt = rtgrs.Where(x => x.boxes == 4).Count();
+                        rt_ss4_cortrialcnt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Count();
+                        rt_ss4_cumcorrt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Sum(x => x.reactiontime);
+
+                    }
+                }
+                catch (Exception exC)
+                {
+                    ;
+                }
+                if (!dbexception)
+                {
+                    for (int i = 0; i < q_rt.Count; i++)
+                    {
+                        int idx = BGRTUserRecords.FindIndex(x => x.Id == q_rt[i].Id);
+                        if (idx == -1)//if the remote server doesn't have this user record, add it
+                        {
+                            try
+                            {
+                                await bguserinfoService.AddRTGameRecordEntryAsync(q_rt[i]);
+                                //                                    JObject item = JObject.FromObject(q[i]);
+                                //                                    await bguserrecord.InsertAsync(item);
+                            }
+                            catch (Exception exA)
+                            {
+                                ;
+                            }
+                        }
+                        else if (BGRTUserRecords[idx].reactiontime == 0 && q_rt[i].reactiontime > 0)//the update didn't go through, resend
+                        {
+                            try
+                            {
+                                await bguserinfoService.UpdateRTGameRecordEntryAsync(q_rt[i]);
+                            }
+                            catch (Exception exA)
+                            {
+                                ;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception exB)
+            {
+                ;
+            }
+            #endregion
+
+
+            #region StroopGameRecordSchema;
+            ///////  CheckServerForDBUpdates
+            try { await db.CreateTableAsync<DataSchemas.StroopGameRecordSchema>(); }
+            catch (Exception ex2)
+            {
+                ;
+            }
+            Task<List<DataSchemas.StroopGameRecordSchema>> t_q_st = null;
+            List<DataSchemas.StroopGameRecordSchema> q_st = new List<DataSchemas.StroopGameRecordSchema>();
+            lock (locker)
+            {
+                t_q_st = db.QueryAsync<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
+            }
+            try
+            {
+                q_st = t_q_st.Result;
+            }
+            catch (Exception ex)
+            {
+                dbexception = true;
+            }
+
+            List<DataSchemas.StroopGameRecordSchema> BGStroopUserRecords = new List<DataSchemas.StroopGameRecordSchema>();
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable bguserrecord = Client.GetTable("StroopGameRecord");
+                //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
+                JToken untypedItems;
+                List<DataSchemas.StroopGameRecordSchema> tmpitems = new List<DataSchemas.StroopGameRecordSchema>();
+                int pagesize = 50, ctr = 0;
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+                try
+                {
+                    do
+                    {
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+                        for (int j = 0; j < untypedItems.Count(); j++)
+                        {
+                            BGStroopUserRecords.Add(untypedItems[j].ToObject<DataSchemas.StroopGameRecordSchema>());
+                        }
+                    } while (untypedItems.Count() > 0);
+
+                    bool added = false;
+                    for (int i = 0; i < BGStroopUserRecords.Count; i++)
+                    {
+                        if (dbexception || (!q_st.Any(x => x.Id == BGStroopUserRecords[i].Id)))//if the local db doesn't have this user record, add it
+                        {
+                            try
+                            {
+                                await db.InsertAsync(BGStroopUserRecords[i]);
+                                added = true;
+                            }
+                            catch (Exception exA)
+                            {
+                                added = false;
+                            }
+
+                        }
+                    }
+                    if (added)
+                    {
+                        List<DataSchemas.StroopGameRecordSchema> stgrs = new List<DataSchemas.StroopGameRecordSchema>();
+                        stgrs = conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema");
+                        stgrs.OrderBy(x => x.datetime);
+                        st_trialctr = stgrs.Max(x => x.trialnum);
+                        st_cortrialcnt = stgrs.Where(x => x.cor == true).Count();
+                        st_cumcorrt = stgrs.Where(x => x.cor == true).Sum(x => x.reactiontime);
+                        st_contrialcnt = stgrs.Where(x => x.congruent == true).Count();
+                        st_corcontrialcnt = stgrs.Where(x => x.congruent == true && x.cor == true).Count();
+                        st_incontrialcnt = stgrs.Where(x => x.congruent == false).Count();
+                        st_corincontrialcnt = stgrs.Where(x => x.congruent == false && x.cor == true).Count();
+                        st_cumconcorrt = stgrs.Where(x => x.congruent == true && x.cor == true).Sum(x => x.reactiontime);
+                        st_cuminconcorrt = stgrs.Where(x => x.congruent == false && x.cor == true).Sum(x => x.reactiontime);
+                    }
+                }
+                catch (Exception exC)
+                {
+                    ;
+                }
+                if (!dbexception)
+                {
+                    for (int i = 0; i < q_st.Count; i++)
+                    {
+                        int idx = BGStroopUserRecords.FindIndex(x => x.Id == q_st[i].Id);
+                        if (idx == -1)//if the remote server doesn't have this user record, add it
+                        {
+                            try
+                            {
+                                await bguserinfoService.AddStroopGameRecordEntryAsync(q_st[i]);
+                                //                                    JObject item = JObject.FromObject(q[i]);
+                                //                                    await bguserrecord.InsertAsync(item);
+                            }
+                            catch (Exception exA)
+                            {
+                                ;
+                            }
+                        }
+                        else if (BGStroopUserRecords[idx].reactiontime == 0 && q_st[i].reactiontime > 0)//the update didn't go through, resend
+                        {
+                            try
+                            {
+                                await bguserinfoService.UpdateStroopGameRecordEntryAsync(q_st[i]);
+                            }
+                            catch (Exception exA)
+                            {
+                                ;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception exB)
+            {
+                ;
+            }
+            #endregion
+
 
             #region BrainGameSessionSchema;
             ///////  CheckServerForDBUpdates
@@ -531,7 +870,7 @@ namespace BrainGames.Utility
             }
         }
 
-        public async static void WriteITGR(Guid sessionid, int trialctr, int reversalctr, double curstimdur, double empstimdur, int cor_ans, bool cor)
+        public async static void WriteITGR(Guid sessionid, int trialctr, int reversalctr, double curstimdur, double empstimdur, double avgcorit, double estit, int cor_ans, bool cor)
         {
             var s = new DataSchemas.ITGameRecordSchema();
             s.Id = Guid.NewGuid().ToString();
@@ -543,6 +882,8 @@ namespace BrainGames.Utility
             s.trialnum = trialctr;
             s.reversalctr = reversalctr;
             s.empstimtime = empstimdur;
+            s.avgcorit = avgcorit;
+            s.estit = estit;
             s.cor = cor;
             if (!IsBusy_local)
             {
@@ -586,6 +927,117 @@ namespace BrainGames.Utility
             }
         }
 
+        public async static void WriteRTGR(Guid sessionid, int trialctr, double reactiontime, double avgrt, int boxes, int corbox, bool cor)
+        {
+            var s = new DataSchemas.RTGameRecordSchema();
+            s.Id = Guid.NewGuid().ToString();
+            s.SessionId = sessionid.ToString();
+            s.datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            s.UserId = Settings.UserId;
+            s.reactiontime = reactiontime;
+            s.boxes = boxes;
+            s.corbox = corbox;
+            s.cor = cor;
+            s.trialnum = trialctr;
+            s.avgrt = avgrt;
+            if (!IsBusy_local)
+            {
+                IsBusy_local = true;
+                try { await conn.InsertAsync(s); }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy_local = false;
+                }
+            }
+
+            //                await azureService.AddUserRecord(ScenarioId, type, recordid);
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
+                SendRTGRToServer(s);
+        }
+
+        public async static void SendRTGRToServer(DataSchemas.RTGameRecordSchema rtgr)
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            try
+            {
+                await bguserinfoService.AddRTGameRecordEntryAsync(rtgr);
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        public async static void WriteStroopGR(Guid sessionid, int trialctr, double reactiontime, double avgrt, double difrt, string word, string textcolor, bool congruent, bool cor)
+        {
+            var s = new DataSchemas.StroopGameRecordSchema();
+            s.Id = Guid.NewGuid().ToString();
+            s.SessionId = sessionid.ToString();
+            s.datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            s.UserId = Settings.UserId;
+            s.reactiontime = reactiontime;
+            s.word = word;
+            s.textcolor = textcolor;
+            s.congruent = congruent;
+            s.cor = cor;
+            s.trialnum = trialctr;
+            s.avgrt = avgrt;
+            s.difrt = difrt;
+            if (!IsBusy_local)
+            {
+                IsBusy_local = true;
+                try { await conn.InsertAsync(s); }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy_local = false;
+                }
+            }
+
+            //                await azureService.AddUserRecord(ScenarioId, type, recordid);
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
+                SendStroopGRToServer(s);
+        }
+
+        public async static void SendStroopGRToServer(DataSchemas.StroopGameRecordSchema stgr)
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            try
+            {
+                await bguserinfoService.AddStroopGameRecordEntryAsync(stgr);
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
 
         public static Guid WriteGameSession(string gametype)
         {

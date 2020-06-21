@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
+             xmlns:ValueConverters="clr-namespace:BrainGames.Converters"
+             mc:Ignorable="d"
+             x:Class="BrainGames.Views.RTStatsPage"
+             Title="Reaction Time Stats">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Return" Clicked="Return_Clicked" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Always">
+            <Grid ColumnSpacing="5" RowSpacing="5">
+                <Grid.Resources>
+                    <ValueConverters:DoubleToStringConverter x:Key="DoubleToString"/>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                </Grid.RowDefinitions>
+                <Frame Grid.Row="0"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Fastest Days"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="BestAvgCorRTDays" Chart="{Binding BestAvgCorRTDaysChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="1"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average Correct RT Over Time"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorRTOverTime" Chart="{Binding AvgCorRTOverTimeChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="2"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Cumulative Average Correct RT By Trial"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgCorRTByTrial" Chart="{Binding CumAvgCorRTByTrialChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="3"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Cumulative Average Correct RT Over Time"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgCorRTOverTime" Chart="{Binding CumAvgCorRTOverTimeChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="4"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Trials Completed Over Time"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="TrialCountOverTime" Chart="{Binding TrialCountOverTimeChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="5"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Average Correct RT By Stimulus Type"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorRTByStimType" Chart="{Binding AvgCorRTByStimTypeChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="6"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Average Correct Percentage By Stimulus Type"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctByStimType" Chart="{Binding AvgCorPctByStimTypeChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="6"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Average Correct RT By Stimulus Location: 2 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorRTByStimLoc2" Chart="{Binding AvgCorRTByStimLoc2Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="7"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Average Correct Percentage By Stimulus Location: 2 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctByStimLoc2" Chart="{Binding AvgCorPctByStimLoc2Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="8"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Average Correct RT By Stimulus Location: 4 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorRTByStimLoc4" Chart="{Binding AvgCorRTByStimLoc4Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="9"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout>
+                        <Label Text="Average Correct Percentage By Stimulus Location: 4 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctByStimLoc4" Chart="{Binding AvgCorPctByStimLoc4Chart}" />
+                    </StackLayout>
+                </Frame>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>

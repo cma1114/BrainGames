@@ -25,6 +25,7 @@ namespace BrainGames.Droid
 		
 		public static void UpdateIdValues()
 		{
+			global::Microcharts.Droid.Resource.String.library_name = global::BrainGames.Droid.Resource.String.library_name;
 			global::Xamarin.Auth._MobileServices.Resource.Animation.slide_in_right = global::BrainGames.Droid.Resource.Animation.slide_in_right;
 			global::Xamarin.Auth._MobileServices.Resource.Animation.slide_out_left = global::BrainGames.Droid.Resource.Animation.slide_out_left;
 			global::Xamarin.Auth._MobileServices.Resource.Drawable.ic_arrow_back = global::BrainGames.Droid.Resource.Drawable.ic_arrow_back;
@@ -14704,31 +14705,34 @@ namespace BrainGames.Droid
 			public const int hide_bottom_view_on_scroll_behavior = 2131558447;
 			
 			// aapt resource value: 0x7F0D0030
-			public const int mtrl_chip_close_icon_content_description = 2131558448;
+			public const int library_name = 2131558448;
 			
 			// aapt resource value: 0x7F0D0031
-			public const int password_toggle_content_description = 2131558449;
+			public const int mtrl_chip_close_icon_content_description = 2131558449;
 			
 			// aapt resource value: 0x7F0D0032
-			public const int path_password_eye = 2131558450;
+			public const int password_toggle_content_description = 2131558450;
 			
 			// aapt resource value: 0x7F0D0033
-			public const int path_password_eye_mask_strike_through = 2131558451;
+			public const int path_password_eye = 2131558451;
 			
 			// aapt resource value: 0x7F0D0034
-			public const int path_password_eye_mask_visible = 2131558452;
+			public const int path_password_eye_mask_strike_through = 2131558452;
 			
 			// aapt resource value: 0x7F0D0035
-			public const int path_password_strike_through = 2131558453;
+			public const int path_password_eye_mask_visible = 2131558453;
 			
 			// aapt resource value: 0x7F0D0036
-			public const int search_menu_title = 2131558454;
+			public const int path_password_strike_through = 2131558454;
 			
 			// aapt resource value: 0x7F0D0037
-			public const int status_bar_notification_info_overflow = 2131558455;
+			public const int search_menu_title = 2131558455;
 			
 			// aapt resource value: 0x7F0D0038
-			public const int title_activity_webview = 2131558456;
+			public const int status_bar_notification_info_overflow = 2131558456;
+			
+			// aapt resource value: 0x7F0D0039
+			public const int title_activity_webview = 2131558457;
 			
 			static String()
 			{

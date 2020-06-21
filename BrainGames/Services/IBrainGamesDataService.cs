@@ -10,6 +10,10 @@ namespace BrainGames.Services
         Task<IList<DataSchemas.ITGameRecordSchema>> GetITGameRecordEntriesAsync();
         Task<DataSchemas.ITGameRecordSchema> AddITGameRecordEntryAsync(DataSchemas.ITGameRecordSchema entry);
         Task<DataSchemas.ITGameRecordSchema> UpdateITGameRecordEntryAsync(DataSchemas.ITGameRecordSchema entry);
+        Task<DataSchemas.RTGameRecordSchema> AddRTGameRecordEntryAsync(DataSchemas.RTGameRecordSchema entry);
+        Task<DataSchemas.RTGameRecordSchema> UpdateRTGameRecordEntryAsync(DataSchemas.RTGameRecordSchema entry);
+        Task<DataSchemas.StroopGameRecordSchema> AddStroopGameRecordEntryAsync(DataSchemas.StroopGameRecordSchema entry);
+        Task<DataSchemas.StroopGameRecordSchema> UpdateStroopGameRecordEntryAsync(DataSchemas.StroopGameRecordSchema entry);
         Task<DataSchemas.BrainGameSessionSchema> AddBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry);
         Task<DataSchemas.BrainGameSessionSchema> UpdateBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry);
         Task<DataSchemas.UserSchema> AddUserEntryAsync(DataSchemas.UserSchema entry);

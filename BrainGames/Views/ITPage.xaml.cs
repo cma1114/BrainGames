@@ -23,11 +23,11 @@ namespace BrainGames.Views
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class ItemsPage : ContentPage
+    public partial class ITPage : ContentPage
     {
-        public ItemsViewModel viewModel
+        public ITViewModel viewModel
         {
-            get { return BindingContext as ItemsViewModel; }
+            get { return BindingContext as ITViewModel; }
             set { BindingContext = value; }
         }
 
@@ -35,6 +35,7 @@ namespace BrainGames.Views
         static float toplen = 120;
         static float shortleglen = 120;
         static float longleglen = 235;
+        private const double _fpsWanted = 120.0;
         float centerx, centery;
 
         SkiaPathDrawingFigure pifigure, pifigure_l, pifigure_r, pifigure_mask, pifigure_dot;
@@ -60,12 +61,13 @@ namespace BrainGames.Views
             Color = SKColors.Blue
         };
 
-        static TimeSpan ts;
+        private TimeSpan ts;
 
-        public ItemsPage()
+        public ITPage()
         {
-            viewModel = new ItemsViewModel();
+            viewModel = new ITViewModel();
             InitializeComponent();
+            ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
 //            fpsLabel.SetBinding(Label.TextProperty, new Binding("Value", source: stimdurtext));
         }
 
@@ -79,9 +81,9 @@ namespace BrainGames.Views
 
         }
 
-        async void AddItem_Clicked(object sender, EventArgs e)
+        async void Stats_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushModalAsync(new NavigationPage(new NewItemPage()));
+            await Navigation.PushModalAsync(new NavigationPage(new ITStatsPage()));
         }
 
         public void ReadyButton_Clicked(object sender, EventArgs e)
@@ -96,7 +98,7 @@ namespace BrainGames.Views
 
         public void LeftButton_Clicked(object sender, EventArgs e)
         {
-            if (viewModel.cor_ans == ItemsViewModel.answertype.left)
+            if (viewModel.cor_ans == ITViewModel.answertype.left)
             {
 //                corLabel.Text = "Correct!";
 //                corLabel.TextColor = Color.ForestGreen;
@@ -118,7 +120,7 @@ namespace BrainGames.Views
 
         public void RightButton_Clicked(object sender, EventArgs e)
         {
-            if (viewModel.cor_ans == ItemsViewModel.answertype.right)
+            if (viewModel.cor_ans == ITViewModel.answertype.right)
             {
 //                corLabel.Text = "Correct!";
 //                corLabel.TextColor = Color.ForestGreen;
@@ -241,7 +243,7 @@ namespace BrainGames.Views
                 {
                     if (pifigure == pifigure_dot) //Start of round; decide which stim to show
                     {
-                        if (viewModel.cor_ans == ItemsViewModel.answertype.left)
+                        if (viewModel.cor_ans == ITViewModel.answertype.left)
                         {
                             pifigure = pifigure_l;
                         }

@@ -59,7 +59,41 @@ namespace BrainGames.Models
             public int reversalctr { get; set; }
             public double stimtime { get; set; }
             public double empstimtime { get; set; }
+            public double estit { get; set; }
+            public double avgcorit { get; set; }
             public int stimtype { get; set; }
+            public bool cor { get; set; }
+        }
+
+        public class RTGameRecordSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId { get; set; }
+            public string SessionId { get; set; }
+            public string datetime { get; set; }
+            public int trialnum { get; set; }
+            public double reactiontime { get; set; }
+            public double avgrt { get; set; }
+            public int boxes { get; set; }
+            public int corbox { get; set; }
+            public bool cor { get; set; }
+        }
+
+        public class StroopGameRecordSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId { get; set; }
+            public string SessionId { get; set; }
+            public string datetime { get; set; }
+            public int trialnum { get; set; }
+            public double reactiontime { get; set; }
+            public double avgrt { get; set; }
+            public double difrt { get; set; }
+            public string word { get; set; }
+            public string textcolor { get; set; }
+            public bool congruent { get; set; }
             public bool cor { get; set; }
         }
     }

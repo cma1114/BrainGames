@@ -45,6 +45,38 @@ namespace BrainGames.Services
             return response;
         }
 
+        public async Task<DataSchemas.RTGameRecordSchema> AddRTGameRecordEntryAsync(DataSchemas.RTGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bgrtgamerecord");
+            var response = await SendRequestAsync<DataSchemas.RTGameRecordSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.RTGameRecordSchema> UpdateRTGameRecordEntryAsync(DataSchemas.RTGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bgrtgamerecord/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.RTGameRecordSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.StroopGameRecordSchema> AddStroopGameRecordEntryAsync(DataSchemas.StroopGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bgstroopgamerecord");
+            var response = await SendRequestAsync<DataSchemas.StroopGameRecordSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.StroopGameRecordSchema> UpdateStroopGameRecordEntryAsync(DataSchemas.StroopGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bgstroopgamerecord/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.StroopGameRecordSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
         public async Task<DataSchemas.UserSchema> AddUserEntryAsync(DataSchemas.UserSchema entry)
         {
             var url = new Uri(_baseUri, "/tables/bguser");

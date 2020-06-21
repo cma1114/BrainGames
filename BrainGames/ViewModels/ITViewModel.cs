@@ -15,7 +15,7 @@ using BrainGames.Converters;
 
 namespace BrainGames.ViewModels
 {
-    public class ItemsViewModel : ViewModelBase
+    public class ITViewModel : ViewModelBase
     {
 //        public ObservableCollection<Item> Items { get; set; }
 //        public Command LoadItemsCommand { get; set; }
@@ -67,7 +67,7 @@ namespace BrainGames.ViewModels
             }*/
         }
 
-        public ItemsViewModel()
+        public ITViewModel()
         {
             ReadyButtonCommand = new Command(ReadyButton);
             LeftButtonCommand = new Command(LeftButton);
@@ -173,7 +173,6 @@ namespace BrainGames.ViewModels
                 cortrialstreak = 0;
                 errtrialstreak++;
             }
-            MasterUtilityModel.WriteITGR(game_session_id, trialctr, reversalctr, curstimdur, empstimdur, (int)cor_ans, cor);
 //            Console.WriteLine("Trialctr: {0}, empstimtimearr[i]: {1}, stimtimearr: {2}", trialctr, empstimtimearr[trialctr - 1], stimtimearr[trialctr - 1]);
 //            Console.WriteLine("corrarr[i]: {0}, stimtypearr[i]: {1}", corarr.Select(Convert.ToDouble).ToArray()[trialctr - 1], stimtypearr[trialctr - 1]);
             if (reversalctr >= reversalthresh)
@@ -182,6 +181,7 @@ namespace BrainGames.ViewModels
                 Settings.IT_EstIT = (0.9 - llsi.Intercept) / llsi.Slope;
                 estit = Settings.IT_EstIT;
             }
+            MasterUtilityModel.WriteITGR(game_session_id, trialctr, reversalctr, curstimdur, empstimdur, Settings.IT_AvgCorDur, Settings.IT_EstIT, (int)cor_ans, cor);
         }
 
         public void ReadyButton()
@@ -216,12 +216,12 @@ namespace BrainGames.ViewModels
             if (MasterUtilityModel.RandomNumber(0, 2) == 1)
             {
                 cor_ans = answertype.left;
-                stimtypearr.Add((int)ItemsViewModel.answertype.left);
+                stimtypearr.Add((int)ITViewModel.answertype.left);
             }
             else
             {
                 cor_ans = answertype.right;
-                stimtypearr.Add((int)ItemsViewModel.answertype.right);
+                stimtypearr.Add((int)ITViewModel.answertype.right);
             }
 
             trialctr++;
