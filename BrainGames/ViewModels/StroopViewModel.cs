@@ -226,7 +226,7 @@ namespace BrainGames.ViewModels
                         var l = ctcnts.Where(x => x < maxwccnt).ToList();
                         l.Shuffle();
                         cv = l[0];
-                        wctnts.Add(cv);
+                        wctnts.Add(ctcnts[cv]);
                         ctcnts.Remove(cv);
                     }
                 }
@@ -271,7 +271,7 @@ namespace BrainGames.ViewModels
                 {
                     int ridx = idxs[MasterUtilityModel.RandomNumber(0, idxs.Count)];
                     textcolors[ridx] = (textcolortypes)colorwords.IndexOf(wms[i]);
-                    idxs.Remove(ridx);
+                    idxs.RemoveAt(ridx);
                 }
                 //now do incongruent
                 for (int j = 0; j < wcnts[i] - wctnts[i]; j++)
@@ -283,7 +283,7 @@ namespace BrainGames.ViewModels
                         cidx = MasterUtilityModel.RandomNumber(0, colorwords.Count());
                     } while (cidx == colorwords.IndexOf(wms[i]));
                     textcolors[ridx] = (textcolortypes)cidx;
-                    idxs.Remove(ridx);
+                    idxs.RemoveAt(ridx);
                 }
 
             }
