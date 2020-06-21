@@ -171,13 +171,13 @@ namespace BrainGames.ViewModels
             blocktrialctr = 0;
 
             #region load words and colors
-            List<string> words = new List<string>(colorwords);
+            List<string> cwords = new List<string>(colorwords);
 
             //choose how many reps each word gets
             int w1 = MasterUtilityModel.RandomNumber(minwcnt, maxwcnt + 1);
             int w2 = MasterUtilityModel.RandomNumber(minwcnt, maxwcnt + 1);
-            int w3 = MasterUtilityModel.RandomNumber(minwcnt, Math.Min(maxwcnt + 1, trialsperset - (w1 + w2) - minwcnt) + 1);
-            int w4 = MasterUtilityModel.RandomNumber(minwcnt, Math.Min(maxwcnt + 1, trialsperset - (w1 + w2 + w3)) + 1);
+            int w3 = MasterUtilityModel.RandomNumber(Math.Max(minwcnt, trialsperset - (w1 + w2) - maxwcnt), Math.Min(maxwcnt + 1, trialsperset - (w1 + w2) - minwcnt) + 1);
+            int w4 = trialsperset - (w1 + w2 + w3);
             List<int> wcnts = new List<int>() { w1, w2, w3, w4 };
             ///////////////////////////////////
             
@@ -235,19 +235,20 @@ namespace BrainGames.ViewModels
 
             //choose word-rep mappings
             int idx = MasterUtilityModel.RandomNumber(0, 4);
-            string wm1 = words[idx];
-            words.RemoveAt(idx);
+            string wm1 = cwords[idx];
+            cwords.RemoveAt(idx);
             idx = MasterUtilityModel.RandomNumber(0, 3);
-            string wm2 = words[idx];
-            words.RemoveAt(idx);
+            string wm2 = cwords[idx];
+            cwords.RemoveAt(idx);
             idx = MasterUtilityModel.RandomNumber(0, 2);
-            string wm3 = words[idx];
-            words.RemoveAt(idx);
-            string wm4 = words[0];
+            string wm3 = cwords[idx];
+            cwords.RemoveAt(idx);
+            string wm4 = cwords[0];
             List<string> wms = new List<string>() { wm1, wm2, wm3, wm4 };
             //////////////////////////////////////////////////////////
-            
+
             //load up words
+            words.Clear();
             for (int i = 0; i < wcnts.Count(); i++)
             {
                 for(int j = 0; j < wcnts[i]; j++)

@@ -90,12 +90,12 @@ namespace BrainGames.Views
 
             if (viewModel.AvgRT > 0)
             {
-                artLabel.Text = "Avg Cor RT: " + viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
+                artLabel.Text = "Avg RT: " + Math.Round(viewModel.AvgRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
             }
 
             if (viewModel.DifRT != 0)
             {
-                difLabel.Text = "C-I RT Dif: " + viewModel.DifRT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
+                difLabel.Text = "C-I Dif: " + Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
             }
 
             redword = MakeWord(viewModel.colorwords[(int)StroopViewModel.textcolortypes.red]);
@@ -113,7 +113,6 @@ namespace BrainGames.Views
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
             rtLabel.BackgroundColor = Color.Gray;
-            congruent = viewModel.colorwords.IndexOf(viewModel.words[viewModel.blocktrialctr]) == (int)viewModel.textcolors[viewModel.blocktrialctr];
             clicked = false;
             firstshown = false;
             _stopWatch.Restart();
@@ -126,6 +125,10 @@ namespace BrainGames.Views
             {
                 double rt = _stopWatch.Elapsed.TotalMilliseconds;
                 viewModel.ReactionTime = Math.Min(rt - ontime, viewModel.timeout);
+
+                congruent = viewModel.colorwords.IndexOf(viewModel.words[viewModel.blocktrialctr]) == (int)viewModel.textcolors[viewModel.blocktrialctr];
+                viewModel.trialctr++;
+                viewModel.blocktrialctr++;
 
                 if (viewModel.cor)
                 {
@@ -147,8 +150,8 @@ namespace BrainGames.Views
 
                 viewModel.trialctr++;
                 rtLabel.Text = "RT: " + viewModel.ReactionTime.ToString("N0", CultureInfo.InvariantCulture) + " ms";
-                artLabel.Text = "Avg Cor RT: " + (viewModel.AvgRT > 0 ? viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms" : "");
-                artLabel.Text = "C-I RT Dif: " + (viewModel.DifRT != 0 ? viewModel.DifRT.ToString("N1", CultureInfo.InvariantCulture) + " ms" : "");
+                artLabel.Text = "Avg RT: " + (viewModel.AvgRT > 0 ? Math.Round(viewModel.AvgRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms" : "");
+                difLabel.Text = "C-I Dif: " + (viewModel.DifRT != 0 ? Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms" : "");
                 clicked = true;
 
                 viewModel.ReactButton(viewModel.trialctr, viewModel.ReactionTime, viewModel.AvgRT, viewModel.DifRT, viewModel.words[viewModel.blocktrialctr - 1], viewModel.colorwords[(int)viewModel.textcolors[viewModel.blocktrialctr - 1]], congruent, viewModel.cor);
@@ -169,6 +172,7 @@ namespace BrainGames.Views
             {
                 showstim = true;
                 displayword = fixation;
+                displayword.FigurePaint.Color = SKColors.Black;
             }
             else if (viewModel.blocktrialctr < viewModel.trialsperset && dt < viewModel.itims + viewModel.fixationondurms + viewModel.fixationoffdurms) //keep orienting cue off
             {
@@ -204,7 +208,7 @@ namespace BrainGames.Views
             var surface = e.Surface;
             var canvas = surface.Canvas;
 
-            canvas.Clear(SKColors.Blue);
+            canvas.Clear(SKColors.Gray);
             if (displayword is null) return;
             if (showstim)
             {
