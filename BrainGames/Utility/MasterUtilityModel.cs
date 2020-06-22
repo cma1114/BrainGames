@@ -172,6 +172,10 @@ namespace BrainGames.Utility
                 it_trialctr = itgrs.Max(x => x.trialnum);
                 it_reversalctr = itgrs.Max(x => x.reversalctr);
                 it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
+                Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
+                Settings.IT_AvgCorDur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials;
+                Settings.IT_LastStimDur = it_laststimtime;
+                Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
             }
             #endregion
 
@@ -318,6 +322,10 @@ namespace BrainGames.Utility
                         it_trialctr = itgrs.Max(x => x.trialnum);
                         it_reversalctr = itgrs.Max(x => x.reversalctr);
                         it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
+                        Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
+                        Settings.IT_AvgCorDur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials;
+                        Settings.IT_LastStimDur = it_laststimtime;
+                        Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
                     }
                 }
                 catch (Exception exC)

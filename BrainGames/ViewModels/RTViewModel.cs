@@ -34,8 +34,8 @@ namespace BrainGames.ViewModels
         public int trialsperset = 6;
         public List<int> pausedurarr = new List<int>();
         public int timeout = 1000;
-        public double cumrt = 0;
         public int trialctr = 0;
+        public double cumrt = 0;
         public double ss1_cumrt = 0;
         public double ss2_cumcorrt = 0;
         public double ss4_cumcorrt = 0;

@@ -83,6 +83,7 @@ namespace BrainGames.Views
 
         async void Stats_Clicked(object sender, EventArgs e)
         {
+            if (viewModel.trialctr == 0) return;
             await Navigation.PushModalAsync(new NavigationPage(new ITStatsPage()));
         }
 

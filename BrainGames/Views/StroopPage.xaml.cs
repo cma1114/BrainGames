@@ -35,20 +35,11 @@ namespace BrainGames.Views
         bool clicked = false;
         bool firstshown = false;
         bool congruent = false;
-        double blockcumrt = 0;
+        float fixsize = 40;
+        float wordsize = 80;
         double ontime = 0;
 
         SkiaTextFigure fixation, redword, greenword, blueword, yellowword, displayword;
-
-        SKPaint textPaint = new SKPaint
-        {
-            Typeface = SKTypeface.FromFamilyName("Verdana", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright),
-            Style = SKPaintStyle.StrokeAndFill,
-            StrokeWidth = 1,
-            FakeBoldText = false,
-            Color = SKColors.Black,
-            TextSize = 40
-        };
 
         public StroopPage()
         {
@@ -63,9 +54,19 @@ namespace BrainGames.Views
             Init();
         }
 
-        private SkiaTextFigure MakeWord(string w)
+        private SkiaTextFigure MakeWord(string w, float fsize, SKColor clr)
         {
             float tl_x, tl_y, br_x, br_y;
+
+            SKPaint textPaint = new SKPaint
+            {
+                Typeface = SKTypeface.FromFamilyName("Verdana", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright),
+                Style = SKPaintStyle.StrokeAndFill,
+                StrokeWidth = 1,
+                FakeBoldText = false,
+                Color = clr,
+                TextSize = fsize
+            };
 
             SkiaTextFigure tf = new SkiaTextFigure(textPaint, w);
 
@@ -97,17 +98,12 @@ namespace BrainGames.Views
             {
                 difLabel.Text = "I-C Dif: " + Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
             }
-
-            redword = MakeWord(viewModel.colorwords[(int)StroopViewModel.textcolortypes.red]);
-            greenword = MakeWord(viewModel.colorwords[(int)StroopViewModel.textcolortypes.green]);
-            blueword = MakeWord(viewModel.colorwords[(int)StroopViewModel.textcolortypes.blue]);
-            yellowword = MakeWord(viewModel.colorwords[(int)StroopViewModel.textcolortypes.yellow]);
-            fixation = MakeWord("+");
         }
 
         async void Stats_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushModalAsync(new NavigationPage(new RTStatsPage()));
+            if (viewModel.trialctr == 0) return;
+            await Navigation.PushModalAsync(new NavigationPage(new StroopStatsPage()));
         }
 
         public void ReadyButton_Clicked(object sender, EventArgs e)
@@ -132,6 +128,7 @@ namespace BrainGames.Views
 
                 if (viewModel.cor)
                 {
+                    rtLabel.BackgroundColor = Color.ForestGreen;
                     viewModel.cumcorrt += viewModel.ReactionTime;
                     viewModel.cortrialcnt++;
                     if (congruent)
@@ -145,6 +142,8 @@ namespace BrainGames.Views
                         viewModel.corincontrialcnt++;
                     }
                 }
+                else
+                { rtLabel.BackgroundColor = Color.OrangeRed; }
                 if (viewModel.cortrialcnt > 0) viewModel.AvgRT = viewModel.cumcorrt / viewModel.cortrialcnt;
                 if (viewModel.corcontrialcnt > 0 && viewModel.corincontrialcnt > 0) viewModel.DifRT = viewModel.cuminconcorrt / viewModel.corincontrialcnt - viewModel.cumconcorrt / viewModel.corcontrialcnt;
 
@@ -171,8 +170,7 @@ namespace BrainGames.Views
             else if (viewModel.blocktrialctr < viewModel.trialsperset && dt < viewModel.itims + viewModel.fixationondurms) //keep orienting cue onscreen
             {
                 showstim = true;
-                displayword = fixation;
-                displayword.FigurePaint.Color = SKColors.Black;
+                displayword = MakeWord("+", fixsize, SKColors.Black);
             }
             else if (viewModel.blocktrialctr < viewModel.trialsperset && dt < viewModel.itims + viewModel.fixationondurms + viewModel.fixationoffdurms) //keep orienting cue off
             {
@@ -181,8 +179,7 @@ namespace BrainGames.Views
             else if (viewModel.blocktrialctr < viewModel.trialsperset && dt < viewModel.itims + viewModel.fixationondurms + viewModel.fixationoffdurms + viewModel.timeout && !clicked)
             {
                 showstim = true;
-                displayword = MakeWord(viewModel.words[viewModel.blocktrialctr]);
-                displayword.FigurePaint.Color = viewModel.colortypes[(int)viewModel.textcolors[viewModel.blocktrialctr]];
+                displayword = MakeWord(viewModel.words[viewModel.blocktrialctr], wordsize, viewModel.colortypes[(int)viewModel.textcolors[viewModel.blocktrialctr]]);
             }
             else //clicked or timeout, done with trial
             {
@@ -193,6 +190,7 @@ namespace BrainGames.Views
                 clicked = false;
                 if (viewModel.blocktrialctr == viewModel.trialsperset) //done with block
                 {
+                    displayword = null;
                     canvasView.InvalidateSurface();
                     viewModel.IsRunning = false;
                     return false;

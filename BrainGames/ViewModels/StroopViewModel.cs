@@ -179,6 +179,7 @@ namespace BrainGames.ViewModels
             int totalconcnt = 0;
             while (totalconcnt < minconcnt || totalconcnt > maxconcnt)
             {
+                totalconcnt = 0;
                 ctcnts.Clear();
                 for (int i = 0; i < 4; i++) 
                 {
