@@ -87,8 +87,8 @@ namespace BrainGames.ViewModels
             {
                 TrialsByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);
                 TrialsByWeek = ur.GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);
-                TrialsByMonth = ur.GroupBy(x => DateTime.Parse(new { DateTime.Parse(x.datetime).Month, DateTime.Parse(x.datetime).Year }.ToString())).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);
-                AvgCorRTByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                TrialsByMonth = ur.GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);
+                AvgCorRTByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.cor == true).Count(),1))).OrderBy(x => x.Item1);
                 AvgCorRTByStimType = ur.GroupBy(x => x.boxes).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
                 AvgCorPctByStimType = ur.GroupBy(x => x.boxes).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
                 AvgCorRTByStimLoc2 = ur.Where(x => x.boxes == 2).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
@@ -100,7 +100,7 @@ namespace BrainGames.ViewModels
                 AvgCorRTByWeek = ur.GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
                 CumAvgCorRTByWeek = ur.Where(x => x.avgrt > 0).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgrt) / x.Count())).OrderBy(x => x.Item1);
                 AvgCorRTByMonth = ur.GroupBy(x => DateTime.Parse(new { DateTime.Parse(x.datetime).Month, DateTime.Parse(x.datetime).Year }.ToString())).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                CumAvgCorRTByMonth = ur.Where(x => x.avgrt > 0).GroupBy(x => DateTime.Parse(new { DateTime.Parse(x.datetime).Month, DateTime.Parse(x.datetime).Year }.ToString())).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgrt) / x.Count())).OrderBy(x => x.Item1);
+                CumAvgCorRTByMonth = ur.Where(x => x.avgrt > 0).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgrt) / x.Count())).OrderBy(x => x.Item1);
 
                 AvgCorRTOverTime = FillTimeList(AvgCorRTByDay, AvgCorRTByWeek, AvgCorRTByMonth);
                 CumAvgCorRTOverTime = FillTimeList(CumAvgCorRTByDay, CumAvgCorRTByWeek, CumAvgCorRTByMonth);
@@ -108,43 +108,44 @@ namespace BrainGames.ViewModels
             }
         }
 
-        private Entry CreateDayEntryMS(Tuple<DateTime, double> dailyitem)
+        private ChartEntry CreateDayEntryMS(Tuple<DateTime, double> dailyitem)
         {
             var label = dailyitem.Item1.ToString("M/dd");
             var color = SKColors.Blue;
             var textcolor = SKColors.Black;
-            return new Entry((float)dailyitem.Item2)
+            return new ChartEntry((float)dailyitem.Item2)
             {
                 ValueLabel = Math.Round(dailyitem.Item2, 1).ToString() + " ms",
                 TextColor = textcolor,
                 Label = label,
-                Color = color,
+                Color = color
             };
         }
 
-        private Entry CreateEntryMS(double item)
+        private ChartEntry CreateEntryMS(double item)
         {
             var color = SKColors.Blue;
             var textcolor = SKColors.Black;
-            return new Entry((float)item)
+            return new ChartEntry((float)item)
             {
                 ValueLabel = Math.Round(item, 1).ToString() + " ms",
                 TextColor = textcolor,
                 Color = color,
+                Label = ""
             };
         }
 
-        private Entry CreateDayEntryCnt(Tuple<DateTime, double> dailyitem)
+        private ChartEntry CreateDayEntryCnt(Tuple<DateTime, double> dailyitem)
         {
             var label = dailyitem.Item1.ToString("M/dd");
             var color = SKColors.Blue;
             var textcolor = SKColors.Black;
-            return new Entry((int)dailyitem.Item2)
+            return new ChartEntry((int)dailyitem.Item2)
             {
                 ValueLabel = dailyitem.Item2.ToString(),
                 TextColor = textcolor,
                 Label = label,
-                Color = color,
+                Color = color
             };
         }
 
@@ -154,7 +155,8 @@ namespace BrainGames.ViewModels
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
-            PointSize = 18
+            PointSize = 18,
+            LabelOrientation = Orientation.Vertical
         };
 
         public Chart CumAvgCorRTOverTimeChart => new LineChart()
@@ -175,25 +177,25 @@ namespace BrainGames.ViewModels
             PointSize = 18
         };
 
-        private List<Entry> GetBestAvgCorRTDays()
+        private List<ChartEntry> GetBestAvgCorRTDays()
         {
             SKColor[] clrs = new SKColor[] { SKColors.Blue, SKColors.Green, SKColors.YellowGreen, SKColors.Red, SKColors.Brown,
                                                 SKColors.Indigo, SKColors.LightGreen, SKColors.Orange, SKColors.Olive, SKColors.Aquamarine, SKColors.Black };
             int idx = 1;
-            List<Entry> es = new List<Entry>();
+            List<ChartEntry> es = new List<ChartEntry>();
             if (AvgCorRTByDay.Last().Item1 == DateTime.Today)
             {
-                Entry e = new Entry((float)AvgCorRTByDay.Last().Item2);
+                ChartEntry e = new ChartEntry((float)AvgCorRTByDay.Last().Item2);
                 e.ValueLabel = Math.Round(AvgCorRTByDay.Last().Item2, 1).ToString() + " ms";
                 e.TextColor = SKColors.Black;
                 e.Label = "Today";
                 e.Color = clrs[0];
                 es.Add(e);
             }
-            var v = AvgCorRTByDay.OrderBy(x => x.Item2).Take(5);
+            var v = AvgCorRTByDay.Where(x => x.Item2 > 0).OrderBy(x => x.Item2).Take(5);
             foreach (Tuple<DateTime, double> rec in v)
             {
-                Entry e = new Entry((float)rec.Item2);
+                ChartEntry e = new ChartEntry((float)rec.Item2);
                 e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
                 e.TextColor = SKColors.Black;
                 e.Label = rec.Item1.ToString("M/dd"); ;
@@ -207,15 +209,15 @@ namespace BrainGames.ViewModels
         public Chart BestAvgCorRTDaysChart => new BarChart()
         {
             Margin = 10,
-            Entries = GetBestAvgCorRTDays()
+            Entries = GetBestAvgCorRTDays(),
         };
 
-        private List<Entry> GetAvgCorRTByStimType()
+        private List<ChartEntry> GetAvgCorRTByStimType()
         {
-            List<Entry> es = new List<Entry>();
+            List<ChartEntry> es = new List<ChartEntry>();
             foreach (Tuple<int, double> rec in AvgCorRTByStimType)
             {
-                Entry e = new Entry((float)rec.Item2);
+                ChartEntry e = new ChartEntry((float)rec.Item2);
                 e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 1)
@@ -238,12 +240,12 @@ namespace BrainGames.ViewModels
             return es;
         }
 
-        private List<Entry> GetAvgCorPctByStimType()
+        private List<ChartEntry> GetAvgCorPctByStimType()
         {
-            List<Entry> es = new List<Entry>();
+            List<ChartEntry> es = new List<ChartEntry>();
             foreach (Tuple<int, double> rec in AvgCorPctByStimType)
             {
-                Entry e = new Entry((float)rec.Item2);
+                ChartEntry e = new ChartEntry((float)rec.Item2);
                 e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 1)
@@ -266,12 +268,12 @@ namespace BrainGames.ViewModels
             return es;
         }
 
-        private List<Entry> GetAvgCorRTByStimLoc2()
+        private List<ChartEntry> GetAvgCorRTByStimLoc2()
         {
-            List<Entry> es = new List<Entry>();
+            List<ChartEntry> es = new List<ChartEntry>();
             foreach (Tuple<int, double> rec in AvgCorRTByStimLoc2)
             {
-                Entry e = new Entry((float)rec.Item2);
+                ChartEntry e = new ChartEntry((float)rec.Item2);
                 e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 0)
@@ -289,12 +291,12 @@ namespace BrainGames.ViewModels
             return es;
         }
 
-        private List<Entry> GetAvgCorPctByStimLoc2()
+        private List<ChartEntry> GetAvgCorPctByStimLoc2()
         {
-            List<Entry> es = new List<Entry>();
+            List<ChartEntry> es = new List<ChartEntry>();
             foreach (Tuple<int, double> rec in AvgCorPctByStimLoc2)
             {
-                Entry e = new Entry((float)rec.Item2);
+                ChartEntry e = new ChartEntry((float)rec.Item2);
                 e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 0)
@@ -312,12 +314,12 @@ namespace BrainGames.ViewModels
             return es;
         }
 
-        private List<Entry> GetAvgCorRTByStimLoc4()
+        private List<ChartEntry> GetAvgCorRTByStimLoc4()
         {
-            List<Entry> es = new List<Entry>();
+            List<ChartEntry> es = new List<ChartEntry>();
             foreach (Tuple<int, double> rec in AvgCorRTByStimLoc4)
             {
-                Entry e = new Entry((float)rec.Item2);
+                ChartEntry e = new ChartEntry((float)rec.Item2);
                 e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 0)
@@ -345,12 +347,12 @@ namespace BrainGames.ViewModels
             return es;
         }
 
-        private List<Entry> GetAvgCorPctByStimLoc4()
+        private List<ChartEntry> GetAvgCorPctByStimLoc4()
         {
-            List<Entry> es = new List<Entry>();
+            List<ChartEntry> es = new List<ChartEntry>();
             foreach (Tuple<int, double> rec in AvgCorPctByStimLoc4)
             {
-                Entry e = new Entry((float)rec.Item2);
+                ChartEntry e = new ChartEntry((float)rec.Item2);
                 e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 0)

@@ -216,13 +216,13 @@ namespace BrainGames.Views
             boxfigures.Clear();
             if (viewModel.boxes == 1)
             {
-                viewModel.AvgRT = viewModel.ss1_cumrt / viewModel.ss1_trialcnt;
+                viewModel.AvgRT = (float)viewModel.ss1_cumrt / viewModel.ss1_trialcnt;
                 crossfigure = crossfigure1;
                 boxfigures.Add(boxfigure1);
             }
             else if (viewModel.boxes == 2)
             {
-                if (viewModel.ss2_trialcnt >= 10 && viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } 
+                if (viewModel.ss2_trialcnt >= 10 && (float)viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } 
                 boxfigures.Add(boxfigure2A);
                 boxfigures.Add(boxfigure2B);
                 if (viewModel.corboxes[0] == 0) crossfigure = crossfigure2A;
@@ -230,7 +230,7 @@ namespace BrainGames.Views
             }
             else if (viewModel.boxes == 4)
             {
-                if (viewModel.ss4_trialcnt >= 10 && viewModel.ss4_cortrialcnt / viewModel.ss4_trialcnt > 0.9) { viewModel.AvgRT = viewModel.ss4_cumcorrt / viewModel.ss4_cortrialcnt; } else { viewModel.AvgRT = 0; }
+                if (viewModel.ss4_trialcnt >= 10 && (float)viewModel.ss4_cortrialcnt / viewModel.ss4_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss4_cumcorrt / viewModel.ss4_cortrialcnt; } else { viewModel.AvgRT = 0; }
                 boxfigures.Add(boxfigure4A);
                 boxfigures.Add(boxfigure4B);
                 boxfigures.Add(boxfigure4C);
@@ -276,7 +276,7 @@ namespace BrainGames.Views
                     {
                         viewModel.ss2_cortrialcnt++;
                         viewModel.ss2_cumcorrt += viewModel.ReactionTime;
-                        if (viewModel.ss2_trialcnt >= 10 && viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } else { viewModel.AvgRT = 0; }
+                        if (viewModel.ss2_trialcnt >= 10 && (float)viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } else { viewModel.AvgRT = 0; }
                     }
                 }
                 else if (viewModel.boxes == 4)
@@ -286,7 +286,7 @@ namespace BrainGames.Views
                     {
                         viewModel.ss4_cortrialcnt++;
                         viewModel.ss4_cumcorrt += viewModel.ReactionTime;
-                        if (viewModel.ss4_trialcnt >= 10 && viewModel.ss4_cortrialcnt / viewModel.ss4_trialcnt > 0.9) { viewModel.AvgRT = viewModel.ss4_cumcorrt / viewModel.ss4_cortrialcnt; } else { viewModel.AvgRT = 0; }
+                        if (viewModel.ss4_trialcnt >= 10 && (float)viewModel.ss4_cortrialcnt / viewModel.ss4_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss4_cumcorrt / viewModel.ss4_cortrialcnt; } else { viewModel.AvgRT = 0; }
                     }
                 }
 

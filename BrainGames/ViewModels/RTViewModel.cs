@@ -111,19 +111,19 @@ namespace BrainGames.ViewModels
             ss2_cumcorrt = App.mum.rt_ss2_cumcorrt;
             ss4_cumcorrt = App.mum.rt_ss4_cumcorrt;
 
-            if (ss2_trialcnt >= 10 && ss2_cortrialcnt / ss2_trialcnt >= 0.9 && ss4_trialcnt >= 10 && ss4_cortrialcnt / ss4_trialcnt >= 0.9)
+            if (ss2_trialcnt >= 10 && (float)ss2_cortrialcnt / ss2_trialcnt >= 0.9 && ss4_trialcnt >= 10 && (float)ss4_cortrialcnt / ss4_trialcnt >= 0.9)
             {
-                AvgRT = (ss1_cumrt / ss1_trialcnt + ss2_cumcorrt / ss2_cortrialcnt + ss4_cumcorrt / ss4_cortrialcnt) / 3;
+                AvgRT = ((float)ss1_cumrt / ss1_trialcnt + (float)ss2_cumcorrt / ss2_cortrialcnt + (float)ss4_cumcorrt / ss4_cortrialcnt) / 3.0;
             }
-            else if (ss2_trialcnt >= 10 && ss2_cortrialcnt / ss2_trialcnt >= 0.9)
+            else if (ss2_trialcnt >= 10 && (float)ss2_cortrialcnt / ss2_trialcnt >= 0.9)
             {
-                AvgRT = (ss1_cumrt / ss1_trialcnt + ss2_cumcorrt / ss2_cortrialcnt) / 2;
+                AvgRT = ((float)ss1_cumrt / ss1_trialcnt + (float)ss2_cumcorrt / ss2_cortrialcnt) / 2.0;
             }
-            else if (ss4_trialcnt >= 10 && ss4_cortrialcnt / ss4_trialcnt >= 0.9)
+            else if (ss4_trialcnt >= 10 && (float)ss4_cortrialcnt / ss4_trialcnt >= 0.9)
             {
-                AvgRT = (ss1_cumrt / ss1_trialcnt + ss4_cumcorrt / ss4_cortrialcnt) / 2;
+                AvgRT = ((float)ss1_cumrt / ss1_trialcnt + (float)ss4_cumcorrt / ss4_cortrialcnt) / 2.0;
             }
-            else { AvgRT = ss1_cumrt / ss1_trialcnt; }
+            else { AvgRT = (float)ss1_cumrt / ss1_trialcnt; }
         }
 
         public void LeftButton()
