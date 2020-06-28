@@ -49,6 +49,7 @@ namespace BrainGames.ViewModels
         public int cortrialctr;
         public string stimdurtext;
         public answertype cor_ans;
+        public bool shown = false;
         bool cor = false;
         bool lastchangefaster = true;
         double estit = 0;
@@ -79,6 +80,8 @@ namespace BrainGames.ViewModels
                 empstimtimearr = new List<double>();
                 trialctr = 0;
                 reversalctr = 0;
+                cortrialstreak = 0;
+                errtrialstreak = 0;
                 initstimdur = minstimdur * /*2*/ 3 * Math.Round(100 / (minstimdur * 2));
             }
             else
@@ -87,6 +90,8 @@ namespace BrainGames.ViewModels
                 empstimtimearr = App.mum.it_empstimtimearr;
                 trialctr = App.mum.it_trialctr;
                 reversalctr = App.mum.it_reversalctr;
+                cortrialstreak = App.mum.it_cortrialstreak;
+                errtrialstreak = App.mum.it_errtrialstreak;
                 initstimdur = App.mum.it_laststimtime;
                 if (corarr[corarr.Count() - 1] == false) lastchangefaster = false;
             }
@@ -109,8 +114,6 @@ namespace BrainGames.ViewModels
                 estit = Settings.IT_EstIT;
             }
 
-            cortrialstreak = 0;
-            errtrialstreak = 0;
             maxstimdur = minstimdur * 500 / minstimdur;
             firstrun = true;
 
@@ -128,8 +131,9 @@ namespace BrainGames.ViewModels
                     });*/
     }
 
-    public void LeftButton()
+        public void LeftButton()
         {
+            if (!shown) return;
             if (cor_ans == answertype.left)
             {
                 cor = true;
@@ -143,6 +147,7 @@ namespace BrainGames.ViewModels
 
         public void RightButton()
         {
+            if (!shown) return;
             if (cor_ans == answertype.right)
             {
                 cor = true;
@@ -186,14 +191,15 @@ namespace BrainGames.ViewModels
 
         public void ReadyButton()
         {
+            shown = false;
             IsRunning = true;
-
+/*
             if (firstrun) 
             { 
                 curstimdur = initstimdur; 
                 firstrun = false; 
             }
-            else if (cortrialstreak == incthresh) 
+            else */if (cortrialstreak == incthresh) 
             { 
                 curstimdur = Math.Max(curstimdur - minstimdur, minstimdur); 
                 cortrialstreak = 0; 
@@ -206,6 +212,11 @@ namespace BrainGames.ViewModels
                 errtrialstreak = 0; 
                 if (lastchangefaster) reversalctr++; 
                 lastchangefaster = false; 
+            }
+            else if (firstrun)
+            {
+                curstimdur = initstimdur;
+                firstrun = false;
             }
 
             Settings.IT_LastStimDur = curstimdur;

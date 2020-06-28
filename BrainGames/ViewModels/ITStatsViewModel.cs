@@ -52,6 +52,8 @@ namespace BrainGames.ViewModels
         private List<Tuple<DateTime, double>> CumAvgCorITOverTime;
         private List<Tuple<DateTime, double>> CumEstITOverTime;
 
+        private double sf = 0.03;
+
         List<Tuple<DateTime, double>> FillTimeList(IEnumerable<Tuple<DateTime, double>> daylist, IEnumerable<Tuple<DateTime, double>> weeklist, IEnumerable<Tuple<DateTime, double>> monthlist)
         {
             IEnumerable<Tuple<DateTime, double>> t;
@@ -110,9 +112,9 @@ namespace BrainGames.ViewModels
                 AvgCorPctByStimType = ur.GroupBy(x => x.stimtype).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Count())).OrderBy(x => x.Item1);
                 AvgCorPctByStimDur = ur.GroupBy(x => x.stimtime).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Count())).OrderByDescending(x => x.Item1);
                 CumAvgCorITByDay = ur.Where(x => x.avgcorit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgcorit)/x.Count())).OrderBy(x => x.Item1);
-                CumAvgCorITByTrial = ur.Where(x => x.avgcorit > 0).OrderBy(x => x.datetime).Select(x => x.avgcorit).Take(30);
+                CumAvgCorITByTrial = ur.Where(x => x.avgcorit > 0).OrderByDescending(x => x.datetime).Select(x => x.avgcorit).Take(30);
                 CumEstITByDay = ur.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1);
-                CumEstITByTrial = ur.OrderBy(x => x.datetime).Where(x => x.estit > 0).Select(x => x.estit).Take(30);
+                CumEstITByTrial = ur.OrderByDescending(x => x.datetime).Where(x => x.estit > 0).Select(x => x.estit).Take(30);
                 AvgCorITByWeek = ur.GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.empstimtime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
                 CumAvgCorITByWeek = ur.Where(x => x.avgcorit > 0).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgcorit) / x.Count())).OrderBy(x => x.Item1);
                 CumEstITByWeek = ur.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1);
@@ -121,8 +123,8 @@ namespace BrainGames.ViewModels
                 CumEstITByMonth = ur.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1);
 
                 AvgCorITOverTime = FillTimeList(AvgCorITByDay, AvgCorITByWeek, AvgCorITByMonth);
-                CumAvgCorITOverTime = FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
-                CumEstITOverTime = FillTimeList(CumEstITByDay, CumEstITByWeek, CumEstITByMonth);
+                CumAvgCorITOverTime = CumAvgCorITByDay.Count() <= 30 ? CumAvgCorITByDay.ToList() : (CumAvgCorITByWeek.Count() <= 30 ? CumAvgCorITByWeek.ToList() : CumAvgCorITByMonth.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
+                CumEstITOverTime = CumEstITByDay.Count() <= 30 ? CumEstITByDay.ToList() : (CumEstITByWeek.Count() <= 30 ? CumEstITByWeek.ToList() : CumEstITByMonth.ToList());
                 TrialCountOverTime = FillTimeList(TrialsByDay, TrialsByWeek, TrialsByMonth);
             }
         }
@@ -150,7 +152,7 @@ namespace BrainGames.ViewModels
                 ValueLabel = Math.Round(item, 1).ToString() + " ms",
                 TextColor = textcolor,
                 Color = color,
-                Label = ""
+                Label = " "
             };
         }
 
@@ -170,11 +172,13 @@ namespace BrainGames.ViewModels
 
         public Chart AvgCorITOverTimeChart => new LineChart()
         {
-            Entries = AvgCorITOverTime.Select(CreateDayEntryMS),
+            Entries = AvgCorITOverTime.Where(x => x.Item2 > 0).Select(CreateDayEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
-            PointSize = 18
+            PointSize = 18,
+            MinValue = (float)Math.Max(0, AvgCorITOverTime.Min(x => x.Item2) - AvgCorITOverTime.Min(x => x.Item2) * sf),
+            MaxValue = (float)(AvgCorITOverTime.Max(x => x.Item2) + AvgCorITOverTime.Max(x => x.Item2) * sf)
         };
 
         public Chart CumAvgCorITOverTimeChart => new LineChart()
@@ -183,7 +187,9 @@ namespace BrainGames.ViewModels
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
-            PointSize = 18
+            PointSize = 18,
+            MinValue = (float)Math.Max(0, CumAvgCorITOverTime.Min(x => x.Item2) - CumAvgCorITOverTime.Min(x => x.Item2) * sf),
+            MaxValue = (float)(CumAvgCorITOverTime.Max(x => x.Item2) + CumAvgCorITOverTime.Max(x => x.Item2) * sf)
         };
 
         public Chart CumEstITOverTimeChart => new LineChart()
@@ -192,25 +198,31 @@ namespace BrainGames.ViewModels
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
-            PointSize = 18
+            PointSize = 18,
+            MinValue = (float)Math.Max(0, CumEstITOverTime.Min(x => x.Item2) - CumEstITOverTime.Min(x => x.Item2) * sf),
+            MaxValue = (float)(CumEstITOverTime.Max(x => x.Item2) + CumEstITOverTime.Max(x => x.Item2) * sf)
         };
 
         public Chart CumAvgCorITByTrialChart => new LineChart()
         {
-            Entries = CumAvgCorITByTrial.Select(CreateEntryMS),
+            Entries = CumAvgCorITByTrial.Reverse().Select(CreateEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
-            PointSize = 18
+            PointSize = 18,
+            MinValue = (float)Math.Max(0, CumAvgCorITByTrial.Min() - CumAvgCorITByTrial.Min() * sf),
+            MaxValue = (float)(CumAvgCorITByTrial.Max() + CumAvgCorITByTrial.Max() * sf)
         };
 
         public Chart CumEstITByTrialChart => new LineChart()
         {
-            Entries = CumEstITByTrial.Select(CreateEntryMS),
+            Entries = CumEstITByTrial.Reverse().Select(CreateEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
-            PointSize = 18
+            PointSize = 18,
+            MinValue = (float)Math.Max(0, CumEstITByTrial.Min() - CumEstITByTrial.Min() * sf),
+            MaxValue = (float)(CumEstITByTrial.Max() + CumEstITByTrial.Max() * sf)
         };
 
         private List<ChartEntry> GetBestAvgCorITDays()
@@ -245,7 +257,9 @@ namespace BrainGames.ViewModels
         public Chart BestAvgCorITDaysChart => new BarChart()
         {
             Margin = 10,
-            Entries = GetBestAvgCorITDays()
+            Entries = GetBestAvgCorITDays(),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal,
         };
 
         private List<ChartEntry> GetAvgCorITByStimType()
@@ -315,25 +329,32 @@ namespace BrainGames.ViewModels
         public Chart AvgCorITByStimTypeChart => new BarChart()
         {
             Margin = 10,
-            Entries = GetAvgCorITByStimType()
+            Entries = GetAvgCorITByStimType(),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
         };
 
         public Chart AvgCorPctByStimTypeChart => new BarChart()
         {
             Margin = 10,
-            Entries = GetAvgCorPctByStimType()
+            Entries = GetAvgCorPctByStimType(),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
         };
 
         public Chart AvgCorPctByStimDurChart => new BarChart()
         {
             Margin = 10,
-            Entries = GetAvgCorPctByStimDur()
+            Entries = GetAvgCorPctByStimDur(),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
         };
 
         public Chart TrialCountOverTimeChart => new BarChart()
         {
             Entries = TrialCountOverTime.Select(CreateDayEntryCnt),
-            Margin = 10
+            Margin = 10,
+            ValueLabelOrientation = Orientation.Horizontal
         };
     }
 

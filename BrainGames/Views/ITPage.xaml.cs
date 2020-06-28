@@ -99,6 +99,7 @@ namespace BrainGames.Views
 
         public void LeftButton_Clicked(object sender, EventArgs e)
         {
+            if (!viewModel.shown) return;
             if (viewModel.cor_ans == ITViewModel.answertype.left)
             {
 //                corLabel.Text = "Correct!";
@@ -121,6 +122,7 @@ namespace BrainGames.Views
 
         public void RightButton_Clicked(object sender, EventArgs e)
         {
+            if (!viewModel.shown) return;
             if (viewModel.cor_ans == ITViewModel.answertype.right)
             {
 //                corLabel.Text = "Correct!";
@@ -263,6 +265,7 @@ namespace BrainGames.Views
                         viewModel.empstimtimearr.Add(viewModel.empstimdur);
 //                        stimdurtext = stimdurtext + empstimdur.ToString("N0", CultureInfo.InvariantCulture) + "ms";
                         fpsLabel.Text = "Stim Dur: " + viewModel.empstimdur.ToString("N0", CultureInfo.InvariantCulture) + " ms";
+                        viewModel.shown = true;
                     }
                     if (dt < viewModel.emppausedur + viewModel.empstimdur + viewModel.maskdur - viewModel.minstimdur / 2) //keep mask onscreen
                     {

@@ -39,6 +39,8 @@ namespace BrainGames.Utility
         public double it_laststimtime = 0;
         public int it_trialctr = 0;
         public int it_reversalctr = 0;
+        public int it_errtrialstreak = 0;
+        public int it_cortrialstreak = 0;
         public int rt_trialctr = 0 ;
         public double rt_ss1_cumrt = 0;
         public double rt_ss2_cumcorrt = 0;
@@ -162,6 +164,18 @@ namespace BrainGames.Utility
             {
 
                 itgrs.OrderBy(x => x.datetime);
+                int i = itgrs.Count() - 1;
+                while (itgrs[i].cor == true)
+                {
+                    it_cortrialstreak++;
+                    i--;
+                }
+                i = itgrs.Count() - 1;
+                while (itgrs[i].cor == false)
+                {
+                    it_errtrialstreak++;
+                    i--;
+                }
                 it_corarr = new List<bool>();
                 it_empstimtimearr = new List<double>();
                 foreach (DataSchemas.ITGameRecordSchema grs in itgrs)
@@ -312,6 +326,18 @@ namespace BrainGames.Utility
                         List<DataSchemas.ITGameRecordSchema> itgrs = new List<DataSchemas.ITGameRecordSchema>();
                         itgrs = conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema");
                         itgrs.OrderBy(x => x.datetime);
+                        int i = itgrs.Count() - 1;
+                        while (itgrs[i].cor == true)
+                        {
+                            it_cortrialstreak++;
+                            i--;
+                        }
+                        i = itgrs.Count() - 1;
+                        while (itgrs[i].cor == false)
+                        {
+                            it_errtrialstreak++;
+                            i--;
+                        }
                         it_corarr = new List<bool>();
                         it_empstimtimearr = new List<double>();
                         foreach (DataSchemas.ITGameRecordSchema grs in itgrs)
@@ -521,7 +547,7 @@ namespace BrainGames.Utility
             try
             {
                 var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
-                IMobileServiceTable bguserrecord = Client.GetTable("StroopGameRecord");
+                IMobileServiceTable bguserrecord = Client.GetTable("BGStroopGameRecord");
                 //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
                 JToken untypedItems;
                 List<DataSchemas.StroopGameRecordSchema> tmpitems = new List<DataSchemas.StroopGameRecordSchema>();

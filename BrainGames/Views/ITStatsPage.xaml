@@ -67,37 +67,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
-                        <Label Text="Cumulative Average Correct IT By Trial"
-                                            FontSize="Medium"
-                                            LineHeight="1"
-                                            TextColor="Black"
-                                            HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgCorITByTrial" Chart="{Binding CumAvgCorITByTrialChart}" />
-                    </StackLayout>
-                </Frame>
-                <Frame Grid.Row="3"
-                       HorizontalOptions="FillAndExpand"
-                       VerticalOptions="FillAndExpand"
-                       Margin="10"
-                       Padding="0"
-                       CornerRadius="0">
-                    <StackLayout>
-                        <Label Text="Cumulative Estimated IT By Trial"
-                                            FontSize="Medium"
-                                            LineHeight="1"
-                                            TextColor="Black"
-                                            HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstITByTrial" Chart="{Binding CumEstITByTrialChart}" />
-                    </StackLayout>
-                </Frame>
-                <Frame Grid.Row="4"
-                       HorizontalOptions="FillAndExpand"
-                       VerticalOptions="FillAndExpand"
-                       Margin="10"
-                       Padding="0"
-                       CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Cumulative Average Correct IT Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -106,13 +76,28 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgCorITOverTime" Chart="{Binding CumAvgCorITOverTimeChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="5"
+                <Frame Grid.Row="3"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Cumulative Average Correct IT By Trial"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgCorITByTrial" Chart="{Binding CumAvgCorITByTrialChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="4"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Cumulative Estimated IT Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -121,13 +106,28 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstITOverTime" Chart="{Binding CumEstITOverTimeChart}" />
                     </StackLayout>
                 </Frame>
+                <Frame Grid.Row="5"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Cumulative Estimated IT By Trial"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstITByTrial" Chart="{Binding CumEstITByTrialChart}" />
+                    </StackLayout>
+                </Frame>
                 <Frame Grid.Row="6"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Trials Completed Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -142,7 +142,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Average Correct IT By Stimulus Type"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -157,7 +157,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Average Correct Percentage By Stimulus Type"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -172,7 +172,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Average Correct Percentage By Stimulus Duration"
                                             FontSize="Medium"
                                             LineHeight="1"

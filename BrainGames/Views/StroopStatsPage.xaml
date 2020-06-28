@@ -67,7 +67,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Cumulative Average C-I Dif RT Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -82,7 +82,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Cumulative Average C-I Dif Cor Pct Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -97,7 +97,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Average C-I Dif RT Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -112,7 +112,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Cumulative Average Correct RT By Block"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -127,7 +127,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Cumulative Average C-I Dif RT By Block"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -142,7 +142,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Trials Completed Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -157,7 +157,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Average Correct RT By Stimulus Type"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -172,7 +172,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Average Correct Percentage By Stimulus Type"
                                             FontSize="Medium"
                                             LineHeight="1"
@@ -187,7 +187,7 @@
                        Margin="10"
                        Padding="0"
                        CornerRadius="0">
-                    <StackLayout>
+                    <StackLayout Spacing="20" Padding="15">
                         <Label Text="Average Correct C-I Dif RT By Stimulus Word"
                                             FontSize="Medium"
                                             LineHeight="1"
