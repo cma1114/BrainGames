@@ -1306,8 +1306,55 @@ namespace BrainGames.Utility
             }
         }
 
-        public async static void WriteDSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, string direction, string items, bool repeats, bool repeats_cons, bool auto bool cor)
+        public async static void WriteDSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, string direction, string items, bool repeats, bool repeats_cons, bool auto, bool cor)
         {
+            List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
+            double estSpan_f = 0, estStimTime_f = 0, estSpan_b = 0, estStimTime_b = 0;
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
+            catch {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
+                List<int> spanlenarr = ur.Where(x => x.direction == "f").Select(x => x.itemcnt).ToList();
+                if(direction == "f")
+                {
+                    corarr.Add(cor);
+                    spanlenarr.Add(itemcnt);
+                }
+                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estSpan_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+
+                corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
+                List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.ontimems + x.offtimems).ToList();
+                if (direction == "f" && itemcnt <= estSpan_f)
+                {
+                    corarr.Add(cor);
+                    stimtimearr.Add(ontimems + offtimems);
+                }
+                llsi = new LinearLeastSquaresInterpolation(stimtimearr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estStimTime_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+
+                corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
+                spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
+                if (direction == "b")
+                {
+                    corarr.Add(cor);
+                    spanlenarr.Add(itemcnt);
+                }
+                llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estSpan_b = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+
+                corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
+                stimtimearr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.ontimems + x.offtimems).ToList();
+                if (direction == "b" && itemcnt <= estSpan_b)
+                {
+                    corarr.Add(cor);
+                    stimtimearr.Add(ontimems + offtimems);
+                }
+                llsi = new LinearLeastSquaresInterpolation(stimtimearr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estStimTime_b = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+            }
+
             var s = new DataSchemas.DSGameRecordSchema();
             s.Id = Guid.NewGuid().ToString();
             s.SessionId = sessionid.ToString();
@@ -1323,6 +1370,10 @@ namespace BrainGames.Utility
             s.direction = direction;
             s.items = items;
             s.autoinc = auto;
+            s.estSpan_b = estSpan_b;
+            s.estSpan_f = estSpan_f;
+            s.estStimTime_b = estStimTime_b;
+            s.estStimTime_f = estStimTime_f;
             if (!IsBusy_local)
             {
                 IsBusy_local = true;

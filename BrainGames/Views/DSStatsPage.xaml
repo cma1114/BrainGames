@@ -31,6 +31,13 @@
                     <RowDefinition Height="250*"/>
                     <RowDefinition Height="250*"/>
                     <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
                 </Grid.RowDefinitions>
                 <Frame Grid.Row="0"
                        HorizontalOptions="FillAndExpand"
@@ -39,12 +46,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Fastest Days"
+                        <Label Text="Longest Span: Today and All Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="BestAvgCorRTDays" Chart="{Binding BestAvgCorRTDaysChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="BestSpanDays" Chart="{Binding BestSpanDaysChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="1"
@@ -54,12 +61,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Cumulative Average Correct RT Over Time"
+                        <Label Text="Fastest Time at Longest Span: Today and All Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgCorRTOverTime" Chart="{Binding CumAvgCorRTOverTimeChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="BestTimeAtBestSpanDays" Chart="{Binding BestTimeAtBestSpanDaysChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="2"
@@ -69,12 +76,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Cumulative Average C-I Dif RT Over Time"
+                        <Label Text="Fastest Time: Today and All Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgICDifCorRTOverTime" Chart="{Binding CumAvgICDifCorRTOverTimeChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="BestTimeDays" Chart="{Binding BestTimeDaysChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="3"
@@ -84,12 +91,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Cumulative Average C-I Dif Cor Pct Over Time"
+                        <Label Text="Longest Span at Fastest Time: Today and All Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgICDifCorPctOverTime" Chart="{Binding CumAvgICDifCorPctOverTimeChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="BestSpanAtBestTimeDays" Chart="{Binding BestSpanAtBestTimeDaysChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="4"
@@ -99,12 +106,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average C-I Dif RT Over Time"
+                        <Label Text="Computed Max 90% Cor Digit Span"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgICDifCorRTOverTime" Chart="{Binding AvgICDifCorRTOverTimeChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="EstSpan" Chart="{Binding EstSpanChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="5"
@@ -114,12 +121,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Cumulative Average Correct RT By Block"
+                        <Label Text="Computed Min 90% Cor Stim Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgCorRTByBlock" Chart="{Binding CumAvgCorRTByBlockChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="EstStimTime" Chart="{Binding EstStimTimeChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="6"
@@ -129,12 +136,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Cumulative Average C-I Dif RT By Block"
+                        <Label Text="Computed Max 90% Cor Forward Digit Span Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumAvgICDifCorRTByBlock" Chart="{Binding CumAvgICDifCorRTByBlockChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstSpanFOverTime" Chart="{Binding CumEstSpanFOverTimeChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="7"
@@ -144,12 +151,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Trials Completed Over Time"
+                        <Label Text="Computed Max 90% Cor Backward Digit Span Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="TrialCountOverTime" Chart="{Binding TrialCountOverTimeChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstSpanBOverTime" Chart="{Binding CumEstSpanBOverTimeChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="8"
@@ -159,12 +166,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average Correct RT By Stimulus Type"
+                        <Label Text="Computed Min 90% Cor Forward Stim Time Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorRTByStimType" Chart="{Binding AvgCorRTByStimTypeChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstStimTimeFOverTime" Chart="{Binding CumEstStimTimeFOverTimeChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="9"
@@ -174,12 +181,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average Correct Percentage By Stimulus Type"
+                        <Label Text="Computed Min 90% Cor Backward Stim Time Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctByStimType" Chart="{Binding AvgCorPctByStimTypeChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstStimTimeBOverTime" Chart="{Binding CumEstStimTimeBOverTimeChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="10"
@@ -189,12 +196,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average Correct C-I Dif RT By Stimulus Word"
+                        <Label Text="Longest Correct Forward Digit Span Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgICDifCorRTByStimWord" Chart="{Binding AvgICDifCorRTByStimWordChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="MaxCorFwdSpanLenOverTime" Chart="{Binding MaxCorFwdSpanLenOverTimeChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="11"
@@ -204,12 +211,117 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average Correct C-I Dif RT By Stimulus Color"
+                        <Label Text="Longest Correct Backward Digit Span Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgICDifCorRTByStimColor" Chart="{Binding AvgICDifCorRTByStimColorChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="MaxCorBwdSpanLenOverTime" Chart="{Binding MaxCorBwdSpanLenOverTimeChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="12"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Trial Count Over Time"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="TrialCountOverTime" Chart="{Binding TrialCountOverTimeChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="13"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average Correct Percentage By Forward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctBySpanLen_f" Chart="{Binding AvgCorPctBySpanLen_fChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="14"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average Correct Percentage By Backward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctBySpanLen_b" Chart="{Binding AvgCorPctBySpanLen_bChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="15"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average Correct Stimulus On Time By Forward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOnTimeBySpanLen_f" Chart="{Binding AvgCorOnTimeBySpanLen_fChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="16"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average Correct Stimulus Off Time By Forward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOffTimeBySpanLen_f" Chart="{Binding AvgCorOffTimeBySpanLen_fChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="17"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average Correct Stimulus On Time By Backward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOnTimeBySpanLen_b" Chart="{Binding AvgCorOnTimeBySpanLen_bChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="18"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average Correct Stimulus Off Time By Backward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOffTimeBySpanLen_b" Chart="{Binding AvgCorOffTimeBySpanLen_bChart}" />
                     </StackLayout>
                 </Frame>
             </Grid>

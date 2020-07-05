@@ -105,6 +105,10 @@ namespace BrainGames.Models
             public string SessionId { get; set; }
             public string datetime { get; set; }
             public int trialnum { get; set; }
+            public double estSpan_f { get; set; }
+            public double estStimTime_f { get; set; }
+            public double estSpan_b { get; set; }
+            public double estStimTime_b { get; set; }
             public int itemcnt { get; set; }
             public int ontimems { get; set; }
             public int offtimems { get; set; }
