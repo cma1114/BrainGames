@@ -292,7 +292,7 @@ namespace BrainGames.Views
 
                 crtLabel.Text = "SS Cor RT: " + (viewModel.AvgRT > 0 ? viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms" : "");
 
-                if (viewModel.blocktrialctr < viewModel.trialsperset) 
+                if (viewModel.blocktrialctr < viewModel.trialsperset) //load up next stim
                 { 
                     if (viewModel.boxes == 1)
                     {

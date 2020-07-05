@@ -49,6 +49,7 @@ namespace BrainGames.Utility
         public int rt_ss2_trialcnt = 0;
         public int rt_ss2_cortrialcnt = 0;
         public int rt_ss4_trialcnt = 0;
+        public int rt_ss4_cortrialcnt = 0;
 
         public int st_trialctr = 0;
         public double st_cumcorrt = 0;
@@ -60,7 +61,21 @@ namespace BrainGames.Utility
         public double st_cuminconcorrt = 0;
         public int st_corincontrialcnt = 0;
 
-        public int rt_ss4_cortrialcnt = 0;
+        public int ds_trialctr = 0;
+        public int ds_errtrialstreak = 0;
+        public int ds_cortrialstreak = 0;
+        public int ds_lastspan = 0;
+        public List<Tuple<int, int>> ds_last_ontimes_by_spanlen = new List<Tuple<int, int>>();
+        public List<Tuple<int, int>> ds_last_offtimes_by_spanlen = new List<Tuple<int, int>>();
+        public List<Tuple<int, bool>> ds_last_outcomes_by_spanlen = new List<Tuple<int, bool>>();
+        public int ds_errtrialstreak_b = 0;
+        public int ds_cortrialstreak_b = 0;
+        public int ds_lastspan_b = 0;
+        public List<Tuple<int, int>> ds_last_ontimes_by_spanlen_b = new List<Tuple<int, int>>();
+        public List<Tuple<int, int>> ds_last_offtimes_by_spanlen_b = new List<Tuple<int, int>>();
+        public List<Tuple<int, bool>> ds_last_outcomes_by_spanlen_b = new List<Tuple<int, bool>>();
+        public string ds_lastdir;
+
         public static string DeviceId;
         object locker = new object();
         //Function to get random number
@@ -162,16 +177,16 @@ namespace BrainGames.Utility
 
             if (itgrs.Count() > 0)
             {
-
                 itgrs.OrderBy(x => x.datetime);
+                it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
                 int i = itgrs.Count() - 1;
-                while (itgrs[i].cor == true)
+                while (i >= 0 && itgrs[i].cor == true && itgrs[i].stimtime == it_laststimtime)
                 {
                     it_cortrialstreak++;
                     i--;
                 }
                 i = itgrs.Count() - 1;
-                while (itgrs[i].cor == false)
+                while (i >= 0 && itgrs[i].cor == false && itgrs[i].stimtime == it_laststimtime)
                 {
                     it_errtrialstreak++;
                     i--;
@@ -185,7 +200,6 @@ namespace BrainGames.Utility
                 }
                 it_trialctr = itgrs.Max(x => x.trialnum);
                 it_reversalctr = itgrs.Max(x => x.reversalctr);
-                it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
                 Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
                 Settings.IT_AvgCorDur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials;
                 Settings.IT_LastStimDur = it_laststimtime;
@@ -244,6 +258,72 @@ namespace BrainGames.Utility
                 st_corincontrialcnt = stgrs.Where(x => x.congruent == false && x.cor == true).Count();
                 st_cumconcorrt = stgrs.Where(x => x.congruent == true && x.cor == true).Sum(x => x.reactiontime);
                 st_cuminconcorrt = stgrs.Where(x => x.congruent == false && x.cor == true).Sum(x => x.reactiontime);
+            }
+            #endregion
+
+            #region dsgr
+            List<DataSchemas.DSGameRecordSchema> dsgrs = new List<DataSchemas.DSGameRecordSchema>();
+            try
+            {
+                conn_sync.CreateTable<DataSchemas.DSGameRecordSchema>();
+                dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'f'");
+            }
+            catch (Exception ex2)
+            {
+                ;
+            }
+            if (dsgrs.Count() > 0)
+            {
+                dsgrs.OrderBy(x => x.datetime);
+                ds_lastspan = dsgrs[dsgrs.Count() - 1].itemcnt;
+                int i = dsgrs.Count() - 1;
+                while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan)
+                {
+                    ds_cortrialstreak++;
+                    i--;
+                }
+                i = dsgrs.Count() - 1;
+                while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan)
+                {
+                    ds_errtrialstreak++;
+                    i--;
+                }
+                ds_trialctr = dsgrs.Max(x => x.trialnum);
+                ds_last_ontimes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
+                ds_last_offtimes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
+                ds_last_outcomes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
+                ds_lastdir = "f";
+            }
+            try
+            {
+                conn_sync.CreateTable<DataSchemas.DSGameRecordSchema>();
+                dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'b'");
+            }
+            catch (Exception ex2)
+            {
+                ;
+            }
+            if (dsgrs.Count() > 0)
+            {
+                dsgrs.OrderBy(x => x.datetime);
+                ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
+                int i = dsgrs.Count() - 1;
+                while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan_b)
+                {
+                    ds_cortrialstreak_b++;
+                    i--;
+                }
+                i = dsgrs.Count() - 1;
+                while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan_b)
+                {
+                    ds_errtrialstreak_b++;
+                    i--;
+                }
+                if (dsgrs.Max(x => x.trialnum) > ds_trialctr) ds_lastdir = "b";
+                ds_trialctr = Math.Max(ds_trialctr, dsgrs.Max(x => x.trialnum));
+                ds_last_ontimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
+                ds_last_offtimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
+                ds_last_outcomes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
             }
             #endregion
         }
@@ -326,14 +406,15 @@ namespace BrainGames.Utility
                         List<DataSchemas.ITGameRecordSchema> itgrs = new List<DataSchemas.ITGameRecordSchema>();
                         itgrs = conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema");
                         itgrs.OrderBy(x => x.datetime);
+                        it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
                         int i = itgrs.Count() - 1;
-                        while (itgrs[i].cor == true)
+                        while (i >= 0 && itgrs[i].cor == true && itgrs[i].stimtime == it_laststimtime)
                         {
                             it_cortrialstreak++;
                             i--;
                         }
                         i = itgrs.Count() - 1;
-                        while (itgrs[i].cor == false)
+                        while (i >= 0 && itgrs[i].cor == false && itgrs[i].stimtime == it_laststimtime)
                         {
                             it_errtrialstreak++;
                             i--;
@@ -347,7 +428,6 @@ namespace BrainGames.Utility
                         }
                         it_trialctr = itgrs.Max(x => x.trialnum);
                         it_reversalctr = itgrs.Max(x => x.reversalctr);
-                        it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
                         Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
                         Settings.IT_AvgCorDur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials;
                         Settings.IT_LastStimDur = it_laststimtime;
@@ -643,6 +723,158 @@ namespace BrainGames.Utility
             #endregion
 
 
+            #region DSGameRecordSchema;
+            ///////  CheckServerForDBUpdates
+            try { await db.CreateTableAsync<DataSchemas.DSGameRecordSchema>(); }
+            catch (Exception ex2)
+            {
+                ;
+            }
+            Task<List<DataSchemas.DSGameRecordSchema>> t_q_ds = null;
+            List<DataSchemas.DSGameRecordSchema> q_ds = new List<DataSchemas.DSGameRecordSchema>();
+            lock (locker)
+            {
+                t_q_ds = db.QueryAsync<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
+            }
+            try
+            {
+                q_ds = t_q_ds.Result;
+            }
+            catch (Exception ex)
+            {
+                dbexception = true;
+            }
+
+            List<DataSchemas.DSGameRecordSchema> BGDSUserRecords = new List<DataSchemas.DSGameRecordSchema>();
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable bguserrecord = Client.GetTable("BGDSGameRecord");
+                //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
+                JToken untypedItems;
+                List<DataSchemas.DSGameRecordSchema> tmpitems = new List<DataSchemas.DSGameRecordSchema>();
+                int pagesize = 50, ctr = 0;
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+                try
+                {
+                    do
+                    {
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+                        for (int j = 0; j < untypedItems.Count(); j++)
+                        {
+                            BGDSUserRecords.Add(untypedItems[j].ToObject<DataSchemas.DSGameRecordSchema>());
+                        }
+                    } while (untypedItems.Count() > 0);
+
+                    bool added = false;
+                    for (int i = 0; i < BGDSUserRecords.Count; i++)
+                    {
+                        if (dbexception || (!q_ds.Any(x => x.Id == BGDSUserRecords[i].Id)))//if the local db doesn't have this user record, add it
+                        {
+                            try
+                            {
+                                await db.InsertAsync(BGDSUserRecords[i]);
+                                added = true;
+                            }
+                            catch (Exception exA)
+                            {
+                                added = false;
+                            }
+
+                        }
+                    }
+                    if (added)
+                    {
+                        List<DataSchemas.DSGameRecordSchema> dsgrs = new List<DataSchemas.DSGameRecordSchema>();
+                        dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'f'");
+                        dsgrs.OrderBy(x => x.datetime);
+                        ds_lastspan = dsgrs[dsgrs.Count() - 1].itemcnt;
+                        int i = dsgrs.Count() - 1;
+                        while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan)
+                        {
+                            ds_cortrialstreak++;
+                            i--;
+                        }
+                        i = dsgrs.Count() - 1;
+                        while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan)
+                        {
+                            ds_errtrialstreak++;
+                            i--;
+                        }
+                        ds_trialctr = dsgrs.Max(x => x.trialnum);
+                        ds_last_ontimes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
+                        ds_last_offtimes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
+                        ds_last_outcomes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
+                        ds_lastdir = "f";
+
+                        dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'b'");
+                        dsgrs.OrderBy(x => x.datetime);
+                        ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
+                        i = dsgrs.Count() - 1;
+                        while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan_b)
+                        {
+                            ds_cortrialstreak_b++;
+                            i--;
+                        }
+                        i = dsgrs.Count() - 1;
+                        while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan_b)
+                        {
+                            ds_errtrialstreak_b++;
+                            i--;
+                        }
+                        if (dsgrs.Max(x => x.trialnum) > ds_trialctr) ds_lastdir = "b";
+                        ds_trialctr = Math.Max(ds_trialctr,dsgrs.Max(x => x.trialnum));
+                        ds_last_ontimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
+                        ds_last_offtimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
+                        ds_last_outcomes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
+                    }
+                }
+                catch (Exception exC)
+                {
+                    ;
+                }
+                if (!dbexception)
+                {
+                    for (int i = 0; i < q_ds.Count; i++)
+                    {
+                        int idx = BGDSUserRecords.FindIndex(x => x.Id == q_ds[i].Id);
+                        if (idx == -1)//if the remote server doesn't have this user record, add it
+                        {
+                            try
+                            {
+                                await bguserinfoService.AddDSGameRecordEntryAsync(q_ds[i]);
+                                //                                    JObject item = JObject.FromObject(q[i]);
+                                //                                    await bguserrecord.InsertAsync(item);
+                            }
+                            catch (Exception exA)
+                            {
+                                ;
+                            }
+                        }
+                        else if (BGDSUserRecords[idx].ontimems == 0 && q_ds[i].ontimems > 0)//the update didn't go through, resend
+                        {
+                            try
+                            {
+                                await bguserinfoService.UpdateDSGameRecordEntryAsync(q_ds[i]);
+                            }
+                            catch (Exception exA)
+                            {
+                                ;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception exB)
+            {
+                ;
+            }
+            #endregion
+
+
             #region BrainGameSessionSchema;
             ///////  CheckServerForDBUpdates
             try { await db.CreateTableAsync<DataSchemas.BrainGameSessionSchema>(); }
@@ -727,6 +959,7 @@ namespace BrainGames.Utility
                 ;
             }
             #endregion
+
 
             #region UserSchema;
             ///////  CheckServerForDBUpdates
@@ -1073,6 +1306,63 @@ namespace BrainGames.Utility
             }
         }
 
+        public async static void WriteDSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, string direction, string items, bool repeats, bool repeats_cons, bool auto bool cor)
+        {
+            var s = new DataSchemas.DSGameRecordSchema();
+            s.Id = Guid.NewGuid().ToString();
+            s.SessionId = sessionid.ToString();
+            s.datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            s.UserId = Settings.UserId;
+            s.itemcnt = itemcnt;
+            s.ontimems = ontimems;
+            s.offtimems = offtimems;
+            s.repeats = repeats;
+            s.repeats_cons = repeats_cons;
+            s.cor = cor;
+            s.trialnum = trialctr;
+            s.direction = direction;
+            s.items = items;
+            s.autoinc = auto;
+            if (!IsBusy_local)
+            {
+                IsBusy_local = true;
+                try { await conn.InsertAsync(s); }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy_local = false;
+                }
+            }
+
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
+                SendDSGRToServer(s);
+        }
+
+        public async static void SendDSGRToServer(DataSchemas.DSGameRecordSchema stgr)
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            try
+            {
+                await bguserinfoService.AddDSGameRecordEntryAsync(stgr);
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
         public static Guid WriteGameSession(string gametype)
         {
             Guid g = Guid.NewGuid();

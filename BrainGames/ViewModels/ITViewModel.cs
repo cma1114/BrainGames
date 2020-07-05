@@ -192,31 +192,25 @@ namespace BrainGames.ViewModels
         public void ReadyButton()
         {
             shown = false;
-            IsRunning = true;
-/*
+
             if (firstrun) 
             { 
                 curstimdur = initstimdur; 
                 firstrun = false; 
             }
-            else */if (cortrialstreak == incthresh) 
+/*            else */if (cortrialstreak >= incthresh) 
             { 
                 curstimdur = Math.Max(curstimdur - minstimdur, minstimdur); 
                 cortrialstreak = 0; 
                 if(!lastchangefaster) reversalctr++; 
                 lastchangefaster = true; 
             }
-            else if (errtrialstreak == decthresh) 
+            else if (errtrialstreak >= decthresh) 
             { 
                 curstimdur = Math.Min(curstimdur + minstimdur, maxstimdur); 
                 errtrialstreak = 0; 
                 if (lastchangefaster) reversalctr++; 
                 lastchangefaster = false; 
-            }
-            else if (firstrun)
-            {
-                curstimdur = initstimdur;
-                firstrun = false;
             }
 
             Settings.IT_LastStimDur = curstimdur;
@@ -236,6 +230,7 @@ namespace BrainGames.ViewModels
             }
 
             trialctr++;
+            IsRunning = true;
         }
 
         /*        async Task ExecuteLoadItemsCommand()

@@ -14,6 +14,8 @@ namespace BrainGames.Services
         Task<DataSchemas.RTGameRecordSchema> UpdateRTGameRecordEntryAsync(DataSchemas.RTGameRecordSchema entry);
         Task<DataSchemas.StroopGameRecordSchema> AddStroopGameRecordEntryAsync(DataSchemas.StroopGameRecordSchema entry);
         Task<DataSchemas.StroopGameRecordSchema> UpdateStroopGameRecordEntryAsync(DataSchemas.StroopGameRecordSchema entry);
+        Task<DataSchemas.DSGameRecordSchema> AddDSGameRecordEntryAsync(DataSchemas.DSGameRecordSchema entry);
+        Task<DataSchemas.DSGameRecordSchema> UpdateDSGameRecordEntryAsync(DataSchemas.DSGameRecordSchema entry);
         Task<DataSchemas.BrainGameSessionSchema> AddBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry);
         Task<DataSchemas.BrainGameSessionSchema> UpdateBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry);
         Task<DataSchemas.UserSchema> AddUserEntryAsync(DataSchemas.UserSchema entry);

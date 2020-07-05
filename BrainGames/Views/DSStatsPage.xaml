@@ -6,8 +6,8 @@
              xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
              xmlns:ValueConverters="clr-namespace:BrainGames.Converters"
              mc:Ignorable="d"
-             x:Class="BrainGames.Views.StroopStatsPage"
-             Title="Stroop Effect Stats">
+             x:Class="BrainGames.Views.DSStatsPage"
+             Title="Digit Span Stats">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Return" Clicked="Return_Clicked" />
     </ContentPage.ToolbarItems>

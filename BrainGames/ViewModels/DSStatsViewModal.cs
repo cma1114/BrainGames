@@ -8,12 +8,13 @@ using System.Linq;
 using BrainGames.Utility;
 using BrainGames.Models;
 using BrainGames.ViewModels;
+using System.Runtime.CompilerServices;
 
 namespace BrainGames.ViewModels
 {
-    public class StroopStatsViewModel : ViewModelBase
+    public class DSStatsViewModel : ViewModelBase
     {
-        private List<DataSchemas.StroopGameRecordSchema> ur = new List<DataSchemas.StroopGameRecordSchema>();
+        private List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
 
         private List<Tuple<DateTime, double>> TrialsByDay;
         private List<Tuple<DateTime, double>> TrialsByWeek;
@@ -47,6 +48,7 @@ namespace BrainGames.ViewModels
         private List<double> CumAvgICDifCorRTByBlock;
         private List<double> CumAvgCorRTByBlock;
 
+        private double estSpan_f, estStimTime_f, estSpan_b, estStimTime_b;
         private double sf = 0.03;
 
         List<Tuple<DateTime, double>> FillTimeList(List<Tuple<DateTime, double>> daylist, List<Tuple<DateTime, double>> weeklist, List<Tuple<DateTime, double>> monthlist)
@@ -123,19 +125,43 @@ namespace BrainGames.ViewModels
             return result;
         }
 
-        public StroopStatsViewModel()
+        public DSStatsViewModel()
         {
-            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema"); }
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
             catch {; }
             if (ur != null && ur.Count() > 0)
             {
+                List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
+                List<int> spanlenarr = ur.Where(x => x.direction == "f").Select(x => x.itemcnt).ToList();
+                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estSpan_f = (0.9 - llsi.Intercept) / llsi.Slope;
+
+                corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
+                List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.ontimems + x.offtimems).ToList();
+                llsi = new LinearLeastSquaresInterpolation(stimtimearr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estStimTime_f = (0.9 - llsi.Intercept) / llsi.Slope;
+
+                corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
+                spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
+                llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estSpan_b = (0.9 - llsi.Intercept) / llsi.Slope;
+
+                corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
+                stimtimearr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.ontimems + x.offtimems).ToList();
+                llsi = new LinearLeastSquaresInterpolation(stimtimearr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                estStimTime_b = (0.9 - llsi.Intercept) / llsi.Slope;
+
                 TrialsByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1).ToList();
                 TrialsByWeek = ur.GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1).ToList();
                 TrialsByMonth = ur.GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1).ToList();
 
-                AvgICDifCorRTByDay = ur.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1).ToList();
-                AvgICDifCorRTByWeek = ur.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1).ToList();
-                AvgICDifCorRTByMonth = ur.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1).ToList();
+                MaxCorFwdSpanLenByDay = ur.Where(x => x.cor == true && x.direction == "f").GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Select(y => y.itemcnt).Max())).OrderBy(x => x.Item1).ToList();
+                MaxCorFwdSpanLenByWeek = ur.Where(x => x.cor == true && x.direction == "f").GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Select(y => y.itemcnt).Max())).OrderBy(x => x.Item1).ToList();
+                MaxCorFwdSpanLenByMonth = ur.Where(x => x.cor == true && x.direction == "f").GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Select(y => y.itemcnt).Max())).OrderBy(x => x.Item1).ToList();
+
+                MaxCorBwdSpanLenByDay = ur.Where(x => x.cor == true && x.direction == "b").GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Select(y => y.itemcnt).Max())).OrderBy(x => x.Item1).ToList();
+                MaxCorBwdSpanLenByWeek = ur.Where(x => x.cor == true && x.direction == "b").GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Select(y => y.itemcnt).Max())).OrderBy(x => x.Item1).ToList();
+                MaxCorBwdSpanLenByMonth = ur.Where(x => x.cor == true && x.direction == "b").GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Select(y => y.itemcnt).Max())).OrderBy(x => x.Item1).ToList();
 
                 CumAvgCorRTByDay = MovingAverage(ur.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, ((x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()) + (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count())) / 2)).OrderBy(x => x.Item1).ToList(), 1);
                 CumAvgCorRTByWeek = MovingAverage(ur.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, ((x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()) + (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count())) / 2)).OrderBy(x => x.Item1).ToList(), 1);
@@ -150,25 +176,28 @@ namespace BrainGames.ViewModels
                 CumAvgICDifCorPctByMonth = MovingAverage(ur.GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.congruent == true && y.cor == true).Count() / x.Where(y => y.congruent == true && (y.cor == true || y.cor == false)).Count() - (double)x.Where(y => y.congruent == false && y.cor == true).Count() / x.Where(y => y.congruent == false && (y.cor == true || y.cor == false)).Count())).OrderBy(x => x.Item1).ToList(), 1);
 
 
-                AvgCorRTByStimType = ur.GroupBy(x => x.congruent).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorPctByStimType = ur.GroupBy(x => x.congruent).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
+                AvgCorOnTimeBySpanLen_f = ur.Where(x => x.cor == true && x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Select(y => y.ontimems).Average())).OrderBy(x => x.Item1);
+                AvgCorOffTimeBySpanLen_f = ur.Where(x => x.cor == true && x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Select(y => y.offtimems).Average())).OrderBy(x => x.Item1);
+                AvgCorOnTimeBySpanLen_b = ur.Where(x => x.cor == true && x.direction == "b").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Select(y => y.ontimems).Average())).OrderBy(x => x.Item1);
+                AvgCorOffTimeBySpanLen_b = ur.Where(x => x.cor == true && x.direction == "b").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Select(y => y.offtimems).Average())).OrderBy(x => x.Item1);
 
                 AvgICDifCorRTByStimWord = ur.Where(x => x.cor == true).GroupBy(x => x.word).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1);
 
                 AvgICDifCorRTByStimColor = ur.Where(x => x.cor == true).GroupBy(x => x.textcolor).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1);
 
-                CumAvgCorRTByBlock = MovingAverage2(ur.Where(x => x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 12.0)).Select(x => Tuple.Create(x.Key, ((x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / Math.Max(/*numerator will be zero anyway*/x.Where(y => y.congruent == true).Count(),1)) + (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.congruent == false).Count(),1))) / 2.0)).OrderByDescending(x => x.Item1).Take(30).Reverse().ToList(), 1);
-                CumAvgICDifCorRTByBlock = MovingAverage2(ur.Where(x => x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 12.0)).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.congruent == false).Count(),1)) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.congruent == true).Count(),1)))).OrderByDescending(x => x.Item1).Take(30).Reverse().ToList(), 1);
+                CumAvgCorRTByBlock = MovingAverage2(ur.Where(x => x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 12.0)).Select(x => Tuple.Create(x.Key, ((x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / Math.Max(/*numerator will be zero anyway*/x.Where(y => y.congruent == true).Count(), 1)) + (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.congruent == false).Count(), 1))) / 2.0)).OrderByDescending(x => x.Item1).Take(30).Reverse().ToList(), 1);
+                CumAvgICDifCorRTByBlock = MovingAverage2(ur.Where(x => x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 12.0)).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.congruent == false).Count(), 1)) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.congruent == true).Count(), 1)))).OrderByDescending(x => x.Item1).Take(30).Reverse().ToList(), 1);
 
                 TrialCountOverTime = FillTimeList(TrialsByDay, TrialsByWeek, TrialsByMonth);
-                AvgICDifCorRTOverTime = AvgICDifCorRTByDay.Count() <= 30 ? AvgICDifCorRTByDay.ToList() : (AvgICDifCorRTByWeek.Count() <= 30 ? AvgICDifCorRTByWeek.ToList() : AvgICDifCorRTByMonth.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
-//                AvgICDifCorRTOverTime = FillTimeList(AvgICDifCorRTByDay, AvgICDifCorRTByWeek, AvgICDifCorRTByMonth);
+                MaxCorFwdSpanLenOverTime = MaxCorFwdSpanLenDay.Count() <= 30 ? MaxCorFwdSpanLenByDay.ToList() : (MaxCorFwdSpanLenByWeek.Count() <= 30 ? MaxCorFwdSpanLenByWeek.ToList() : MaxCorFwdSpanLenByMonth.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
+                MaxCorBwdSpanLenOverTime = MaxCorBwdSpanLenDay.Count() <= 30 ? MaxCorBwdSpanLenByDay.ToList() : (MaxCorBwdSpanLenByWeek.Count() <= 30 ? MaxCorBwdSpanLenByWeek.ToList() : MaxCorBwdSpanLenByMonth.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
+                                                                                                                                                                                                                            //                AvgICDifCorRTOverTime = FillTimeList(AvgICDifCorRTByDay, AvgICDifCorRTByWeek, AvgICDifCorRTByMonth);
                 CumAvgCorRTOverTime = CumAvgCorRTByDay.Count() <= 30 ? CumAvgCorRTByDay.ToList() : (CumAvgCorRTByWeek.Count() <= 30 ? CumAvgCorRTByWeek.ToList() : CumAvgCorRTByMonth.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
                 CumAvgICDifCorRTOverTime = CumAvgICDifCorRTByDay.Count() <= 30 ? CumAvgICDifCorRTByDay.ToList() : (CumAvgICDifCorRTByWeek.Count() <= 30 ? CumAvgICDifCorRTByWeek.ToList() : CumAvgICDifCorRTByMonth.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
                 CumAvgICDifCorPctOverTime = CumAvgICDifCorPctByDay.Count() <= 30 ? CumAvgICDifCorPctByDay.ToList() : (CumAvgICDifCorPctByWeek.Count() <= 30 ? CumAvgICDifCorPctByWeek.ToList() : CumAvgICDifCorPctByMonth.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
-//                CumAvgCorRTOverTime = FillTimeList(CumAvgCorRTByDay, CumAvgCorRTByWeek, CumAvgCorRTByMonth);
-//                CumAvgICDifCorRTOverTime = FillTimeList(CumAvgICDifCorRTByDay, CumAvgICDifCorRTByWeek, CumAvgICDifCorRTByMonth);
-//                CumAvgICDifCorPctOverTime = FillTimeList(CumAvgICDifCorPctByDay, CumAvgICDifCorPctByWeek, CumAvgICDifCorPctByMonth);
+                                                                                                                                                                                                                                    //                CumAvgCorRTOverTime = FillTimeList(CumAvgCorRTByDay, CumAvgCorRTByWeek, CumAvgCorRTByMonth);
+                                                                                                                                                                                                                                    //                CumAvgICDifCorRTOverTime = FillTimeList(CumAvgICDifCorRTByDay, CumAvgICDifCorRTByWeek, CumAvgICDifCorRTByMonth);
+                                                                                                                                                                                                                                    //                CumAvgICDifCorPctOverTime = FillTimeList(CumAvgICDifCorPctByDay, CumAvgICDifCorPctByWeek, CumAvgICDifCorPctByMonth);
             }
         }
 
@@ -371,29 +400,29 @@ namespace BrainGames.ViewModels
 
         private ChartEntry GetAvgICDifCorRTByStimWordOrColor(Tuple<string, double> rec)
         {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                if (rec.Item1 == "RED")
-                {
-                    e.Label = "RED";
-                    e.Color = SKColor.Parse("#2c3e50");
-                }
-                else if (rec.Item1 == "GREEN")
-                {
-                    e.Label = "GREEN";
-                    e.Color = SKColor.Parse("#77d065");
-                }
-                else if (rec.Item1 == "BLUE")
-                {
-                    e.Label = "BLUE";
-                    e.Color = SKColor.Parse("#b455b6");
-                }
-                else
-                {
-                    e.Label = "YELLOW";
-                    e.Color = SKColor.Parse("#3498db");
-                }
+            ChartEntry e = new ChartEntry((float)rec.Item2);
+            e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
+            e.TextColor = SKColors.Black;
+            if (rec.Item1 == "RED")
+            {
+                e.Label = "RED";
+                e.Color = SKColor.Parse("#2c3e50");
+            }
+            else if (rec.Item1 == "GREEN")
+            {
+                e.Label = "GREEN";
+                e.Color = SKColor.Parse("#77d065");
+            }
+            else if (rec.Item1 == "BLUE")
+            {
+                e.Label = "BLUE";
+                e.Color = SKColor.Parse("#b455b6");
+            }
+            else
+            {
+                e.Label = "YELLOW";
+                e.Color = SKColor.Parse("#3498db");
+            }
             return e;
         }
 

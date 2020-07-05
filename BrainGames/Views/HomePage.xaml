@@ -37,6 +37,16 @@
                                   VerticalOptions="Fill"
                                   HorizontalOptions="CenterAndExpand"
                                   Clicked="StroopPressed"/>
+            <Button x:Name="DSButton"
+                                  FontFamily="{StaticResource FontFamily.RobotoMedium}"
+                                  FontAttributes="Bold"
+                                  TextColor="{Binding Secondary}"
+                                  Text="Digit Span"
+                                  Margin="0"
+                                  BackgroundColor="Transparent"
+                                  VerticalOptions="Fill"
+                                  HorizontalOptions="CenterAndExpand"
+                                  Clicked="DSPressed"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

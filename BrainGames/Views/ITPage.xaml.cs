@@ -232,6 +232,7 @@ namespace BrainGames.Views
 
         private bool TimerLoop()
         {
+            if (!viewModel.IsRunning) { return true; }
             // get the elapsed time from the stopwatch because the 1/30 timer interval is not accurate and can be off by 2 ms
             var dt = _stopWatch.Elapsed.TotalMilliseconds;
 

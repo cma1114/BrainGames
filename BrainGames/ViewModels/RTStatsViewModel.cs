@@ -109,14 +109,11 @@ namespace BrainGames.ViewModels
 
             for (int i = 0; i < series.Count(); i++)
             {
-                if (i >= period - 1)
-                {
-                    double total = 0;
-                    for (int x = i; x > (i - period); x--)
-                        total += series[x].Item2;
-                    double average = total / period;
-                    result.Add(Tuple.Create(series[i].Item1, average));
-                }
+                double total = 0;
+                for (int x = 0; x <= i; x++)
+                    total += series[x].Item2;
+                double average = total / (i + 1);
+                result.Add(Tuple.Create(series[i].Item1, average));
             }
             return result;
         }
@@ -452,22 +449,22 @@ namespace BrainGames.ViewModels
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 0)
                 {
-                    e.Label = "Far left box";
+                    e.Label = "Upper left box";
                     e.Color = SKColor.Parse("#2c3e50");
                 }
                 else if (rec.Item1 == 1)
                 {
-                    e.Label = "Mid left box";
+                    e.Label = "Upper right box";
                     e.Color = SKColor.Parse("#77d065");
                 }
                 else if (rec.Item1 == 2)
                 {
-                    e.Label = "Mid right box";
+                    e.Label = "Lower left box";
                     e.Color = SKColor.Parse("#b455b6");
                 }
                 else 
                 {
-                    e.Label = "Far right box";
+                    e.Label = "Lower right box";
                     e.Color = SKColor.Parse("#3498db");
                 }
                 es.Add(e);
@@ -485,22 +482,22 @@ namespace BrainGames.ViewModels
                 e.TextColor = SKColors.Black;
                 if (rec.Item1 == 0)
                 {
-                    e.Label = "Far left box";
+                    e.Label = "Upper left box";
                     e.Color = SKColor.Parse("#2c3e50");
                 }
                 else if (rec.Item1 == 1)
                 {
-                    e.Label = "Mid left box";
+                    e.Label = "Upper right box";
                     e.Color = SKColor.Parse("#77d065");
                 }
                 else if (rec.Item1 == 2)
                 {
-                    e.Label = "Mid right box";
+                    e.Label = "Lower left box";
                     e.Color = SKColor.Parse("#b455b6");
                 }
                 else
                 {
-                    e.Label = "Far right box";
+                    e.Label = "Lower right box";
                     e.Color = SKColor.Parse("#3498db");
                 }
                 es.Add(e);

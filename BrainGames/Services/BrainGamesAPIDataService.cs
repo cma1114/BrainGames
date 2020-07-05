@@ -77,6 +77,22 @@ namespace BrainGames.Services
             return response;
         }
 
+        public async Task<DataSchemas.DSGameRecordSchema> AddDSGameRecordEntryAsync(DataSchemas.DSGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bgdsgamerecord");
+            var response = await SendRequestAsync<DataSchemas.DSGameRecordSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.DSGameRecordSchema> UpdateDSGameRecordEntryAsync(DataSchemas.DSGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bgdsgamerecord/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.DSGameRecordSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
         public async Task<DataSchemas.UserSchema> AddUserEntryAsync(DataSchemas.UserSchema entry)
         {
             var url = new Uri(_baseUri, "/tables/bguser");

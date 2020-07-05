@@ -31,5 +31,10 @@ namespace BrainGames.Views
         {
             await Navigation.PushAsync(new StroopPage());
         }
+
+        public async void DSPressed(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new DSPage());
+        }
     }
 }

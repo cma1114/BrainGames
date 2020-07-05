@@ -221,7 +221,6 @@ namespace BrainGames.ViewModels
                 ShowReact4 = true;
                 timeout = 2000;
             }
-            IsRunning = true;
             pausedurarr.Clear();
             corboxes.Clear();
             for (int i = 0; i < trialsperset; i++)
@@ -229,6 +228,7 @@ namespace BrainGames.ViewModels
                 pausedurarr.Add(MasterUtilityModel.RandomNumber(pauseminms, pausemaxms + 1));
                 corboxes.Add(MasterUtilityModel.RandomNumber(0, boxes));
             }
+            IsRunning = true;
         }
 
         public void ReactButton(int tctr, double rt, double avgrt, int corbox, bool correct)

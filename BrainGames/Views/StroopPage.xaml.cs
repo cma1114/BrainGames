@@ -36,7 +36,7 @@ namespace BrainGames.Views
         bool firstshown = false;
         bool congruent = false;
         float fixsize = 40;
-        float wordsize = 80;
+        float wordsize = 90;
         double ontime = 0;
 
         SkiaTextFigure fixation, redword, greenword, blueword, yellowword, displayword;
@@ -62,7 +62,7 @@ namespace BrainGames.Views
             {
                 Typeface = SKTypeface.FromFamilyName("Verdana", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright),
                 Style = SKPaintStyle.StrokeAndFill,
-                StrokeWidth = 1,
+                StrokeWidth = 4,
                 FakeBoldText = false,
                 Color = clr,
                 TextSize = fsize
@@ -147,7 +147,6 @@ namespace BrainGames.Views
                 if (viewModel.cortrialcnt > 0) viewModel.AvgRT = viewModel.cumcorrt / viewModel.cortrialcnt;
                 if (viewModel.corcontrialcnt > 0 && viewModel.corincontrialcnt > 0) viewModel.DifRT = viewModel.cuminconcorrt / viewModel.corincontrialcnt - viewModel.cumconcorrt / viewModel.corcontrialcnt;
 
-                viewModel.trialctr++;
                 rtLabel.Text = "RT: " + viewModel.ReactionTime.ToString("N0", CultureInfo.InvariantCulture) + " ms";
                 artLabel.Text = "Avg RT: " + (viewModel.AvgRT > 0 ? Math.Round(viewModel.AvgRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms" : "");
                 difLabel.Text = "I-C Dif: " + (viewModel.DifRT != 0 ? Math.Round(viewModel.DifRT, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms" : "");
