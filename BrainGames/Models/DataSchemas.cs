@@ -112,6 +112,7 @@ namespace BrainGames.Models
             public int itemcnt { get; set; }
             public int ontimems { get; set; }
             public int offtimems { get; set; }
+            public int resptimems { get; set; }
             public string direction { get; set; }
             public string items { get; set; }
             public bool repeats { get; set; }

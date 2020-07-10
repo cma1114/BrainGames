@@ -10,6 +10,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using BrainGames.Models;
 using BrainGames.Services;
+using MathNet.Numerics;
 
 namespace BrainGames.Utility
 {
@@ -1306,7 +1307,7 @@ namespace BrainGames.Utility
             }
         }
 
-        public async static void WriteDSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, string direction, string items, bool repeats, bool repeats_cons, bool auto, bool cor)
+        public async static void WriteDSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, int resptimems, string direction, string items, bool repeats, bool repeats_cons, bool auto, bool cor)
         {
             List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
             double estSpan_f = 0, estStimTime_f = 0, estSpan_b = 0, estStimTime_b = 0;
@@ -1321,8 +1322,30 @@ namespace BrainGames.Utility
                     corarr.Add(cor);
                     spanlenarr.Add(itemcnt);
                 }
-                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                estSpan_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+                //                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                //                estSpan_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+                Tuple<double, double> p;
+                List<Tuple<int, double>> AvgCorStatsBySpan;
+
+                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
+                catch { p = Tuple.Create<double, double>(0.0,0.0); }
+
+                if (p.Item2 >= 0 || p.Item1 <= 0.9)
+                {
+                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
+                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                    {
+                        estSpan_f = 0.0;
+                    }
+                    else
+                    {
+                        estSpan_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
+                    }
+                }
+                else
+                {
+                    estSpan_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
+                }
 
                 corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
                 List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.ontimems + x.offtimems).ToList();
@@ -1331,9 +1354,25 @@ namespace BrainGames.Utility
                     corarr.Add(cor);
                     stimtimearr.Add(ontimems + offtimems);
                 }
-                llsi = new LinearLeastSquaresInterpolation(stimtimearr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                estStimTime_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
+                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
 
+                if (p.Item2 >= 0 || p.Item1 <= 0.9)
+                {
+                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
+                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                    {
+                        estStimTime_f = 0.0;
+                    }
+                    else
+                    {
+                        estStimTime_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
+                    }
+                }
+                else
+                {
+                    estStimTime_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
+                }
                 corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
                 spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
                 if (direction == "b")
@@ -1341,8 +1380,26 @@ namespace BrainGames.Utility
                     corarr.Add(cor);
                     spanlenarr.Add(itemcnt);
                 }
-                llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                estSpan_b = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+//                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
+                catch { p = Tuple.Create<double, double>(0.0,0.0); }
+
+                if (p.Item2 >= 0 || p.Item1 <= 0.9)
+                {
+                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
+                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                    {
+                        estSpan_b = 0.0;
+                    }
+                    else
+                    {
+                        estSpan_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
+                    }
+                }
+                else
+                {
+                    estSpan_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
+                }
 
                 corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
                 stimtimearr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.ontimems + x.offtimems).ToList();
@@ -1351,8 +1408,25 @@ namespace BrainGames.Utility
                     corarr.Add(cor);
                     stimtimearr.Add(ontimems + offtimems);
                 }
-                llsi = new LinearLeastSquaresInterpolation(stimtimearr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                estStimTime_b = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
+                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
+
+                if (p.Item2 >= 0 || p.Item1 <= 0.9)
+                {
+                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
+                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                    {
+                        estStimTime_b = 0.0;
+                    }
+                    else
+                    {
+                        estStimTime_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
+                    }
+                }
+                else
+                {
+                    estStimTime_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
+                }
             }
 
             var s = new DataSchemas.DSGameRecordSchema();
@@ -1374,6 +1448,96 @@ namespace BrainGames.Utility
             s.estSpan_f = estSpan_f;
             s.estStimTime_b = estStimTime_b;
             s.estStimTime_f = estStimTime_f;
+            s.resptimems = resptimems;
+            if (!IsBusy_local)
+            {
+                IsBusy_local = true;
+                try { await conn.InsertAsync(s); }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy_local = false;
+                }
+            }
+
+            if (Connectivity.NetworkAccess == NetworkAccess.Internet)
+                SendDSGRToServer(s);
+        }
+
+        public async static void WriteLSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, int resptimems, string direction, string items, bool repeats, bool repeats_cons, bool auto, bool cor)
+        {
+            List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
+            double estSpan_f = 0, estStimTime_f = 0, estSpan_b = 0, estStimTime_b = 0;
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
+            catch {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
+                List<int> spanlenarr = ur.Where(x => x.direction == "f").Select(x => x.itemcnt).ToList();
+                if (direction == "f")
+                {
+                    corarr.Add(cor);
+                    spanlenarr.Add(itemcnt);
+                }
+                //                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
+                //                estSpan_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
+                Tuple<double, double> p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray());
+                estSpan_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
+
+                corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
+                List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.ontimems + x.offtimems).ToList();
+                if (direction == "f" && itemcnt <= estSpan_f)
+                {
+                    corarr.Add(cor);
+                    stimtimearr.Add(ontimems + offtimems);
+                }
+                p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray());
+                estStimTime_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
+
+                corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
+                spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
+                if (direction == "b")
+                {
+                    corarr.Add(cor);
+                    spanlenarr.Add(itemcnt);
+                }
+                p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray());
+                estSpan_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
+
+                corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
+                stimtimearr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.ontimems + x.offtimems).ToList();
+                if (direction == "b" && itemcnt <= estSpan_b)
+                {
+                    corarr.Add(cor);
+                    stimtimearr.Add(ontimems + offtimems);
+                }
+                p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray());
+                estStimTime_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
+            }
+
+            var s = new DataSchemas.DSGameRecordSchema();
+            s.Id = Guid.NewGuid().ToString();
+            s.SessionId = sessionid.ToString();
+            s.datetime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+            s.UserId = Settings.UserId;
+            s.itemcnt = itemcnt;
+            s.ontimems = ontimems;
+            s.offtimems = offtimems;
+            s.repeats = repeats;
+            s.repeats_cons = repeats_cons;
+            s.cor = cor;
+            s.trialnum = trialctr;
+            s.direction = direction;
+            s.items = items;
+            s.autoinc = auto;
+            s.estSpan_b = estSpan_b;
+            s.estSpan_f = estSpan_f;
+            s.estStimTime_b = estStimTime_b;
+            s.estStimTime_f = estStimTime_f;
+            s.resptimems = resptimems;
             if (!IsBusy_local)
             {
                 IsBusy_local = true;

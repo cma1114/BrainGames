@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:BrainGames.Converters"
+             mc:Ignorable="d"
+             x:Class="BrainGames.Views.LSPage"
+             Title="Location Span"
+             x:Name="LocationSpanPage"
+             Visual="Material">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
+    </ContentPage.ToolbarItems>
+
+    <Grid x:Name="MasterGrid">
+        <Grid.Resources>
+            <converters:InverseBoolConverter x:Key="not"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" BackgroundColor="Gray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Label x:Name="spanlenLabel" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding spanlen, StringFormat='Digits: {0}'}" FontSize="Small" Margin="0,0"/>
+            <Label x:Name="estspanLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" FontSize="Small" Text="Est Span: " TextColor="LightGray" Margin="0,0"/>
+            <StackLayout Grid.Column="2" Orientation="Horizontal">
+                <Label x:Name="_autocheckboxLabel"
+               Text="Auto"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+                <CheckBox IsChecked="{Binding AutoIncrement, Mode=TwoWay}" HorizontalOptions="Center"/>
+            </StackLayout>
+        </Grid>
+        <Grid Grid.Row="1" BackgroundColor="DarkGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackLayout Grid.Column="0" >
+                <Label x:Name="_spanlenstepperLabel"
+               Text="{Binding spanlen, StringFormat='Digits: {0}'}"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+                <Stepper Minimum="{Binding minlen}" Maximum="{Binding maxlen}" Value="{Binding spanlen, Mode=TwoWay}"
+                 Increment="1"
+                 HorizontalOptions="Center"/>
+            </StackLayout>
+            <StackLayout Grid.Column="1" >
+                <Label x:Name="_ontimestepperLabel1"
+               Text="On Time:"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+                <Label x:Name="_ontimestepperLabel2"
+               Text="{Binding stimonms, StringFormat='{0} ms'}"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+                <Stepper Minimum="30" Maximum="1000" Value="{Binding stimonms, Mode=TwoWay}"
+                 Increment="10"
+                 HorizontalOptions="Center"/>
+            </StackLayout>
+            <StackLayout Grid.Column="2" >
+                <Label x:Name="_offtimestepperLabel1"
+               Text="Off Time:"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+                <Label x:Name="_offtimestepperLabe2"
+               Text="{Binding stimoffms, StringFormat='{0} ms'}"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+                <Stepper Minimum="30" Maximum="1000" Value="{Binding stimoffms, Mode=TwoWay}"
+                 Increment="10"
+                 HorizontalOptions="Center"/>
+            </StackLayout>
+            <StackLayout Grid.Column="3" >
+                <Label x:Name="_directionswitchLabel"
+               Text="Backward"
+               FontSize="Small"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+                <Switch HorizontalOptions="Center" IsToggled="{Binding Backward, Mode=TwoWay}"/>
+            </StackLayout>
+        </Grid>
+        <!--<Grid Grid.Row="2"></Grid>-->
+        <Button Grid.Row="3" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" 
+                Command="{Binding ReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
+        <Grid Grid.Row="3" IsVisible="{Binding IsRunning}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button0Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="0"/>
+            <Button Grid.Row="0" Grid.Column="1" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button1Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="1"/>
+            <Button Grid.Row="0" Grid.Column="2" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button2Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="2"/>
+            <Button Grid.Row="0" Grid.Column="3" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button3Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="3"/>
+            <Button Grid.Row="0" Grid.Column="4" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button4Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="4"/>
+            <Button Grid.Row="1" Grid.Column="0" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button5Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="5"/>
+            <Button Grid.Row="1" Grid.Column="1" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button6Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="6"/>
+            <Button Grid.Row="1" Grid.Column="2" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button7Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="7"/>
+            <Button Grid.Row="1" Grid.Column="3" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button8Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="8"/>
+            <Button Grid.Row="1" Grid.Column="4" HeightRequest="50" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button9Command}"
+                    IsVisible="{Binding IsRunning}" IsEnabled="{Binding EnableButtons}" Text="9"/>
+        </Grid>
+    </Grid>
+</ContentPage>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics;
 
 using Xamarin.Forms;
 
@@ -182,8 +183,10 @@ namespace BrainGames.ViewModels
 //            Console.WriteLine("corrarr[i]: {0}, stimtypearr[i]: {1}", corarr.Select(Convert.ToDouble).ToArray()[trialctr - 1], stimtypearr[trialctr - 1]);
             if (reversalctr >= reversalthresh)
             {
-                var llsi = new LinearLeastSquaresInterpolation(empstimtimearr, corarr.Select(Convert.ToDouble));
-                Settings.IT_EstIT = (0.9 - llsi.Intercept) / llsi.Slope;
+//                var llsi = new LinearLeastSquaresInterpolation(empstimtimearr, corarr.Select(Convert.ToDouble));
+//                Settings.IT_EstIT = (0.9 - llsi.Intercept) / llsi.Slope;
+                Tuple<double, double> p = Fit.Line(empstimtimearr.ToArray(), corarr.Select(Convert.ToDouble).ToArray());
+                Settings.IT_EstIT = (0.9 - p.Item1) / p.Item2;
                 estit = Settings.IT_EstIT;
             }
             MasterUtilityModel.WriteITGR(game_session_id, trialctr, reversalctr, curstimdur, empstimdur, Settings.IT_AvgCorDur, Settings.IT_EstIT, (int)cor_ans, cor);

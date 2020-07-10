@@ -20,11 +20,11 @@ using BrainGames.ViewModels;
 namespace BrainGames.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class DSPage : ContentPage
+    public partial class LSPage : ContentPage
     {
-        public DSViewModel viewModel
+        public LSViewModel viewModel
         {
-            get { return BindingContext as DSViewModel; }
+            get { return BindingContext as LSViewModel; }
             set { BindingContext = value; }
         }
 
@@ -32,16 +32,42 @@ namespace BrainGames.Views
         private TimeSpan ts;
         private const double _fpsWanted = 60.0;
         float digitsize = 70;
-        float centerx, centery;
+        float TILE_SIZE;
         bool showstim = false;
 
         SkiaTextFigure displayword;
 
-        public DSPage()
+        public LSPage()
         {
-            viewModel = new DSViewModel();
+            viewModel = new LSViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
+
+            Grid g = new Grid()
+            {
+                Opacity = 0.5,
+                HorizontalOptions = LayoutOptions.Center,
+                Margin = 10,
+                RowSpacing = 2,
+                ColumnSpacing = 2
+            };
+            for (var i = 0; i < viewModel.gridsize; i++)
+            {
+                g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });
+                g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(TILE_SIZE) });
+            }
+
+            // Create the tiles
+            for (var x = 0; x < viewModel.gridsize; x++)
+            {
+                for (var y = 0; y < viewModel.gridsize; y++)
+                {
+                    var tile = new Tile(x, y, TILE_SIZE, Color.Gray, "");
+                    viewModel.AddTile(tile);
+                    g.Children.Add(tile, x, y);
+                }
+            }
+            this.Content.FindByName<Grid>("MasterGrid").Children.Insert(3, g);
         }
 
         protected override void OnAppearing()
@@ -50,40 +76,8 @@ namespace BrainGames.Views
             Init();
         }
 
-        private SkiaTextFigure MakeWord(string w, float fsize, SKColor clr)
-        {
-            float tl_x, tl_y, br_x, br_y;
-
-            SKPaint textPaint = new SKPaint
-            {
-                Typeface = SKTypeface.FromFamilyName("Verdana", SKFontStyleWeight.Normal, SKFontStyleWidth.Normal, SKFontStyleSlant.Upright),
-                Style = SKPaintStyle.StrokeAndFill,
-                StrokeWidth = 2,
-                FakeBoldText = false,
-                Color = clr,
-                TextSize = fsize
-            };
-
-            SkiaTextFigure tf = new SkiaTextFigure(textPaint, w);
-
-            tl_x = centerx - tf.textBounds.Width / 2;
-            tl_y = centery - tf.textBounds.Height / 2;
-            br_x = centerx + tf.textBounds.Width / 2;
-            br_y = centery + tf.textBounds.Height / 2;
-
-            SKRect r = new SKRect();
-            textPaint.MeasureText(w, ref r);
-            tf.RenderedRectangle = r;
-            SKRect rect = new SKRect(tl_x, tl_y, br_x, br_y).Standardized;
-            tf.Rectangle = rect;
-
-            return tf;
-        }
-
         private void Init()
         {
-            centerx = canvasView.CanvasSize.Width / 2;
-            centery = canvasView.CanvasSize.Height / 2;
 
             if (viewModel.EstSpan > 0)
             {
@@ -106,7 +100,7 @@ namespace BrainGames.Views
 
         public void ReactButton_Clicked(object sender, EventArgs e)
         {
-            if(viewModel.answered) spanlenLabel.BackgroundColor = viewModel.AnsClr;
+            if (viewModel.answered) spanlenLabel.BackgroundColor = viewModel.AnsClr;
         }
 
         private bool TimerLoop()
@@ -116,7 +110,7 @@ namespace BrainGames.Views
             if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms)
             {
                 showstim = true;
-                displayword = MakeWord(viewModel.digitlist[viewModel.blocktrialctr], digitsize, SKColors.Black);
+//                displayword = MakeWord(viewModel.digitlist[viewModel.blocktrialctr], digitsize, SKColors.Black);
             }
             else if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms + viewModel.stimoffms)
             {
@@ -139,26 +133,14 @@ namespace BrainGames.Views
                 viewModel.EnableButtons = false;
                 viewModel.timer.Stop();
                 displayword = null;
-                canvasView.InvalidateSurface();
+//                canvasView.InvalidateSurface();
                 return false;
             }
-            canvasView.InvalidateSurface();
+//            canvasView.InvalidateSurface();
 
             return true;
         }
 
-        private void OnPainting(object sender, SKPaintSurfaceEventArgs e)
-        {
-            var surface = e.Surface;
-            var canvas = surface.Canvas;
-
-            canvas.Clear(SKColors.Gray);
-            if (displayword is null) return;
-            if (showstim)
-            {
-                canvas.DrawText((displayword).Text, displayword.Rectangle.Left - (displayword).RenderedRectangle.Left, displayword.Rectangle.Top - (displayword).RenderedRectangle.Top, displayword.FigurePaint);
-            }
-        }
 
     }
 }

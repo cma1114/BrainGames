@@ -7,16 +7,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Xamarin.Forms;
-
 using BrainGames.Utility;
-using BrainGames.Models;
-using BrainGames.Views;
-using BrainGames.Converters;
-using SkiaSharp;
+using BrainGames.Controls;
 
 namespace BrainGames.ViewModels
 {
-    public class DSViewModel : ViewModelBase
+    public class LSViewModel : ViewModelBase
     {
         public ICommand ReadyButtonCommand { get; protected set; }
         //        public ICommand ReactButtonCommand { get; protected set; }
@@ -70,11 +66,14 @@ namespace BrainGames.ViewModels
         public List<string> digitlist = new List<string>();
         public List<string> responselist = new List<string>();
 
+        private Tile[,] _tiles;
+        public int gridsize;
+
         private bool _backward = false;
         public bool Backward
         {
             get => _backward;
-            set 
+            set
             {//save values
                 if (_backward)
                 {
@@ -168,7 +167,18 @@ namespace BrainGames.ViewModels
             set { SetProperty(ref _estSpan, value); }
         }
 
-        public DSViewModel()
+        public void AddTile(Tile tile)
+        {
+            tile.Tapped += TileTapped;
+            _tiles[tile.XPos, tile.YPos] = tile;
+        }
+
+        private void TileTapped(object sender, TileTappedEventArgs e)
+        {
+            { responselist.Add((e.XPos + e.YPos * gridsize).ToString()); ResponseButton(); }
+        }
+
+        public LSViewModel()
         {
             ReadyButtonCommand = new Command(ReadyButton);
             Button0Command = new Command(Button0);
@@ -181,7 +191,7 @@ namespace BrainGames.ViewModels
             Button7Command = new Command(Button7);
             Button8Command = new Command(Button8);
             Button9Command = new Command(Button9);
-            game_session_id = MasterUtilityModel.WriteGameSession("DS");
+            game_session_id = MasterUtilityModel.WriteGameSession("LS");
 
             if (App.mum.ds_trialctr == 0)
             {
@@ -279,7 +289,7 @@ namespace BrainGames.ViewModels
             for (int i = 0; i < spanlen; i++)
             {
                 string d;
-                if (repeats_set || maxdigit-mindigit + 1 < spanlen)//circumstances force you to repeat digits
+                if (repeats_set || maxdigit - mindigit + 1 < spanlen)//circumstances force you to repeat digits
                 {
                     repeats_set = true;
                     if (repeats_cons)
@@ -379,7 +389,7 @@ namespace BrainGames.ViewModels
                 }
                 AnsClr = Color.OrangeRed;
             }
-            MasterUtilityModel.WriteDSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
+            MasterUtilityModel.WriteLSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
 
             if (AutoIncrement)
             {
