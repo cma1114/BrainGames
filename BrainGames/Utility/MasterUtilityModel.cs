@@ -167,7 +167,7 @@ namespace BrainGames.Utility
                     exists = cmd.ExecuteScalar<int>() == 1;
 //                    Console.WriteLine("exists1: {0}", exists);
                 }
-                catch
+                catch (Exception ex)
                 {
                     try
                     {
@@ -177,7 +177,7 @@ namespace BrainGames.Utility
                         cmdOthers.ExecuteNonQuery();
 //                        Console.WriteLine("exists2: {0}", exists);
                     }
-                    catch
+                    catch (Exception ex1)
                     {
                         exists = false;
 //                        Console.WriteLine("exists3: {0}", exists);
@@ -1551,7 +1551,7 @@ namespace BrainGames.Utility
             List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
             double estSpan_f = 0, estStimTime_f = 0, estSpan_b = 0, estStimTime_b = 0;
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
-            catch {; }
+            catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
                 List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
@@ -1567,7 +1567,7 @@ namespace BrainGames.Utility
                 List<Tuple<int, double>> AvgCorStatsBySpan;
 
                 try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0,0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0,0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
@@ -1594,7 +1594,7 @@ namespace BrainGames.Utility
                     stimtimearr.Add(ontimems + offtimems);
                 }
                 try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
@@ -1621,7 +1621,7 @@ namespace BrainGames.Utility
                 }
 //                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
                 try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0,0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0,0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
@@ -1648,7 +1648,7 @@ namespace BrainGames.Utility
                     stimtimearr.Add(ontimems + offtimems);
                 }
                 try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
@@ -1711,7 +1711,7 @@ namespace BrainGames.Utility
             List<DataSchemas.LSGameRecordSchema> ur = new List<DataSchemas.LSGameRecordSchema>();
             double estSpan_f = 0, estStimTime_f = 0, estSpan_b = 0, estStimTime_b = 0;
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema"); }
-            catch {; }
+            catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
                 List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
@@ -1727,7 +1727,7 @@ namespace BrainGames.Utility
                 List<Tuple<int, double>> AvgCorStatsBySpan;
 
                 try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
@@ -1754,7 +1754,7 @@ namespace BrainGames.Utility
                     stimtimearr.Add(ontimems + offtimems);
                 }
                 try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
@@ -1781,7 +1781,7 @@ namespace BrainGames.Utility
                 }
                 //                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
                 try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
@@ -1808,7 +1808,7 @@ namespace BrainGames.Utility
                     stimtimearr.Add(ontimems + offtimems);
                 }
                 try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch { p = Tuple.Create<double, double>(0.0, 0.0); }
+                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
 
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {

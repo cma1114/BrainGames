@@ -134,7 +134,7 @@ namespace BrainGames.ViewModels
         public RTStatsViewModel()
         {
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema"); }
-            catch {; }
+            catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
                 TrialsByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);

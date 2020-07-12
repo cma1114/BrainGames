@@ -131,6 +131,7 @@ namespace BrainGames.Views
             else if (viewModel.blocktrialctr == viewModel.spanlen && dt < viewModel.timeout && !viewModel.answered)//key buttons enabled
             {
                 viewModel.EnableButtons = true;
+                ReadyButton.Text = "Go!";
                 viewModel.timer.Start();
             }
             else //entered response or timeout, done with trial, return to ready screen
@@ -139,6 +140,7 @@ namespace BrainGames.Views
                 viewModel.IsRunning = false;
                 viewModel.EnableButtons = false;
                 viewModel.timer.Stop();
+                ReadyButton.Text = "Ready";
                 if (viewModel.answered) spanlenLabel.BackgroundColor = viewModel.AnsClr;
                 return false;
             }

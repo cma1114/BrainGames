@@ -114,7 +114,7 @@ namespace BrainGames.ViewModels
         public ITStatsViewModel()
         {
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema"); }
-            catch {; }
+            catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
                 TrialsByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);

@@ -52,7 +52,7 @@ namespace BrainGames.ViewModels
         private List<Tuple<int, int>> last_offtimes_by_spanlen_b;
         private List<Tuple<int, bool>> last_outcomes_by_spanlen_b;
 
-        public List<int> digitlist = new List<int>();
+        public List<string> digitlist = new List<string>();
         public List<string> responselist = new List<string>();
 
         private Tile[,] _tiles;
@@ -165,11 +165,12 @@ namespace BrainGames.ViewModels
             _tiles[tile.XPos, tile.YPos] = tile;
         }
 
-        public /*async*/ void FlipTile(int t)
+        public /*async*/ void FlipTile(string t)
         {
                 Console.WriteLine("flipping");
+            int ti = Convert.ToInt32(t);
 //            await _tiles[t % gridsize, (int)Math.Floor((double)t / gridsize)].Flip();
-            _tiles[t % gridsize, (int)Math.Floor((double)t / gridsize)].FlipIt();
+            _tiles[ti % gridsize, (int)Math.Floor((double)ti / gridsize)].FlipIt();
         }
 
         private void TileTapped(object sender, TileTappedEventArgs e)
@@ -289,19 +290,19 @@ namespace BrainGames.ViewModels
 
             for (int i = 0; i < spanlen; i++)
             {
-                int d;
+                string d;
                 if (repeats_set || maxdigit - mindigit + 1 < spanlen)//circumstances force you to repeat digits
                 {
                     repeats_set = true;
                     if (repeats_cons)
                     {
-                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1);
+                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1).ToString();
                     }
                     else
                     {
                         do
                         {
-                            d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1);
+                            d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1).ToString();
                         } while (digitlist.Count() > 0 && digitlist[digitlist.Count - 1] == d);
                     }
                 }
@@ -310,7 +311,7 @@ namespace BrainGames.ViewModels
                     repeats_set = false;
                     do
                     {
-                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1);
+                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1).ToString();
                     } while (digitlist.Contains(d));
                 }
                 digitlist.Add(d);
@@ -322,7 +323,7 @@ namespace BrainGames.ViewModels
 
         private bool MatchLists()
         {
-            List<int> testlist = new List<int>(digitlist);
+            List<string> testlist = new List<string>(digitlist);
             if (Backward)
             {
                 testlist.Reverse();
@@ -379,7 +380,7 @@ namespace BrainGames.ViewModels
                 }
                 AnsClr = Color.OrangeRed;
             }
-            MasterUtilityModel.WriteLSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, gridsize, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist.ToString()), repeats_set, repeats_cons, AutoIncrement, cor);
+            MasterUtilityModel.WriteLSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, gridsize, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
 
             if (AutoIncrement)
             {

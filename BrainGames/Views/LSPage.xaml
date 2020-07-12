@@ -30,7 +30,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Label x:Name="spanlenLabel" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding spanlen, StringFormat='Digits: {0}'}" FontSize="Small" Margin="0,0"/>
+            <Label x:Name="spanlenLabel" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding spanlen, StringFormat='Locations: {0}'}" FontSize="Small" Margin="0,0"/>
             <Label x:Name="estspanLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" FontSize="Small" Text="Est Span: " TextColor="LightGray" Margin="0,0"/>
             <StackLayout Grid.Column="2" Orientation="Horizontal">
                 <Label x:Name="_autocheckboxLabel"
@@ -99,7 +99,7 @@
             </StackLayout>
         </Grid>
         <Grid Grid.Row="2" x:Name="BoardGrid" Opacity = "1" HorizontalOptions="Center" Margin = "10" RowSpacing = "2" ColumnSpacing = "2" IsEnabled="{Binding EnableButtons}"></Grid>
-        <Button Grid.Row="3" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" 
+        <Button Grid.Row="3" x:Name="ReadyButton" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" FontSize="Large"
                 Command="{Binding ReadyButtonCommand}" IsEnabled="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
     </Grid>
 </ContentPage>
