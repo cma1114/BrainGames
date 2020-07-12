@@ -65,12 +65,14 @@ namespace BrainGames.Controls
                 _foreground.Opacity = 0;
 
                 _frontIsShowing = false;
+                Console.WriteLine("flipping to gray");
             }
             else
             {
                 _foreground.Opacity = 1;
 
                 _frontIsShowing = true;
+                Console.WriteLine("flipping to yellow");
             }
         }
 

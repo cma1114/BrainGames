@@ -24,7 +24,6 @@ namespace BrainGames.Services
             var data = requestData == null
                 ? null
                 : JsonConvert.SerializeObject(requestData);
-Console.WriteLine("data: {0}", data);
 
             using (var request = new HttpRequestMessage(method, url))
             {

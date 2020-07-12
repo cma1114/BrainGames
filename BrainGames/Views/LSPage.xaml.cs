@@ -8,8 +8,6 @@ using System.Diagnostics;
 using System.Globalization;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SkiaSharp;
-using SkiaSharp.Views.Forms;
 
 using BrainGames.Models;
 using BrainGames.Controls;
@@ -31,11 +29,8 @@ namespace BrainGames.Views
         private readonly Stopwatch _stopWatch = new Stopwatch();
         private TimeSpan ts;
         private const double _fpsWanted = 60.0;
-        float digitsize = 70;
         float TILE_SIZE;
         bool showstim = false;
-
-        SkiaTextFigure displayword;
 
         public LSPage()
         {
@@ -114,18 +109,13 @@ namespace BrainGames.Views
             Device.StartTimer(ts, TimerLoop);
         }
 
-        public void ReactButton_Clicked(object sender, EventArgs e)
-        {
-            if (viewModel.answered) spanlenLabel.BackgroundColor = viewModel.AnsClr;
-        }
-
         private bool TimerLoop()
         {
             var dt = _stopWatch.Elapsed.TotalMilliseconds;
 
             if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms)
             {
-                if(!showstim) viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
+                if (!showstim) viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
                 showstim = true;
             }
             else if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms + viewModel.stimoffms)
@@ -149,11 +139,9 @@ namespace BrainGames.Views
                 viewModel.IsRunning = false;
                 viewModel.EnableButtons = false;
                 viewModel.timer.Stop();
-                displayword = null;
-//                canvasView.InvalidateSurface();
+                if (viewModel.answered) spanlenLabel.BackgroundColor = viewModel.AnsClr;
                 return false;
             }
-//            canvasView.InvalidateSurface();
 
             return true;
         }

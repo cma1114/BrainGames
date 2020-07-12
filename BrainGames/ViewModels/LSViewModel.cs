@@ -165,14 +165,18 @@ namespace BrainGames.ViewModels
             _tiles[tile.XPos, tile.YPos] = tile;
         }
 
-        public void FlipTile(int t)
+        public /*async*/ void FlipTile(int t)
         {
+                Console.WriteLine("flipping");
+//            await _tiles[t % gridsize, (int)Math.Floor((double)t / gridsize)].Flip();
             _tiles[t % gridsize, (int)Math.Floor((double)t / gridsize)].FlipIt();
         }
 
         private void TileTapped(object sender, TileTappedEventArgs e)
         {
-            { responselist.Add((e.XPos + e.YPos * gridsize).ToString()); ResponseButton(); }
+            Console.WriteLine("tapped");
+            responselist.Add((e.XPos + e.YPos * gridsize).ToString()); 
+            ResponseButton(); 
         }
 
         public LSViewModel()

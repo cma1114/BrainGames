@@ -251,7 +251,7 @@ namespace BrainGames.Views
 
         public void ReactButton_Clicked(object sender, EventArgs e)
         {
-            Console.WriteLine("blocktrialctr = {0}", viewModel.blocktrialctr);
+//            Console.WriteLine("blocktrialctr = {0}", viewModel.blocktrialctr);
             if (showcross) //ignore it if it's not during a trial
             {
                 double rt = _stopWatch.Elapsed.TotalMilliseconds;

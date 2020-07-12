@@ -98,7 +98,7 @@
                 <Switch HorizontalOptions="Center" IsToggled="{Binding Backward, Mode=TwoWay}"/>
             </StackLayout>
         </Grid>
-        <Grid Grid.Row="2" x:Name="BoardGrid" Opacity = "0.5" HorizontalOptions="Center" Margin = "10" RowSpacing = "2" ColumnSpacing = "2"></Grid>
+        <Grid Grid.Row="2" x:Name="BoardGrid" Opacity = "0.5" HorizontalOptions="Center" Margin = "10" RowSpacing = "2" ColumnSpacing = "2" IsEnabled="{Binding EnableButtons}"></Grid>
         <Button Grid.Row="3" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" 
                 Command="{Binding ReadyButtonCommand}" IsEnabled="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
     </Grid>

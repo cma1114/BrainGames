@@ -165,7 +165,7 @@ namespace BrainGames.Utility
                     var cmd = new SQLiteCommand(conn_sync);
                     cmd.CommandText="select case when exists((select * from information_schema.tables where table_name = 'ITGameRecordSchema')) then 1 else 0 end";
                     exists = cmd.ExecuteScalar<int>() == 1;
-                    Console.WriteLine("exists1: {0}", exists);
+//                    Console.WriteLine("exists1: {0}", exists);
                 }
                 catch
                 {
@@ -175,21 +175,21 @@ namespace BrainGames.Utility
                         var cmdOthers = new SQLiteCommand(conn_sync);
                         cmdOthers.CommandText = "select 1 from ITGameRecordSchema where 1 = 0";
                         cmdOthers.ExecuteNonQuery();
-                        Console.WriteLine("exists2: {0}", exists);
+//                        Console.WriteLine("exists2: {0}", exists);
                     }
                     catch
                     {
                         exists = false;
-                        Console.WriteLine("exists3: {0}", exists);
+//                        Console.WriteLine("exists3: {0}", exists);
                     }
                 }
                 if (!exists) throw new System.ArgumentException("no table");
-                Console.WriteLine("exists4: {0}", exists);
+//                Console.WriteLine("exists4: {0}", exists);
                 itgrs = conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("exists5");
+//                Console.WriteLine("exists5");
 //                return;
             }
 
