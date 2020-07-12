@@ -36,5 +36,10 @@ namespace BrainGames.Views
         {
             await Navigation.PushAsync(new DSPage());
         }
+
+        public async void LSPressed(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new LSPage());
+        }
     }
 }

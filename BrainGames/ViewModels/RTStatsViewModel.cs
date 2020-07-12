@@ -69,11 +69,12 @@ namespace BrainGames.ViewModels
             if (historicrange < 7) historicrange = 7;
             if (historicrange > 30)
             {
-                historicrange = weeklist.Count() > 0 ? DateTime.Now.Subtract(weeklist.First().Item1).Days : 0;
+                historicrange = weeklist.Count() > 0 ? (int)Math.Ceiling(DateTime.Now.Subtract(weeklist.First().Item1).Days / 7.0) : 0;
                 if (historicrange < 7) historicrange = 7;
                 if (historicrange > 30)
                 {
-                    historicrange = 30;
+                    historicrange = monthlist.Count() > 0 ? (int)Math.Ceiling(DateTime.Now.Subtract(monthlist.First().Item1).Days / 31.0) : 0;
+                    if (historicrange < 7) historicrange = 7;
                     b = timeblock.Month;
                 }
                 else
@@ -87,10 +88,22 @@ namespace BrainGames.ViewModels
             }
             for (int i = 1; i <= historicrange; i++)
             {
-                doi = DateTime.Now.AddDays(i - historicrange).Date;
-                if (b == timeblock.Day) { t = daylist.Where(x => x.Item1 == doi); }
-                else if (b == timeblock.Week) { t = weeklist.Where(x => x.Item1 == doi); }
-                else { t = monthlist.Where(x => x.Item1 == doi); }
+
+                if (b == timeblock.Day)
+                {
+                    doi = DateTime.Now.AddDays(i - historicrange).Date;
+                    t = daylist.Where(x => x.Item1 == doi);
+                }
+                else if (b == timeblock.Week)
+                {
+                    doi = DateTime.Now.StartOfWeek(DayOfWeek.Monday).AddDays(i * 7 - historicrange * 7).Date;
+                    t = weeklist.Where(x => x.Item1 == doi);
+                }
+                else
+                {
+                    doi = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(i - historicrange).Date;
+                    t = monthlist.Where(x => x.Item1 == doi);
+                }
                 if (t.Count() == 0)
                 {
                     v.Add(Tuple.Create(doi, 0.0));

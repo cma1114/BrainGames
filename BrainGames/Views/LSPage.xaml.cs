@@ -42,15 +42,14 @@ namespace BrainGames.Views
             viewModel = new LSViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
+        }
 
-            Grid g = new Grid()
-            {
-                Opacity = 0.5,
-                HorizontalOptions = LayoutOptions.Center,
-                Margin = 10,
-                RowSpacing = 2,
-                ColumnSpacing = 2
-            };
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            Grid g = this.Content.FindByName<Grid>("BoardGrid");
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * 2/*row/col spacing*/)) / viewModel.gridsize);
             for (var i = 0; i < viewModel.gridsize; i++)
             {
                 g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });
@@ -62,17 +61,12 @@ namespace BrainGames.Views
             {
                 for (var y = 0; y < viewModel.gridsize; y++)
                 {
-                    var tile = new Tile(x, y, TILE_SIZE, Color.Gray, "");
+                    var tile = new Tile(x, y, TILE_SIZE, Color.Gray, Color.Yellow, "");
                     viewModel.AddTile(tile);
                     g.Children.Add(tile, x, y);
                 }
             }
-            this.Content.FindByName<Grid>("MasterGrid").Children.Insert(3, g);
-        }
 
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
             Init();
         }
 
@@ -88,11 +82,33 @@ namespace BrainGames.Views
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
-            await Navigation.PushModalAsync(new NavigationPage(new DSStatsPage()));
+            await Navigation.PushModalAsync(new NavigationPage(new LSStatsPage()));
         }
 
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
+            Grid g = this.Content.FindByName<Grid>("BoardGrid");
+            g.ColumnDefinitions.Clear();
+            g.RowDefinitions.Clear();
+            g.Children.Clear();
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * 2/*row/col spacing*/)) / viewModel.gridsize);
+            for (var i = 0; i < viewModel.gridsize; i++)
+            {
+                g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });
+                g.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(TILE_SIZE) });
+            }
+
+            // Create the tiles
+            for (var x = 0; x < viewModel.gridsize; x++)
+            {
+                for (var y = 0; y < viewModel.gridsize; y++)
+                {
+                    var tile = new Tile(x, y, TILE_SIZE, Color.Gray, Color.Yellow, "");
+                    viewModel.AddTile(tile);
+                    g.Children.Add(tile, x, y);
+                }
+            }
+
             spanlenLabel.BackgroundColor = Color.Gray;
             _stopWatch.Restart();
             Device.StartTimer(ts, TimerLoop);
@@ -110,11 +126,13 @@ namespace BrainGames.Views
             if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms)
             {
                 showstim = true;
-//                displayword = MakeWord(viewModel.digitlist[viewModel.blocktrialctr], digitsize, SKColors.Black);
+                //                displayword = MakeWord(viewModel.digitlist[viewModel.blocktrialctr], digitsize, SKColors.Black);
+                viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
             }
             else if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms + viewModel.stimoffms)
             {
                 showstim = false;
+                viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
             }
             else if (viewModel.blocktrialctr < viewModel.spanlen && dt >= viewModel.stimonms + viewModel.stimoffms)
             {

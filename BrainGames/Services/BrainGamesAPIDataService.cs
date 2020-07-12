@@ -93,6 +93,22 @@ namespace BrainGames.Services
             return response;
         }
 
+        public async Task<DataSchemas.LSGameRecordSchema> AddLSGameRecordEntryAsync(DataSchemas.LSGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bglsgamerecord");
+            var response = await SendRequestAsync<DataSchemas.LSGameRecordSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.LSGameRecordSchema> UpdateLSGameRecordEntryAsync(DataSchemas.LSGameRecordSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bglsgamerecord/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.LSGameRecordSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
         public async Task<DataSchemas.UserSchema> AddUserEntryAsync(DataSchemas.UserSchema entry)
         {
             var url = new Uri(_baseUri, "/tables/bguser");

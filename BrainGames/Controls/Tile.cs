@@ -21,10 +21,11 @@ namespace BrainGames.Controls
         public bool FrontIsShowing { get { return _frontIsShowing; } }
 
         private BoxView _background;
-        private Image _foreground;
+        private Image _foreground_img;
+        private BoxView _foreground;
         private float TILE_SIZE;
 
-        public Tile(int xPos, int yPos, float ts, Color bgColor, string fg = null)
+        public Tile(int xPos, int yPos, float ts, Color bgColor, Color fgColor, string fg = null)
         {
             _xPos = xPos;
             _yPos = yPos;
@@ -36,11 +37,15 @@ namespace BrainGames.Controls
             // Foreground
             if (fg != null)
             {
-                _foreground = new Image
+                _foreground_img = new Image
                 {
                     RotationY = -90,
                     Source = ImageSource.FromResource($"XamLights.images.row-{yPos + 1}-col-{xPos + 1}.jpg")
                 };
+            }
+            else
+            {
+                _foreground = new BoxView { Color = fgColor };
             }
 
             // Tapframe
@@ -51,6 +56,22 @@ namespace BrainGames.Controls
             Children.Add(_background, 0, 0);
             Children.Add(_foreground, 0, 0);
             Children.Add(tapFrame, 0, 0);
+        }
+
+        public void FlipIt()
+        {
+            if (_frontIsShowing)
+            {
+                _foreground.Opacity = 0;
+
+                _frontIsShowing = false;
+            }
+            else
+            {
+                _foreground.Opacity = 1;
+
+                _frontIsShowing = true;
+            }
         }
 
         public async Task Flip()

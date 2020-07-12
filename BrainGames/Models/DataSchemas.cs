@@ -120,5 +120,30 @@ namespace BrainGames.Models
             public bool autoinc { get; set; }
             public bool cor { get; set; }
         }
+
+        public class LSGameRecordSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId { get; set; }
+            public string SessionId { get; set; }
+            public string datetime { get; set; }
+            public int trialnum { get; set; }
+            public double estSpan_f { get; set; }
+            public double estStimTime_f { get; set; }
+            public double estSpan_b { get; set; }
+            public double estStimTime_b { get; set; }
+            public int itemcnt { get; set; }
+            public int ontimems { get; set; }
+            public int offtimems { get; set; }
+            public int gridsize { get; set; }
+            public int resptimems { get; set; }
+            public string direction { get; set; }
+            public string items { get; set; }
+            public bool repeats { get; set; }
+            public bool repeats_cons { get; set; }
+            public bool autoinc { get; set; }
+            public bool cor { get; set; }
+        }
     }
 }

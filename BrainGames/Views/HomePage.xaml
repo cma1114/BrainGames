@@ -47,6 +47,16 @@
                                   VerticalOptions="Fill"
                                   HorizontalOptions="CenterAndExpand"
                                   Clicked="DSPressed"/>
+            <Button x:Name="LSButton"
+                                  FontFamily="{StaticResource FontFamily.RobotoMedium}"
+                                  FontAttributes="Bold"
+                                  TextColor="{Binding Secondary}"
+                                  Text="Location Span"
+                                  Margin="0"
+                                  BackgroundColor="Transparent"
+                                  VerticalOptions="Fill"
+                                  HorizontalOptions="CenterAndExpand"
+                                  Clicked="LSPressed"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

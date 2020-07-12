@@ -13,9 +13,9 @@ using MathNet.Numerics;
 
 namespace BrainGames.ViewModels
 {
-    public class DSStatsViewModel : ViewModelBase
+    public class LSStatsViewModel : ViewModelBase
     {
-        private List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
+        private List<DataSchemas.LSGameRecordSchema> ur = new List<DataSchemas.LSGameRecordSchema>();
 
         private List<Tuple<DateTime, double>> TrialsByDay;
         private List<Tuple<DateTime, double>> TrialsByWeek;
@@ -151,9 +151,9 @@ namespace BrainGames.ViewModels
             return result;
         }
 
-        public DSStatsViewModel()
+        public LSStatsViewModel()
         {
-            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema"); }
             catch {; }
             if (ur != null && ur.Count() > 0)
             {
@@ -205,7 +205,7 @@ namespace BrainGames.ViewModels
                 catch (Exception ex) { fastestcorstimtime_b = 0; longestcorspanatfastestcorstimetime_b = 0; }
 
                 try
-                { 
+                {
                     tdy_longestcorspan_f = ur.Where(x => x.cor == true && x.direction == "f" && DateTime.Parse(x.datetime).Date == DateTime.Today).Select(x => x.itemcnt).Max();
                     tdy_fastestcorstimtimeatlongestcorspan_f = ur.Where(x => x.itemcnt == tdy_longestcorspan_f && x.cor == true && x.direction == "f" && DateTime.Parse(x.datetime).Date == DateTime.Today).Select(x => x.ontimems + x.offtimems).Min();
                 }
@@ -381,19 +381,19 @@ namespace BrainGames.ViewModels
             PointMode = PointMode.Circle,
             PointSize = 18
         };
-        
- /*
-                public Chart CumAvgCorRTByBlockChart => new LineChart()
-                {
-                    Entries = CumAvgCorRTByBlock.Select(CreateEntryMS),
-                    LineMode = LineMode.Straight,
-                    LineSize = 8,
-                    PointMode = PointMode.Circle,
-                    PointSize = 18,
-                    MinValue = (float)Math.Max(0, CumAvgCorRTByBlock.Min() - CumAvgCorRTByBlock.Min() * sf),
-                    MaxValue = (float)(CumAvgCorRTByBlock.Max() + CumAvgCorRTByBlock.Max() * sf)
-                };
-        */
+
+        /*
+                       public Chart CumAvgCorRTByBlockChart => new LineChart()
+                       {
+                           Entries = CumAvgCorRTByBlock.Select(CreateEntryMS),
+                           LineMode = LineMode.Straight,
+                           LineSize = 8,
+                           PointMode = PointMode.Circle,
+                           PointSize = 18,
+                           MinValue = (float)Math.Max(0, CumAvgCorRTByBlock.Min() - CumAvgCorRTByBlock.Min() * sf),
+                           MaxValue = (float)(CumAvgCorRTByBlock.Max() + CumAvgCorRTByBlock.Max() * sf)
+                       };
+               */
 
         public Chart TrialCountOverTimeChart => new BarChart()
         {

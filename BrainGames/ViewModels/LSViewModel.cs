@@ -15,18 +15,6 @@ namespace BrainGames.ViewModels
     public class LSViewModel : ViewModelBase
     {
         public ICommand ReadyButtonCommand { get; protected set; }
-        //        public ICommand ReactButtonCommand { get; protected set; }
-        public ICommand Button0Command { get; protected set; }
-        public ICommand Button1Command { get; protected set; }
-        public ICommand Button2Command { get; protected set; }
-        public ICommand Button3Command { get; protected set; }
-        public ICommand Button4Command { get; protected set; }
-        public ICommand Button5Command { get; protected set; }
-        public ICommand Button6Command { get; protected set; }
-        public ICommand Button7Command { get; protected set; }
-        public ICommand Button8Command { get; protected set; }
-
-        public ICommand Button9Command { get; protected set; }
 
         public int timeout = 60000;
         public bool timedout = false;
@@ -38,7 +26,8 @@ namespace BrainGames.ViewModels
 
         protected Guid game_session_id;
 
-        private int initspanlen = 6;
+        private int initspanlen = 4;
+        private int initgridsize = 5;
         private int initontimems = 500;
         private int initofftimems = 500;
         private int mindigit = 0;
@@ -57,13 +46,13 @@ namespace BrainGames.ViewModels
         private List<Tuple<int, int>> last_ontimes_by_spanlen;
         private List<Tuple<int, int>> last_offtimes_by_spanlen;
         private List<Tuple<int, bool>> last_outcomes_by_spanlen;
-        private int spanlen_f, spanlen_b, stimonms_f, stimonms_b, stimoffms_f, stimoffms_b;
+        private int spanlen_f, spanlen_b, stimonms_f, stimonms_b, stimoffms_f, stimoffms_b, gridsize_f, gridsize_b;
         private int cortrialstreak_b, errtrialstreak_b;
         private List<Tuple<int, int>> last_ontimes_by_spanlen_b;
         private List<Tuple<int, int>> last_offtimes_by_spanlen_b;
         private List<Tuple<int, bool>> last_outcomes_by_spanlen_b;
 
-        public List<string> digitlist = new List<string>();
+        public List<int> digitlist = new List<int>();
         public List<string> responselist = new List<string>();
 
         private Tile[,] _tiles;
@@ -80,18 +69,21 @@ namespace BrainGames.ViewModels
                     spanlen_b = spanlen;
                     stimonms_b = stimonms;
                     stimoffms_b = stimoffms;
+                    gridsize_b = gridsize;
                 }
                 else
                 {
                     spanlen_f = spanlen;
                     stimonms_f = stimonms;
                     stimoffms_f = stimoffms;
+                    gridsize_f = gridsize;
                 }
                 SetProperty(ref _backward, value);
                 //restore values
                 spanlen = _backward ? spanlen_b : spanlen_f;
                 stimonms = _backward ? stimonms_b : stimonms_f;
                 stimoffms = _backward ? stimoffms_b : stimoffms_f;
+                gridsize = _backward ? gridsize_b : gridsize_f;
             }
         }
 
@@ -173,6 +165,11 @@ namespace BrainGames.ViewModels
             _tiles[tile.XPos, tile.YPos] = tile;
         }
 
+        public void FlipTile(int t)
+        {
+            _tiles[t % gridsize, (int)Math.Floor((double)t / gridsize)].FlipIt();
+        }
+
         private void TileTapped(object sender, TileTappedEventArgs e)
         {
             { responselist.Add((e.XPos + e.YPos * gridsize).ToString()); ResponseButton(); }
@@ -181,23 +178,16 @@ namespace BrainGames.ViewModels
         public LSViewModel()
         {
             ReadyButtonCommand = new Command(ReadyButton);
-            Button0Command = new Command(Button0);
-            Button1Command = new Command(Button1);
-            Button2Command = new Command(Button2);
-            Button3Command = new Command(Button3);
-            Button4Command = new Command(Button4);
-            Button5Command = new Command(Button5);
-            Button6Command = new Command(Button6);
-            Button7Command = new Command(Button7);
-            Button8Command = new Command(Button8);
-            Button9Command = new Command(Button9);
             game_session_id = MasterUtilityModel.WriteGameSession("LS");
 
-            if (App.mum.ds_trialctr == 0)
+            if (App.mum.ls_trialctr == 0)
             {
                 trialctr = 0;
                 cortrialstreak = 0;
                 errtrialstreak = 0;
+                gridsize = initgridsize;
+                gridsize_f = initgridsize;
+                gridsize_b = initgridsize;
                 spanlen = initspanlen;
                 stimonms = initontimems;
                 stimoffms = initofftimems;
@@ -218,23 +208,25 @@ namespace BrainGames.ViewModels
             }
             else
             {
-                trialctr = App.mum.ds_trialctr;
-                cortrialstreak = App.mum.ds_cortrialstreak;
-                errtrialstreak = App.mum.ds_errtrialstreak;
-                last_ontimes_by_spanlen = App.mum.ds_last_ontimes_by_spanlen;
-                last_offtimes_by_spanlen = App.mum.ds_last_offtimes_by_spanlen;
-                last_outcomes_by_spanlen = App.mum.ds_last_outcomes_by_spanlen;
-                cortrialstreak_b = App.mum.ds_cortrialstreak_b;
-                errtrialstreak_b = App.mum.ds_errtrialstreak_b;
-                last_ontimes_by_spanlen_b = App.mum.ds_last_ontimes_by_spanlen_b;
-                last_offtimes_by_spanlen_b = App.mum.ds_last_offtimes_by_spanlen_b;
-                last_outcomes_by_spanlen_b = App.mum.ds_last_outcomes_by_spanlen_b;
-                spanlen_f = App.mum.ds_lastspan;
-                spanlen_b = App.mum.ds_lastspan_b;
+                trialctr = App.mum.ls_trialctr;
+                cortrialstreak = App.mum.ls_cortrialstreak;
+                errtrialstreak = App.mum.ls_errtrialstreak;
+                last_ontimes_by_spanlen = App.mum.ls_last_ontimes_by_spanlen;
+                last_offtimes_by_spanlen = App.mum.ls_last_offtimes_by_spanlen;
+                last_outcomes_by_spanlen = App.mum.ls_last_outcomes_by_spanlen;
+                cortrialstreak_b = App.mum.ls_cortrialstreak_b;
+                errtrialstreak_b = App.mum.ls_errtrialstreak_b;
+                last_ontimes_by_spanlen_b = App.mum.ls_last_ontimes_by_spanlen_b;
+                last_offtimes_by_spanlen_b = App.mum.ls_last_offtimes_by_spanlen_b;
+                last_outcomes_by_spanlen_b = App.mum.ls_last_outcomes_by_spanlen_b;
+                spanlen_f = App.mum.ls_lastspan;
+                spanlen_b = App.mum.ls_lastspan_b;
                 stimonms_f = last_ontimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
                 stimoffms_f = last_offtimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
                 stimonms_b = last_ontimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
                 stimoffms_b = last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
+                gridsize_f = App.mum.ls_lastgridsize_f;
+                gridsize_b = App.mum.ls_lastgridsize_b;
 
                 if (AutoIncrement)
                 {
@@ -264,7 +256,8 @@ namespace BrainGames.ViewModels
                 spanlen = spanlen_f;
                 stimonms = stimonms_f;
                 stimoffms = stimoffms_f;
-                if (App.mum.ds_lastdir == "f")
+                gridsize = gridsize_f;
+                if (App.mum.ls_lastdir == "f")
                 {
                     Backward = false;
                 }
@@ -273,6 +266,8 @@ namespace BrainGames.ViewModels
                     Backward = true;
                 }
             }
+            maxdigit = gridsize * gridsize - 1;
+            _tiles = new Tile[gridsize, gridsize];
         }
 
         public void ReadyButton()
@@ -285,22 +280,24 @@ namespace BrainGames.ViewModels
 
             digitlist.Clear();
             responselist.Clear();
+            maxdigit = gridsize * gridsize - 1;
+            _tiles = new Tile[gridsize, gridsize];
 
             for (int i = 0; i < spanlen; i++)
             {
-                string d;
+                int d;
                 if (repeats_set || maxdigit - mindigit + 1 < spanlen)//circumstances force you to repeat digits
                 {
                     repeats_set = true;
                     if (repeats_cons)
                     {
-                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1).ToString();
+                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1);
                     }
                     else
                     {
                         do
                         {
-                            d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1).ToString();
+                            d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1);
                         } while (digitlist.Count() > 0 && digitlist[digitlist.Count - 1] == d);
                     }
                 }
@@ -309,7 +306,7 @@ namespace BrainGames.ViewModels
                     repeats_set = false;
                     do
                     {
-                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1).ToString();
+                        d = MasterUtilityModel.RandomNumber(mindigit, maxdigit + 1);
                     } while (digitlist.Contains(d));
                 }
                 digitlist.Add(d);
@@ -319,27 +316,16 @@ namespace BrainGames.ViewModels
             IsRunning = true;
         }
 
-        public void Button0() { responselist.Add("0"); ResponseButton(); }
-        public void Button1() { responselist.Add("1"); ResponseButton(); }
-        public void Button2() { responselist.Add("2"); ResponseButton(); }
-        public void Button3() { responselist.Add("3"); ResponseButton(); }
-        public void Button4() { responselist.Add("4"); ResponseButton(); }
-        public void Button5() { responselist.Add("5"); ResponseButton(); }
-        public void Button6() { responselist.Add("6"); ResponseButton(); }
-        public void Button7() { responselist.Add("7"); ResponseButton(); }
-        public void Button8() { responselist.Add("8"); ResponseButton(); }
-        public void Button9() { responselist.Add("9"); ResponseButton(); }
-
         private bool MatchLists()
         {
-            List<string> testlist = new List<string>(digitlist);
+            List<int> testlist = new List<int>(digitlist);
             if (Backward)
             {
                 testlist.Reverse();
             }
             for (int i = 0; i < responselist.Count() && i < testlist.Count(); i++)
             {
-                if (responselist[i] != testlist[i]) return false;
+                if (responselist[i] != testlist[i].ToString()) return false;
             }
             return true;
         }
@@ -389,7 +375,7 @@ namespace BrainGames.ViewModels
                 }
                 AnsClr = Color.OrangeRed;
             }
-            MasterUtilityModel.WriteLSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
+            MasterUtilityModel.WriteLSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, gridsize, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist.ToString()), repeats_set, repeats_cons, AutoIncrement, cor);
 
             if (AutoIncrement)
             {

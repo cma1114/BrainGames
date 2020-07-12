@@ -420,12 +420,16 @@ namespace BrainGames.ViewModels
                     }
                     else if (cortrialstreak > 0)
                     {
-                        if (MasterUtilityModel.RandomNumber(0, 3) <= 1) stimonms = Math.Max(stimonms - timedecms, mintimems);
+                        if (stimonms == mintimems) stimoffms = Math.Max(stimoffms - timedecms, mintimems);
+                        else if (stimoffms == mintimems) stimonms = Math.Max(stimonms - timedecms, mintimems);
+                        else if (MasterUtilityModel.RandomNumber(0, 3) <= 1) stimonms = Math.Max(stimonms - timedecms, mintimems);
                         else stimoffms = Math.Max(stimoffms - timedecms, mintimems);
                     }
                     else if (errtrialstreak > 0)
                     {
-                        if (MasterUtilityModel.RandomNumber(0, 3) <= 1) stimonms = Math.Min(stimonms + timeincms, maxtimems);
+                        if (stimonms == maxtimems) stimoffms = Math.Min(stimoffms + timeincms, maxtimems);
+                        else if (stimoffms == maxtimems) stimonms = Math.Min(stimonms + timeincms, maxtimems);
+                        else if (MasterUtilityModel.RandomNumber(0, 3) <= 1) stimonms = Math.Min(stimonms + timeincms, maxtimems);
                         else stimoffms = Math.Min(stimoffms + timeincms, maxtimems);
                     }
                 }
