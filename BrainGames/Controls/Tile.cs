@@ -35,7 +35,7 @@ namespace BrainGames.Controls
             _background = new BoxView { Color = bgColor };
 
             // Foreground
-            if (fg != null)
+            if (fg != "")
             {
                 _foreground_img = new Image
                 {

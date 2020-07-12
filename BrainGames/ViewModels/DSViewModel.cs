@@ -221,10 +221,10 @@ namespace BrainGames.ViewModels
                 last_outcomes_by_spanlen_b = App.mum.ds_last_outcomes_by_spanlen_b;
                 spanlen_f = App.mum.ds_lastspan;
                 spanlen_b = App.mum.ds_lastspan_b;
-                stimonms_f = last_ontimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
-                stimoffms_f = last_offtimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
-                stimonms_b = last_ontimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
-                stimoffms_b = last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
+                stimonms_f = last_ontimes_by_spanlen.Count() == 0 ? 0 : last_ontimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
+                stimoffms_f = last_offtimes_by_spanlen.Count() == 0 ? 0 : last_offtimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
+                stimonms_b = last_ontimes_by_spanlen_b.Count() == 0 ? 0 : last_ontimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
+                stimoffms_b = last_offtimes_by_spanlen_b.Count() == 0 ? 0 : last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
 
                 if (AutoIncrement)
                 {

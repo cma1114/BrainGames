@@ -61,7 +61,7 @@ namespace BrainGames.Views
             {
                 for (var y = 0; y < viewModel.gridsize; y++)
                 {
-                    var tile = new Tile(x, y, TILE_SIZE, Color.Gray, Color.Yellow, "");
+                    var tile = new Tile(x, y, TILE_SIZE, Color.Yellow, Color.Gray, "");
                     viewModel.AddTile(tile);
                     g.Children.Add(tile, x, y);
                 }
@@ -103,7 +103,7 @@ namespace BrainGames.Views
             {
                 for (var y = 0; y < viewModel.gridsize; y++)
                 {
-                    var tile = new Tile(x, y, TILE_SIZE, Color.Gray, Color.Yellow, "");
+                    var tile = new Tile(x, y, TILE_SIZE, Color.Yellow, Color.Gray, "");
                     viewModel.AddTile(tile);
                     g.Children.Add(tile, x, y);
                 }
@@ -125,14 +125,13 @@ namespace BrainGames.Views
 
             if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms)
             {
+                if(!showstim) viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
                 showstim = true;
-                //                displayword = MakeWord(viewModel.digitlist[viewModel.blocktrialctr], digitsize, SKColors.Black);
-                viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
             }
             else if (viewModel.blocktrialctr < viewModel.spanlen && dt < viewModel.stimonms + viewModel.stimoffms)
             {
+                if (showstim) viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
                 showstim = false;
-                viewModel.FlipTile(viewModel.digitlist[viewModel.blocktrialctr]);
             }
             else if (viewModel.blocktrialctr < viewModel.spanlen && dt >= viewModel.stimonms + viewModel.stimoffms)
             {
