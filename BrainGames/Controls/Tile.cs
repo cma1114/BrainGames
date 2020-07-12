@@ -15,7 +15,7 @@ namespace BrainGames.Controls
 
         private int _xPos;
         private int _yPos;
-        private bool _frontIsShowing;
+        private bool _frontIsShowing = true;
         public int XPos { get { return _xPos; } }
         public int YPos { get { return _yPos; } }
         public bool FrontIsShowing { get { return _frontIsShowing; } }
@@ -45,7 +45,7 @@ namespace BrainGames.Controls
             }
             else
             {
-                _foreground = new BoxView { Color = fgColor };
+                _foreground = new BoxView { /*RotationY = -90, */Color = fgColor };
             }
 
             // Tapframe
@@ -62,17 +62,17 @@ namespace BrainGames.Controls
         {
             if (_frontIsShowing)
             {
-                _foreground.Opacity = 0;
+//                _foreground.Opacity = 0;
+                _foreground.Color = Color.Yellow;
 
                 _frontIsShowing = false;
-                Console.WriteLine("flipping to gray");
             }
             else
             {
-                _foreground.Opacity = 1;
+//                _foreground.Opacity = 1;
+                _foreground.Color = Color.Gray;
 
                 _frontIsShowing = true;
-                Console.WriteLine("flipping to yellow");
             }
         }
 
@@ -84,6 +84,7 @@ namespace BrainGames.Controls
                 _foreground.Opacity = 0;
                 await _background.RotateYTo(0, 400, Easing.CubicOut);
 
+                Console.WriteLine("flipping to gray {0},{1}",this.XPos,this.YPos);
                 _frontIsShowing = false;
             }
             else
@@ -92,6 +93,7 @@ namespace BrainGames.Controls
                 _foreground.Opacity = 1;
                 await _foreground.RotateYTo(0, 400, Easing.CubicOut);
 
+                Console.WriteLine("flipping to yellow {0},{1}", this.XPos, this.YPos);
                 _frontIsShowing = true;
             }
         }
