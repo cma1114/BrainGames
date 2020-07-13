@@ -38,6 +38,8 @@
                     <RowDefinition Height="250*"/>
                     <RowDefinition Height="250*"/>
                     <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
                 </Grid.RowDefinitions>
                 <Frame Grid.Row="0"
                        HorizontalOptions="FillAndExpand"
@@ -322,6 +324,36 @@
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOffTimeBySpanLen_b" Chart="{Binding AvgCorOffTimeBySpanLen_bChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="19"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Fastest Correct Stimulus Time By Forward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="FastestCorStimTimeBySpanLen_f" Chart="{Binding FastestCorStimTimeBySpanLen_fChart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="20"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Fastest Correct Stimulus Time By Backward Span Length"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="FastestCorStimTimeBySpanLen_b" Chart="{Binding FastestCorStimTimeBySpanLen_bChart}" />
                     </StackLayout>
                 </Frame>
             </Grid>

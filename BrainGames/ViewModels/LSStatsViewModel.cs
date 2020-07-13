@@ -57,6 +57,9 @@ namespace BrainGames.ViewModels
         private IEnumerable<Tuple<int, double>> AvgCorPctBySpanLen_f;
         private IEnumerable<Tuple<int, double>> AvgCorPctBySpanLen_b;
 
+        private IEnumerable<Tuple<int, double>> FastestCorStimTimeBySpanLen_f;
+        private IEnumerable<Tuple<int, double>> FastestCorStimTimeBySpanLen_b;
+
         private double estSpan_f, estStimTime_f, estSpan_b, estStimTime_b;
         private int longestcorspan_f, fastestcorstimtimeatlongestcorspan_f, fastestcorstimtime_f, longestcorspanatfastestcorstimetime_f;
         private int longestcorspan_b, fastestcorstimtimeatlongestcorspan_b, fastestcorstimtime_b, longestcorspanatfastestcorstimetime_b;
@@ -354,6 +357,9 @@ namespace BrainGames.ViewModels
                 AvgCorPctBySpanLen_f = ur.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1);
                 AvgCorPctBySpanLen_b = ur.Where(x => x.direction == "b").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1);
 
+                FastestCorStimTimeBySpanLen_f = ur.Where(x => x.cor == true && x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Select(y => (double)y.ontimems + y.offtimems).Min())).OrderBy(x => x.Item1);
+                FastestCorStimTimeBySpanLen_b = ur.Where(x => x.cor == true && x.direction == "b").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Select(y => (double)y.ontimems + y.offtimems).Min())).OrderBy(x => x.Item1);
+
                 TrialCountOverTime = FillTimeList(TrialsByDay, TrialsByWeek, TrialsByMonth);
                 MaxCorFwdSpanLenOverTime = MaxCorFwdSpanLenByDay.Count() <= 30 ? MaxCorFwdSpanLenByDay : (MaxCorFwdSpanLenByWeek.Count() <= 30 ? MaxCorFwdSpanLenByWeek : MaxCorFwdSpanLenByMonth);
                 MaxCorBwdSpanLenOverTime = MaxCorBwdSpanLenByDay.Count() <= 30 ? MaxCorBwdSpanLenByDay : (MaxCorBwdSpanLenByWeek.Count() <= 30 ? MaxCorBwdSpanLenByWeek : MaxCorBwdSpanLenByMonth);
@@ -537,6 +543,22 @@ namespace BrainGames.ViewModels
         {
             Margin = 10,
             Entries = GetStatsBySpanLen(AvgCorOffTimeBySpanLen_b, " ms"),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
+        };
+
+        public Chart FastestCorStimTimeBySpanLen_fChart => new BarChart()
+        {
+            Margin = 10,
+            Entries = GetStatsBySpanLen(FastestCorStimTimeBySpanLen_f, " ms"),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
+        };
+
+        public Chart FastestCorStimTimeBySpanLen_bChart => new BarChart()
+        {
+            Margin = 10,
+            Entries = GetStatsBySpanLen(FastestCorStimTimeBySpanLen_b, " ms"),
             LabelOrientation = Orientation.Horizontal,
             ValueLabelOrientation = Orientation.Horizontal
         };
