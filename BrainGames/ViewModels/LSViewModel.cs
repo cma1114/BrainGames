@@ -175,7 +175,7 @@ namespace BrainGames.ViewModels
 
         private void TileTapped(object sender, TileTappedEventArgs e)
         {
-            Console.WriteLine("tapped");
+//            Console.WriteLine("tapped");
             responselist.Add((e.XPos + e.YPos * gridsize).ToString()); 
             ResponseButton(); 
         }
@@ -381,6 +381,8 @@ namespace BrainGames.ViewModels
                 AnsClr = Color.OrangeRed;
             }
             MasterUtilityModel.WriteLSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, gridsize, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
+            Console.WriteLine("digitlist: {0}", String.Join("~", digitlist));
+            Console.WriteLine("responselist: {0}", String.Join("~", responselist));
 
             if (AutoIncrement)
             {

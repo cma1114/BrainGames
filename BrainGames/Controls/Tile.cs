@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Diagnostics;
+
 using Xamarin.Forms;
 //https://github.com/marcofolio/XamLights/blob/master/XamLights/Views/Tile.cs
 namespace BrainGames.Controls
@@ -12,6 +14,9 @@ namespace BrainGames.Controls
     public class Tile : Grid
     {
         public event EventHandler<TileTappedEventArgs> Tapped;
+
+        private readonly Stopwatch _stopWatch = new Stopwatch();
+        private TimeSpan ts;
 
         private int _xPos;
         private int _yPos;
@@ -115,8 +120,26 @@ namespace BrainGames.Controls
             return frame;
         }
 
-        protected virtual void OnFrameTapped(object sender, EventArgs e)
+        protected async Task Flash()
         {
+            this._foreground.Color = Color.Green;
+            await Task.Delay(100);
+//            ts = TimeSpan.FromMilliseconds(30);
+//            _stopWatch.Restart();
+//            Device.StartTimer(ts, TimerLoop);
+            this._foreground.Color = Color.Gray;
+        }
+
+        private bool TimerLoop()
+        {
+            var dt = _stopWatch.Elapsed.TotalMilliseconds;
+            if (dt < 10000) return true;
+            return false;
+        }
+
+        protected async virtual void OnFrameTapped(object sender, EventArgs e)
+        {
+            this.Flash();
             var handler = Tapped;
             if (handler != null)
             {

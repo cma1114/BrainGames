@@ -51,11 +51,11 @@
             </Grid.ColumnDefinitions>
             <StackLayout Grid.Column="0" >
                 <Label x:Name="_spanlenstepperLabel"
-               Text="{Binding spanlen, StringFormat='Digits: {0}'}"
+               Text="{Binding spanlen, StringFormat='Locations: {0}'}"
                FontSize="Small"
                HorizontalOptions="Center"
                VerticalOptions="CenterAndExpand" />
-                <Stepper Minimum="{Binding minlen}" Maximum="{Binding maxlen}" Value="{Binding spanlen, Mode=TwoWay}"
+                <Stepper Minimum="{Binding minlen}" Maximum="{Binding maxlen}" Value="{Binding spanlen, Mode=TwoWay}" IsEnabled="{Binding AutoIncrement, Converter={StaticResource not}}"
                  Increment="1"
                  HorizontalOptions="Center"/>
             </StackLayout>
@@ -70,7 +70,7 @@
                FontSize="Small"
                HorizontalOptions="Center"
                VerticalOptions="CenterAndExpand" />
-                <Stepper Minimum="30" Maximum="1000" Value="{Binding stimonms, Mode=TwoWay}"
+                <Stepper Minimum="30" Maximum="1000" Value="{Binding stimonms, Mode=TwoWay}" IsEnabled="{Binding AutoIncrement, Converter={StaticResource not}}"
                  Increment="10"
                  HorizontalOptions="Center"/>
             </StackLayout>
@@ -85,7 +85,7 @@
                FontSize="Small"
                HorizontalOptions="Center"
                VerticalOptions="CenterAndExpand" />
-                <Stepper Minimum="30" Maximum="1000" Value="{Binding stimoffms, Mode=TwoWay}"
+                <Stepper Minimum="30" Maximum="1000" Value="{Binding stimoffms, Mode=TwoWay}" IsEnabled="{Binding AutoIncrement, Converter={StaticResource not}}"
                  Increment="10"
                  HorizontalOptions="Center"/>
             </StackLayout>

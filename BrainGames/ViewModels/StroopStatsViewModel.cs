@@ -369,7 +369,7 @@ namespace BrainGames.ViewModels
                 e.Color = clrs[0];
                 es.Add(e);
             }
-            var v = AvgICDifCorRTByDay.Where(x => x.Item2 > 0).OrderBy(x => x.Item2).Take(5);
+            var v = AvgICDifCorRTByDay.Where(x => x.Item2 > 0 && x.Item1 != DateTime.Today).OrderBy(x => x.Item2).Take(5);
             foreach (Tuple<DateTime, double> rec in v)
             {
                 ChartEntry e = new ChartEntry((float)rec.Item2);
