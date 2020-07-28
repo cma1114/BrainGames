@@ -36,8 +36,10 @@ namespace BrainGames.Controls
             _yPos = yPos;
             TILE_SIZE = ts;
 
+            
+
             // Background
-            _background = new BoxView { Color = bgColor };
+            _background = new BoxView { Color = bgColor, CornerRadius=10 };
 
             // Foreground
             if (fg != "")
@@ -50,7 +52,7 @@ namespace BrainGames.Controls
             }
             else
             {
-                _foreground = new BoxView { /*RotationY = -90, */Color = fgColor };
+                _foreground = new BoxView { /*RotationY = -90, */Color = fgColor, CornerRadius = 10 };
             }
 
             // Tapframe

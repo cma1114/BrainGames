@@ -6,7 +6,9 @@ namespace BrainGames.Models
 {
     public enum MenuItemType
     {
-        Browse,
+        Play,
+        Invite,
+        Profile,
         About
     }
     public class HomeMenuItem

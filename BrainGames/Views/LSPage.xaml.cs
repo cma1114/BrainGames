@@ -30,6 +30,7 @@ namespace BrainGames.Views
         private TimeSpan ts;
         private const double _fpsWanted = 60.0;
         float TILE_SIZE;
+        float spacing = 10;
         bool showstim = false;
 
         public LSPage()
@@ -44,7 +45,9 @@ namespace BrainGames.Views
             base.OnAppearing();
 
             Grid g = this.Content.FindByName<Grid>("BoardGrid");
-            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * 2/*row/col spacing*/)) / viewModel.gridsize);
+            g.RowSpacing = spacing;
+            g.ColumnSpacing = spacing;
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * spacing/*row/col spacing*/)) / viewModel.gridsize);
             for (var i = 0; i < viewModel.gridsize; i++)
             {
                 g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });
@@ -86,7 +89,9 @@ namespace BrainGames.Views
             g.ColumnDefinitions.Clear();
             g.RowDefinitions.Clear();
             g.Children.Clear();
-            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * 2/*row/col spacing*/)) / viewModel.gridsize);
+            g.RowSpacing = spacing;
+            g.ColumnSpacing = spacing;
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * spacing/*row/col spacing*/)) / viewModel.gridsize);
             for (var i = 0; i < viewModel.gridsize; i++)
             {
                 g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });

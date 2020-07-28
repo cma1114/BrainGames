@@ -30,8 +30,9 @@ namespace BrainGames.Views
         private readonly Stopwatch _stopWatch = new Stopwatch();
         private TimeSpan ts;
         private const double _fpsWanted = 60.0;
-        static float boxsize = 200;
+        static float boxsize = 150;//200;
         static float crossmargin = 30;
+        static float crossfont = 30;//40;
         float centerx, centery;
         bool showbox = false;
         bool showcross = false;
@@ -47,7 +48,7 @@ namespace BrainGames.Views
         {
             Style = SKPaintStyle.Stroke,
             Color = SKColors.Black,
-            StrokeWidth = 40,
+            StrokeWidth = crossfont,
             IsAntialias = true,
             StrokeCap = SKStrokeCap.Round
         };
@@ -140,7 +141,7 @@ namespace BrainGames.Views
             crossfigure2B.Path.MoveTo(boxfigure2B.Rectangle.Right - crossmargin, br_y - crossmargin);
             crossfigure2B.Path.LineTo(new SKPoint(boxfigure2B.Rectangle.Left + crossmargin, tl_y + crossmargin));
 
-
+            /*
             boxfigure4A = new SkiaRectangleDrawingFigure();
             boxfigure4A.FigurePaint = skBoxPaint;
             boxfigure4A.StartPoint = new SKPoint(tl_x - boxsize / 2 - buffer, tl_y - boxsize / 2 - buffer);
@@ -160,6 +161,27 @@ namespace BrainGames.Views
             boxfigure4D.FigurePaint = skBoxPaint;
             boxfigure4D.StartPoint = new SKPoint(tl_x + boxsize / 2 + buffer, tl_y + boxsize / 2 + buffer);
             boxfigure4D.EndPoint = new SKPoint(br_x + boxsize / 2 + buffer, br_y + boxsize / 2 + buffer);
+            */
+
+            boxfigure4A = new SkiaRectangleDrawingFigure();
+            boxfigure4A.FigurePaint = skBoxPaint;
+            boxfigure4A.StartPoint = new SKPoint(tl_x - boxsize * (float)1.5 - buffer, tl_y);
+            boxfigure4A.EndPoint = new SKPoint(br_x - boxsize * (float)1.5 - buffer, br_y);
+
+            boxfigure4B = new SkiaRectangleDrawingFigure();
+            boxfigure4B.FigurePaint = skBoxPaint;
+            boxfigure4B.StartPoint = new SKPoint(boxfigure4A.Rectangle.Right + buffer, tl_y);
+            boxfigure4B.EndPoint = new SKPoint(boxfigure4A.Rectangle.Right + buffer + boxsize, br_y);
+
+            boxfigure4C = new SkiaRectangleDrawingFigure();
+            boxfigure4C.FigurePaint = skBoxPaint;
+            boxfigure4C.StartPoint = new SKPoint(boxfigure4B.Rectangle.Right + buffer, tl_y);
+            boxfigure4C.EndPoint = new SKPoint(boxfigure4B.Rectangle.Right + buffer + boxsize, br_y);
+
+            boxfigure4D = new SkiaRectangleDrawingFigure();
+            boxfigure4D.FigurePaint = skBoxPaint;
+            boxfigure4D.StartPoint = new SKPoint(boxfigure4C.Rectangle.Right + buffer, tl_y);
+            boxfigure4D.EndPoint = new SKPoint(boxfigure4C.Rectangle.Right + buffer + boxsize, br_y);
 
             crossfigure4A = new SkiaPathDrawingFigure();
             crossfigure4A.FigurePaint = skCrossPaint;

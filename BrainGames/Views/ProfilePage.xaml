@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:util="clr-namespace:BrainGames.Utility"
+             mc:Ignorable="d"
+             x:Class="BrainGames.Views.ProfilePage"
+             Title="Profile"
+             x:Name="ProPage"
+             Visual="Material">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="Center">
+            <Entry Placeholder="Screenname" PlaceholderColor="Olive" MaxLength="20" IsTextPredictionEnabled="false"/>
+            <Label Text="(Visible to others)" TextColor="Gray" FontSize="Small"/>
+<!--        <SearchBar x:Name="BrandSearchBar" ClassId="1" Margin="0,40,0,0" SearchCommand="{Binding BrandSearchCommand}" Focused="OnFocus" Unfocused="OnUnfocus" SearchCommandParameter="{Binding Text, Source={x:Reference BrandSearchBar}}" Text="Search Brand or Company" TextColor="LightGray">
+            <SearchBar.Behaviors>
+                <util:TextChangedBehavior />
+            </SearchBar.Behaviors>
+        </SearchBar>-->
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

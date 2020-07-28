@@ -20,7 +20,9 @@ namespace BrainGames.Views
 
             menuItems = new List<HomeMenuItem>
             {
-                new HomeMenuItem {Id = MenuItemType.Browse, Title="Browse" },
+                new HomeMenuItem {Id = MenuItemType.Play, Title="Play Games" },
+                new HomeMenuItem {Id = MenuItemType.Invite, Title="Invite Friends" },
+                new HomeMenuItem {Id = MenuItemType.Profile, Title="Profile" },
                 new HomeMenuItem {Id = MenuItemType.About, Title="About" }
             };
 

@@ -28,5 +28,10 @@ namespace BrainGames.Views
         {
             await Navigation.PopModalAsync();
         }
+
+        async void Compare_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushModalAsync(new NavigationPage(new DSStatsPage()));
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace BrainGames.ViewModels
         protected Guid game_session_id;
 
         private int initspanlen = 4;
-        private int initgridsize = 5;
+        private int initgridsize = 4;
         private int initontimems = 500;
         private int initofftimems = 500;
         private int mindigit = 0;
@@ -230,8 +230,8 @@ namespace BrainGames.ViewModels
                 stimoffms_f = last_offtimes_by_spanlen.Count() == 0 ? initofftimems : last_offtimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
                 stimonms_b = last_ontimes_by_spanlen_b.Count() == 0 ? initontimems : last_ontimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
                 stimoffms_b = last_offtimes_by_spanlen_b.Count() == 0 ? initofftimems : last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
-                gridsize_f = App.mum.ls_lastgridsize_f == 0 ? initgridsize : App.mum.ls_lastgridsize_f;
-                gridsize_b = App.mum.ls_lastgridsize_b == 0 ? initgridsize : App.mum.ls_lastgridsize_b;
+                gridsize_f = 4;// App.mum.ls_lastgridsize_f == 0 ? initgridsize : App.mum.ls_lastgridsize_f;
+                gridsize_b = 4;// App.mum.ls_lastgridsize_b == 0 ? initgridsize : App.mum.ls_lastgridsize_b;
 
                 if (AutoIncrement)
                 {
