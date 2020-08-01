@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Xamarin.Forms;
 using BrainGames.ViewModels;
+using BrainGames.Utility;
 
 namespace BrainGames.Views
 {
@@ -19,9 +20,36 @@ namespace BrainGames.Views
             InitializeComponent();
         }
 
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            Init();
+        }
+
+        private void Init()
+        {
+            if (Settings.Screenname != "")
+            {
+                ScreennameEntry.Text = Settings.Screenname;
+                ScreennameEntry.IsEnabled = false;
+                ScreennameLabel.Text = "";
+            }
+        }
+
         void Entry_Completed(object sender, EventArgs e)
         {
-            var text = ((Entry)sender).Text; //cast sender to access the properties of the Entry
+            if(viewModel.CheckName(((Entry)sender).Text)) //cast sender to access the properties of the Entry
+            {
+                ScreennameEntry.Text = Settings.Screenname;
+                ScreennameEntry.IsEnabled = false;
+                ScreennameLabel.Text = "";
+            }
+            else
+            {
+                ScreennameEntry.Text = "";
+                ScreennameEntry.Placeholder = "Choose Screenname";
+                ScreennameLabel.Text = "That Screenname is already taken";
+            }
         }
 
         public void OnFocus(object sender, EventArgs e)

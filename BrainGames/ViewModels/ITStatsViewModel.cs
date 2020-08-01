@@ -207,13 +207,13 @@ namespace BrainGames.ViewModels
 
         public Chart CumEstITOverTimeChart => new LineChart()
         {
-            Entries = CumEstITOverTime.Select(CreateDayEntryMS),
+            Entries = CumEstITOverTime.Count == 0 ? null : CumEstITOverTime.Select(CreateDayEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = (float)Math.Max(0, CumEstITOverTime.Min(x => x.Item2) - CumEstITOverTime.Min(x => x.Item2) * sf),
-            MaxValue = (float)(CumEstITOverTime.Max(x => x.Item2) + CumEstITOverTime.Max(x => x.Item2) * sf)
+            MinValue = (float)Math.Max(0, (CumEstITOverTime.Count == 0 ? 0 : CumEstITOverTime.Min(x => x.Item2)) - (CumEstITOverTime.Count == 0 ? 0 : CumEstITOverTime.Min(x => x.Item2)) * sf),
+            MaxValue = (float)((CumEstITOverTime.Count == 0 ? 0 : CumEstITOverTime.Max(x => x.Item2)) + (CumEstITOverTime.Count == 0 ? 0 : CumEstITOverTime.Max(x => x.Item2)) * sf)
         };
 
         public Chart CumAvgCorITByTrialChart => new LineChart()
@@ -229,13 +229,13 @@ namespace BrainGames.ViewModels
 
         public Chart CumEstITByTrialChart => new LineChart()
         {
-            Entries = CumEstITByTrial.Reverse().Select(CreateEntryMS),
+            Entries = CumEstITByTrial.Count() == 0 ? null : CumEstITByTrial.Reverse().Select(CreateEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = (float)Math.Max(0, CumEstITByTrial.Min() - CumEstITByTrial.Min() * sf),
-            MaxValue = (float)(CumEstITByTrial.Max() + CumEstITByTrial.Max() * sf)
+            MinValue = (float)Math.Max(0, (CumEstITByTrial.Count() == 0 ? 0 : CumEstITByTrial.Min() - CumEstITByTrial.Min() * sf)),
+            MaxValue = CumEstITByTrial.Count() == 0 ? 0 : (float)(CumEstITByTrial.Max() + CumEstITByTrial.Max() * sf)
         };
 
         private List<ChartEntry> GetBestAvgCorITDays()

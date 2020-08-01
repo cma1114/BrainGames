@@ -166,8 +166,8 @@ namespace BrainGames.Views
             }
             //            stimdurtext = "Stim Dur: ";
 
-            centerx = canvasView.CanvasSize.Width / 2;
-            centery = canvasView.CanvasSize.Height / 2;
+            centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
+            centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
 
             float tl_x, tl_y, bl_x, bl_y, tr_x, tr_y, br_x, br_y;
 

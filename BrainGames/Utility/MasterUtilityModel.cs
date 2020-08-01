@@ -1233,7 +1233,7 @@ namespace BrainGames.Utility
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
                 _headers.Add("zumo-api-version", "2.0.0");
-                untypedItems = await bgsessions.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId, _headers);
+                untypedItems = await bgsessions.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'", _headers);
                 BGUser = untypedItems.ToObject<DataSchemas.UserSchema>();
                 if (BGUser != null)
                     onremote = true;
@@ -1242,6 +1242,7 @@ namespace BrainGames.Utility
                 {
                     try
                     {
+                        Settings.Screenname = BGUser.Screenname;
                         await db.InsertAsync(BGUser);
                         onlocal = true;
                     }
@@ -1298,6 +1299,7 @@ namespace BrainGames.Utility
                 s.Id = Guid.NewGuid().ToString();
                 s.SubscriptionId = new Guid().ToString();
                 s.UserId = Settings.UserId;
+                s.Screenname = Settings.Screenname;
                 s.LastSubscriptionVerificationDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                 s.ActiveSubscription = true;
                 s.SignupDevice = DeviceInfo.DeviceType.ToString();
@@ -1336,6 +1338,7 @@ namespace BrainGames.Utility
                 s.Id = Guid.NewGuid().ToString();
                 s.SubscriptionId = _subscriptionId;
                 s.UserId = Settings.UserId;
+                s.Screenname = Settings.Screenname;
                 s.LastSubscriptionVerificationDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
                 s.ActiveSubscription = true;
                 s.SignupDevice = DeviceInfo.DeviceType.ToString();
@@ -1352,6 +1355,33 @@ namespace BrainGames.Utility
                 await Task.Run(async () => { /*await GetScenariosFromServer(conn); */ SendSubscriptionToServer(s); });
             }
             Settings.LastVerifiedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
+        }
+
+        public async static Task<bool> CheckScreenname(string sname)
+        {
+            DataSchemas.UserSchema BGUser = new DataSchemas.UserSchema();
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable bgsessions = Client.GetTable("BGUser");
+                //                IMobileServiceTable lguserfeedback_typed = Client.GetTable<LogicGame.LGUserFeedback>();
+                JToken untypedItems;
+                List<DataSchemas.UserSchema> tmpitems = new List<DataSchemas.UserSchema>();
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+                untypedItems = await bgsessions.ReadAsync("$filter=Screenname%20eq%20'" + sname + "'", _headers);
+                BGUser = untypedItems.ToObject<DataSchemas.UserSchema>();
+                if (BGUser != null)
+                    return true;
+                else 
+                    return false;
+            }
+            catch(Exception ex)
+            {
+                return true;
+            }
+
         }
 
         public async static void SendSubscriptionToServer(DataSchemas.UserSchema user)

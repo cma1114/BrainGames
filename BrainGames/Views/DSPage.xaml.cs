@@ -82,8 +82,8 @@ namespace BrainGames.Views
 
         private void Init()
         {
-            centerx = canvasView.CanvasSize.Width / 2;
-            centery = canvasView.CanvasSize.Height / 2;
+            centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
+            centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
 
             if (viewModel.EstSpan > 0)
             {

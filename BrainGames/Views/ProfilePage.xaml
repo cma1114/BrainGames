@@ -11,8 +11,8 @@
              Visual="Material">
     <ContentPage.Content>
         <StackLayout VerticalOptions="Center">
-            <Entry Placeholder="Screenname" PlaceholderColor="Olive" MaxLength="20" IsTextPredictionEnabled="false"/>
-            <Label Text="(Visible to others)" TextColor="Gray" FontSize="Small"/>
+            <Entry x:Name="ScreennameEntry" Placeholder="Choose Screenname" Completed="Entry_Completed" PlaceholderColor="Olive" MaxLength="20" IsTextPredictionEnabled="false"/>
+            <Label x:Name="ScreennameLabel" Text="(Visible to others)" TextColor="Gray" FontSize="Small"/>
 <!--        <SearchBar x:Name="BrandSearchBar" ClassId="1" Margin="0,40,0,0" SearchCommand="{Binding BrandSearchCommand}" Focused="OnFocus" Unfocused="OnUnfocus" SearchCommandParameter="{Binding Text, Source={x:Reference BrandSearchBar}}" Text="Search Brand or Company" TextColor="LightGray">
             <SearchBar.Behaviors>
                 <util:TextChangedBehavior />

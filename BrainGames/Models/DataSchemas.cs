@@ -16,6 +16,7 @@ namespace BrainGames.Models
             [PrimaryKey, JsonProperty("id")]
             public string Id { get; set; }
             public string UserId { get; set; }
+            public string Screenname { get; set; }
             public string SubscriptionId { get; set; }
             public bool ActiveSubscription { get; set; }
             public string LastSubscriptionVerificationDate { get; set; }
@@ -27,6 +28,15 @@ namespace BrainGames.Models
             public double SignupScreenHeight;
             public double SignupScreenWidth;
             public double SignupScreenDensity;
+        }
+
+        public class SharingUsersSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId1 { get; set; }
+            public string UserId2 { get; set; }
+            public string game { get; set; }
         }
 
         public class BrainGameSessionSchema

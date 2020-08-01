@@ -80,8 +80,8 @@ namespace BrainGames.Views
             {
                 crtLabel.Text = "Avg Cor RT: " + viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
             }
-            centerx = canvasView.CanvasSize.Width / 2;
-            centery = canvasView.CanvasSize.Height / 2;
+            centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
+            centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
 
             float tl_x, tl_y, bl_x, bl_y, tr_x, tr_y, br_x, br_y;
 
@@ -244,7 +244,7 @@ namespace BrainGames.Views
             }
             else if (viewModel.boxes == 2)
             {
-                if (viewModel.ss2_trialcnt >= 10 && (float)viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } 
+                if (viewModel.ss2_trialcnt >= 10 && (float)viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } else { viewModel.AvgRT = 0; }
                 boxfigures.Add(boxfigure2A);
                 boxfigures.Add(boxfigure2B);
                 if (viewModel.corboxes[0] == 0) crossfigure = crossfigure2A;

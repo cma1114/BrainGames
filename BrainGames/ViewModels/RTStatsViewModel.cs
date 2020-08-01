@@ -245,24 +245,24 @@ namespace BrainGames.ViewModels
 
         public Chart CumAvgCorRTOverTime2Chart => new LineChart()
         {
-            Entries = CumAvgCorRTOverTime2.Select(CreateDayEntryMS),
+            Entries = CumAvgCorRTOverTime2.Count == 0 ? null : CumAvgCorRTOverTime2.Select(CreateDayEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = (float)Math.Max(0, CumAvgCorRTOverTime2.Min(x => x.Item2) - CumAvgCorRTOverTime2.Min(x => x.Item2) * sf),
-            MaxValue = (float)(CumAvgCorRTOverTime2.Max(x => x.Item2) + CumAvgCorRTOverTime2.Max(x => x.Item2) * sf)
+            MinValue = (float)Math.Max(0, (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Min(x => x.Item2)) - (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Min(x => x.Item2)) * sf),
+            MaxValue = (float)((CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Max(x => x.Item2)) + (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Max(x => x.Item2)) * sf)
         };
 
         public Chart CumAvgCorRTOverTime4Chart => new LineChart()
         {
-            Entries = CumAvgCorRTOverTime4.Select(CreateDayEntryMS),
+            Entries = CumAvgCorRTOverTime4.Count == 0 ? null : CumAvgCorRTOverTime4.Select(CreateDayEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = (float)Math.Max(0, CumAvgCorRTOverTime4.Min(x => x.Item2) - CumAvgCorRTOverTime4.Min(x => x.Item2) * sf),
-            MaxValue = (float)(CumAvgCorRTOverTime4.Max(x => x.Item2) + CumAvgCorRTOverTime4.Max(x => x.Item2) * sf)
+            MinValue = (float)Math.Max(0, (CumAvgCorRTOverTime4.Count == 0 ? 0 : CumAvgCorRTOverTime4.Min(x => x.Item2)) - (CumAvgCorRTOverTime4.Count == 0 ? 0 : CumAvgCorRTOverTime4.Min(x => x.Item2)) * sf),
+            MaxValue = (float)((CumAvgCorRTOverTime4.Count == 0 ? 0 : CumAvgCorRTOverTime4.Max(x => x.Item2)) + (CumAvgCorRTOverTime4.Count == 0 ? 0 : CumAvgCorRTOverTime4.Max(x => x.Item2)) * sf)
         };
 
 /*

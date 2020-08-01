@@ -22,6 +22,9 @@ namespace BrainGames.Utility
         private const string UserIdKey = "userid_key";
         private static readonly string UserIdDefault = "123";
 
+        private const string ScreennameKey = "screenname_key";
+        private static readonly string ScreennameDefault = "";
+
         private const string IT_AvgCorDurKey = "it_avgcordur_key";
         private static readonly double IT_AvgCorDurDefault = 0;
 
@@ -51,6 +54,18 @@ namespace BrainGames.Utility
             set
             {
                 AppSettings.AddOrUpdateValue(UserIdKey, value);
+            }
+        }
+
+        public static string Screenname
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(ScreennameKey, ScreennameDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(ScreennameKey, value);
             }
         }
 
