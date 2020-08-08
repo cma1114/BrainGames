@@ -6,6 +6,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 using BrainGames.Models;
+using BrainGames.Utility;
 
 namespace BrainGames.Views
 {
@@ -22,6 +23,29 @@ namespace BrainGames.Views
             MasterBehavior = MasterBehavior.Popover;
 
             MenuPages.Add((int)MenuItemType.Play, (NavigationPage)Detail);
+            /*
+            IsPresentedChanged += (sender, args) =>
+            {
+                if (App.mum.has_notifications && !ToolbarItems.Contains()
+                {
+                    ToolbarItems.Add(new ToolbarItem
+                    {
+                        Text = "Notifications"
+                    });
+                }
+            };*/
+            //IsPresentedChanged += CheckNotifications;
+        }
+
+        public void CheckNotifications(object sender, EventArgs args)
+        {
+            if (App.mum.has_notifications && ToolbarItems.Count == 0)
+                {
+                ToolbarItems.Add(new ToolbarItem
+                {
+                    Text = "Notifications"
+                });
+            }
         }
 
         public async Task NavigateFromMenu(int id)
@@ -34,7 +58,11 @@ namespace BrainGames.Views
                         MenuPages.Add(id, new NavigationPage(new HomePage()));
                         break;
                     case (int)MenuItemType.Invite:
-                        MenuPages.Add(id, new NavigationPage(new InvitePage()));
+                        if(Settings.Screenname != "") MenuPages.Add(id, new NavigationPage(new InvitePage()));
+                        else await DisplayAlert("Select Screenname", "In order to invite friends you must first select a Screename for yourself on the Profile page", "OK");
+                        break;
+                    case (int)MenuItemType.Invitations:
+                        MenuPages.Add(id, new NavigationPage(new InvitationsPage()));
                         break;
                     case (int)MenuItemType.Profile:
                         MenuPages.Add(id, new NavigationPage(new ProfilePage()));

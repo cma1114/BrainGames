@@ -5,6 +5,12 @@ using System.Runtime.CompilerServices;
 
 using Xamarin.Forms;
 
+using System.Threading.Tasks;
+using Rg.Plugins.Popup.Services;
+using Xamarin.Forms.Xaml;
+using BrainGames.Views;
+using BrainGames.ViewModels;
+
 using BrainGames.Models;
 using BrainGames.Services;
 

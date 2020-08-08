@@ -30,6 +30,13 @@ namespace BrainGames.Utility
         }
     }
 
+    public class SharingInvitation
+    {
+        public string UserId { get; set; }
+        public string Screenname { get; set; }
+        public List<string> games { get; set; }
+    }
+
     public class MasterUtilityModel
     {
         public static SQLiteAsyncConnection conn;
@@ -94,6 +101,10 @@ namespace BrainGames.Utility
         public int ls_lastgridsize_f;
         public int ls_lastgridsize_b;
 
+        public bool has_notifications = false;
+        public List<SharingInvitation> Invitations;
+        private List<DataSchemas.SharingUsersSchema> BGSharingUserRecords;
+
         public static string DeviceId;
         object locker = new object();
         //Function to get random number
@@ -151,7 +162,11 @@ namespace BrainGames.Utility
 
             conn_sync = DependencyService.Get<ISQLiteDb>().GetConnection();
             conn = DependencyService.Get<ISQLiteDb>().GetAsyncConnection();
-
+/*
+            var cmnd = new SQLiteCommand(conn_sync);
+            cmnd.CommandText = "ALTER TABLE UserSchema ADD COLUMN Screenname;";
+            cmnd.ExecuteNonQuery();
+*/
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
                 SyncLocalDBwithServer(conn);
 
@@ -417,9 +432,9 @@ namespace BrainGames.Utility
         private async void SyncLocalDBwithServer(SQLiteAsyncConnection db)
         {
             bool dbexception = false;
-            if (IsBusy)
+            while (IsBusy)
             {
-                return;
+                ;
             }
 
             IsBusy = true;
@@ -453,7 +468,6 @@ namespace BrainGames.Utility
                 IMobileServiceTable bguserrecord = Client.GetTable("BGITGameRecord");
                 //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
                 JToken untypedItems;
-                List<DataSchemas.ITGameRecordSchema> tmpitems = new List<DataSchemas.ITGameRecordSchema>();
                 int pagesize = 50, ctr = 0;
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
@@ -592,7 +606,6 @@ namespace BrainGames.Utility
                 IMobileServiceTable bguserrecord = Client.GetTable("BGRTGameRecord");
                 //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
                 JToken untypedItems;
-                List<DataSchemas.RTGameRecordSchema> tmpitems = new List<DataSchemas.RTGameRecordSchema>();
                 int pagesize = 50, ctr = 0;
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
@@ -716,7 +729,6 @@ namespace BrainGames.Utility
                 IMobileServiceTable bguserrecord = Client.GetTable("BGStroopGameRecord");
                 //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
                 JToken untypedItems;
-                List<DataSchemas.StroopGameRecordSchema> tmpitems = new List<DataSchemas.StroopGameRecordSchema>();
                 int pagesize = 50, ctr = 0;
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
@@ -838,7 +850,6 @@ namespace BrainGames.Utility
                 IMobileServiceTable bguserrecord = Client.GetTable("BGDSGameRecord");
                 //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
                 JToken untypedItems;
-                List<DataSchemas.DSGameRecordSchema> tmpitems = new List<DataSchemas.DSGameRecordSchema>();
                 int pagesize = 50, ctr = 0;
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
@@ -990,7 +1001,6 @@ namespace BrainGames.Utility
                 IMobileServiceTable bguserrecord = Client.GetTable("BGLSGameRecord");
                 //                IMobileServiceTable bguserrecord = Client.GetTable("LGUser");
                 JToken untypedItems;
-                List<DataSchemas.LSGameRecordSchema> tmpitems = new List<DataSchemas.LSGameRecordSchema>();
                 int pagesize = 50, ctr = 0;
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
@@ -1144,7 +1154,6 @@ namespace BrainGames.Utility
                 IMobileServiceTable bgsessions = Client.GetTable("BGSession");
                 //                IMobileServiceTable lguserfeedback_typed = Client.GetTable<LogicGame.LGUserFeedback>();
                 JToken untypedItems;
-                List<DataSchemas.BrainGameSessionSchema> tmpitems = new List<DataSchemas.BrainGameSessionSchema>();
                 int pagesize = 50, ctr = 0;
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
@@ -1203,6 +1212,11 @@ namespace BrainGames.Utility
 
             #region UserSchema;
             ///////  CheckServerForDBUpdates
+            try { await db.CreateTableAsync<DataSchemas.UserSchema>(); }
+            catch (Exception ex3)
+            {
+                ;
+            }
             bool onlocal = false;
             bool onremote = false;
             Task<List<DataSchemas.UserSchema>> t_q5 = null;
@@ -1229,12 +1243,11 @@ namespace BrainGames.Utility
                 IMobileServiceTable bgsessions = Client.GetTable("BGUser");
                 //                IMobileServiceTable lguserfeedback_typed = Client.GetTable<LogicGame.LGUserFeedback>();
                 JToken untypedItems;
-                List<DataSchemas.UserSchema> tmpitems = new List<DataSchemas.UserSchema>();
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
                 _headers.Add("zumo-api-version", "2.0.0");
                 untypedItems = await bgsessions.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'", _headers);
-                BGUser = untypedItems.ToObject<DataSchemas.UserSchema>();
+                BGUser = untypedItems[0].ToObject<DataSchemas.UserSchema>();
                 if (BGUser != null)
                     onremote = true;
 
@@ -1251,23 +1264,6 @@ namespace BrainGames.Utility
                         ;
                     }
                 }
-
-                if (!dbexception)
-                {
-                    if (!BGSessions.Any(x => x.Id == q5[0].Id))//if the remote server doesn't have this user, add it
-                    {
-                        try
-                        {
-                            await bguserinfoService.AddUserEntryAsync(q5[0]);
-                            onremote = true;
-                        }
-                        catch (Exception exA)
-                        {
-                            ;
-                        }
-
-                    }
-                }
             }
             catch (Exception exB)
             {
@@ -1278,6 +1274,71 @@ namespace BrainGames.Utility
 
             IsBusy = false;
             //            SendToServer(conn);
+        }
+
+        public async Task<bool> CheckInvitations()
+        {
+            BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable bguserrecord = Client.GetTable("BGSharingUsers");
+                JToken untypedItems;
+                int pagesize = 50, ctr = 0;
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+                try
+                {
+                    do
+                    {
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId2%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%200%20and%20Declined%20eq%200&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+                        for (int j = 0; j < untypedItems.Count(); j++)
+                        {
+                            BGSharingUserRecords.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
+                        }
+                    } while (untypedItems.Count() > 0);
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            if (BGSharingUserRecords.Count() > 0)
+            {
+                has_notifications = true;
+                Invitations = new List<SharingInvitation>();
+                List<string> userids = BGSharingUserRecords.Select(x => x.UserId1).Distinct().ToList();
+                foreach (string userid in userids)
+                {
+                    SharingInvitation invite = new SharingInvitation();
+                    try
+                    {
+                        var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                        IMobileServiceTable bguserrecord = Client.GetTable("BGUser");
+                        JToken untypedItems;
+                        int pagesize = 50, ctr = 0;
+                        IDictionary<string, string> _headers = new Dictionary<string, string>();
+                        // TODO: Add header with auth-based token in chapter 7
+                        _headers.Add("zumo-api-version", "2.0.0");
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'", _headers);
+                        invite.UserId = userid;
+                        invite.Screenname = untypedItems[0].ToObject<DataSchemas.UserSchema>().Screenname;
+                        invite.games = BGSharingUserRecords.Where(x => x.UserId1 == userid).Select(x => x.game).ToList();
+                        Invitations.Add(invite);
+                    }
+                    catch (Exception ex)
+                    {
+                        ;
+                    }
+                }
+            }
+            return has_notifications;
         }
 
         public async static void CreateUser(bool onremote)
@@ -1357,32 +1418,68 @@ namespace BrainGames.Utility
             Settings.LastVerifiedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         }
 
-        public async static Task<bool> CheckScreenname(string sname)
+        public async static Task<string> CheckScreenname(string sname)
         {
-            DataSchemas.UserSchema BGUser = new DataSchemas.UserSchema();
             try
             {
                 var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
                 IMobileServiceTable bgsessions = Client.GetTable("BGUser");
                 //                IMobileServiceTable lguserfeedback_typed = Client.GetTable<LogicGame.LGUserFeedback>();
                 JToken untypedItems;
-                List<DataSchemas.UserSchema> tmpitems = new List<DataSchemas.UserSchema>();
                 IDictionary<string, string> _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
                 _headers.Add("zumo-api-version", "2.0.0");
                 untypedItems = await bgsessions.ReadAsync("$filter=Screenname%20eq%20'" + sname + "'", _headers);
-                BGUser = untypedItems.ToObject<DataSchemas.UserSchema>();
-                if (BGUser != null)
-                    return true;
-                else 
-                    return false;
+                if (untypedItems.Count() == 0)
+                {
+                    return "";
+                }
+                else return untypedItems[0].ToObject<DataSchemas.UserSchema>().UserId;
             }
             catch(Exception ex)
             {
-                return true;
+                return "";
             }
 
         }
+
+        public async static void SetScreenname(string sname)
+        {
+            Task<List<DataSchemas.UserSchema>> t_q3 = null;
+            List<DataSchemas.UserSchema> q3 = new List<DataSchemas.UserSchema>();
+            t_q3 = conn.QueryAsync<DataSchemas.UserSchema>("select * from UserSchema where UserId = ?", Settings.UserId);
+            q3 = t_q3.Result;
+
+            var s = new DataSchemas.UserSchema();
+            s = q3[0];
+            s.Screenname = sname;
+            await conn.UpdateAsync(s);
+            await Task.Run(async () => { UpdateUserOnServer(s); });
+        }
+
+        public async static void UpdateUserOnServer(DataSchemas.UserSchema user)
+        {
+            while (IsBusy)
+            {
+                ;
+            }
+
+            IsBusy = true;
+
+            try
+            {
+                await bguserinfoService.UpdateUserEntryAsync(user);
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
 
         public async static void SendSubscriptionToServer(DataSchemas.UserSchema user)
         {
@@ -1405,6 +1502,78 @@ namespace BrainGames.Utility
             {
                 IsBusy = false;
             }
+        }
+
+        public async static void SetShare(string user, string games)
+        {
+            string[] garr = games.Split(',');
+            foreach (string g in garr)
+            {
+                var s = new DataSchemas.SharingUsersSchema();
+                s.Id = Guid.NewGuid().ToString();
+                s.Accepted = false;
+                s.Declined = false;
+                s.UserId1 = Settings.UserId;
+                s.UserId2 = user;
+                s.game = g;
+
+                while (IsBusy)
+                {
+                    ;
+                }
+
+                IsBusy = true;
+
+                try
+                {
+                    await bguserinfoService.AddSharingEntryAsync(s);
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+            }
+        }
+
+        public async void RespondShare(string screenname, string games)
+        {
+            List<string> invitedgames = Invitations.Where(x => x.Screenname == screenname).ToList()[0].games;
+
+            List<DataSchemas.SharingUsersSchema> requests = new List<DataSchemas.SharingUsersSchema>();
+            requests = BGSharingUserRecords.Where(x => x.UserId1 == Invitations.Where(y => y.Screenname == screenname).ToList()[0].UserId).ToList();
+
+            List<string> gs = games.Split(',').ToList();
+            foreach (DataSchemas.SharingUsersSchema r in requests)
+            {
+                if (gs.Contains(r.game)) r.Accepted = true;
+                else r.Declined = true;
+
+                while (IsBusy)
+                {
+                    ;
+                }
+
+                IsBusy = true;
+
+                try
+                {
+                    await bguserinfoService.UpdateSharingEntryAsync(r);
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy = false;
+                    BGSharingUserRecords.Remove(r);
+                }
+            }
+            if (BGSharingUserRecords.Count() == 0) has_notifications = false;
         }
 
         public async static void WriteITGR(Guid sessionid, int trialctr, int reversalctr, double curstimdur, double empstimdur, double avgcorit, double estit, int cor_ans, bool cor)
@@ -1613,7 +1782,7 @@ namespace BrainGames.Utility
                 }
                 else
                 {
-                    estSpan_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
+                    estSpan_f = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
                 }
 
                 corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
@@ -1629,7 +1798,7 @@ namespace BrainGames.Utility
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
                     AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9 || corarr.Count() == 0)
                     {
                         estStimTime_f = 0.0;
                     }
@@ -1640,7 +1809,7 @@ namespace BrainGames.Utility
                 }
                 else
                 {
-                    estStimTime_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
+                    estStimTime_f = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
                 }
                 corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
                 spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
@@ -1667,7 +1836,7 @@ namespace BrainGames.Utility
                 }
                 else
                 {
-                    estSpan_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
+                    estSpan_b = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
                 }
 
                 corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
@@ -1683,7 +1852,7 @@ namespace BrainGames.Utility
                 if (p.Item2 >= 0 || p.Item1 <= 0.9)
                 {
                     AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9 || corarr.Count() == 0)
                     {
                         estStimTime_b = 0.0;
                     }
@@ -1694,7 +1863,7 @@ namespace BrainGames.Utility
                 }
                 else
                 {
-                    estStimTime_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
+                    estStimTime_b = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
                 }
             }
 

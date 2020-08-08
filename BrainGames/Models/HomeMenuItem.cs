@@ -8,6 +8,7 @@ namespace BrainGames.Models
     {
         Play,
         Invite,
+        Invitations,
         Profile,
         About
     }

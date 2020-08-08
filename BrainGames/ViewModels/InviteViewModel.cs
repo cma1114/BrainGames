@@ -9,17 +9,19 @@ using System.Linq;
 using Xamarin.Forms;
 using BrainGames.Utility;
 using BrainGames.Models;
+using System.Runtime.CompilerServices;
 
 namespace BrainGames.ViewModels
 {
-    public class ProfileViewModel : ViewModelBase
+    public class InviteViewModel : ViewModelBase
     {
+        private string user2 = ""; 
         public bool CheckName(string name)
         {
-/*            Task<bool> task = MasterUtilityModel.CheckScreenname(name);
-            task.Wait();
-            if (task.Result == true)*/
-//            if(MasterUtilityModel.CheckScreenname(name))
+            /*            Task<bool> task = MasterUtilityModel.CheckScreenname(name);
+                        task.Wait();
+                        if (task.Result == true)*/
+            //            if(MasterUtilityModel.CheckScreenname(name))
             bool done = false;
             string s = "";
             Task.Run(async () => {
@@ -38,16 +40,20 @@ namespace BrainGames.ViewModels
             {
                 ;
             }
-            if (s != "")
+            if (s == "")
             {
                 return false;
             }
-            Settings.Screenname = name;
-            MasterUtilityModel.SetScreenname(name);
+            user2 = s;
             return true;
         }
 
-        public ProfileViewModel()
+        public void SendInvite(string games)
+        {
+            MasterUtilityModel.SetShare(user2, games);
+        }
+
+        public InviteViewModel()
         {
         }
     }

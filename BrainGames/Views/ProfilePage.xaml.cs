@@ -38,9 +38,11 @@ namespace BrainGames.Views
 
         void Entry_Completed(object sender, EventArgs e)
         {
-            if(viewModel.CheckName(((Entry)sender).Text)) //cast sender to access the properties of the Entry
+            string s = ((Entry)sender).Text.Trim();
+            if (s.Length > 0 && viewModel.CheckName(s)) //cast sender to access the properties of the Entry
             {
                 ScreennameEntry.Text = Settings.Screenname;
+                ScreennameEntry.Placeholder = "Screenname";
                 ScreennameEntry.IsEnabled = false;
                 ScreennameLabel.Text = "";
             }

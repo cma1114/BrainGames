@@ -11,8 +11,35 @@
              Visual="Material">
     <ContentPage.Content>
         <StackLayout VerticalOptions="Center">
-            <Entry Placeholder="Screenname" PlaceholderColor="Olive" MaxLength="20" IsTextPredictionEnabled="false"/>
-<!--        <SearchBar x:Name="BrandSearchBar" ClassId="1" Margin="0,40,0,0" SearchCommand="{Binding BrandSearchCommand}" Focused="OnFocus" Unfocused="OnUnfocus" SearchCommandParameter="{Binding Text, Source={x:Reference BrandSearchBar}}" Text="Search Brand or Company" TextColor="LightGray">
+            <Entry x:Name="ScreennameEntry" Placeholder="Screenname" Completed="Entry_Completed" PlaceholderColor="Olive" MaxLength="20" IsTextPredictionEnabled="false"/>
+            <Label x:Name="ScreennameLabel" Text="Enter Screenname of user you wish to invite" TextColor="Gray" FontSize="Small"/>
+            <Grid x:Name="GameGrid" Margin="20,35,20,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.75*" />
+                    <ColumnDefinition Width="0.25*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Grid.ColumnSpan="2" Text="Select game(s) to share:" HorizontalOptions="Start" />
+                <Label Grid.Row="1" Grid.Column="0" Text="Inspection Time" VerticalOptions="Center" />
+                <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkIT" CheckedChanged="OnCheckChanged" VerticalOptions="Center" />
+                <Label Grid.Row="2" Grid.Column="0" Text="Reaction Time" VerticalOptions="Center" />
+                <CheckBox Grid.Row="2" Grid.Column="1" x:Name="chkRT" CheckedChanged="OnCheckChanged" VerticalOptions="Center" />
+                <Label Grid.Row="3" Grid.Column="0" Text="Stroop Effect" VerticalOptions="Center" />
+                <CheckBox Grid.Row="3" Grid.Column="1" x:Name="chkStroop" CheckedChanged="OnCheckChanged" VerticalOptions="Center" />
+                <Label Grid.Row="4" Grid.Column="0" Text="Digit Span" VerticalOptions="Center" />
+                <CheckBox Grid.Row="4" Grid.Column="1" x:Name="chkDS" CheckedChanged="OnCheckChanged" VerticalOptions="Center" />
+                <Label Grid.Row="5" Grid.Column="0" Text="Location Span" VerticalOptions="Center" />
+                <CheckBox Grid.Row="5" Grid.Column="1" x:Name="chkLS" CheckedChanged="OnCheckChanged" VerticalOptions="Center" />
+            </Grid>
+            <Button x:Name="InviteButton" Text="Invite" WidthRequest="100" IsEnabled="{Binding InviteOkay}" Clicked="Invite_Clicked" HorizontalOptions="Center"/>
+            <!--        <SearchBar x:Name="BrandSearchBar" ClassId="1" Margin="0,40,0,0" SearchCommand="{Binding BrandSearchCommand}" Focused="OnFocus" Unfocused="OnUnfocus" SearchCommandParameter="{Binding Text, Source={x:Reference BrandSearchBar}}" Text="Search Brand or Company" TextColor="LightGray">
             <SearchBar.Behaviors>
                 <util:TextChangedBehavior />
             </SearchBar.Behaviors>

@@ -117,6 +117,30 @@ namespace BrainGames.Services
             return response;
         }
 
+        public async Task<DataSchemas.UserSchema> UpdateUserEntryAsync(DataSchemas.UserSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bguser/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.UserSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.SharingUsersSchema> AddSharingEntryAsync(DataSchemas.SharingUsersSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bgsharingusers");
+            var response = await SendRequestAsync<DataSchemas.SharingUsersSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.SharingUsersSchema> UpdateSharingEntryAsync(DataSchemas.SharingUsersSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bgsharingusers/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.SharingUsersSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
         public async Task<DataSchemas.BrainGameSessionSchema> AddBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry)
         {
             var url = new Uri(_baseUri, "/tables/bgsession");

@@ -25,9 +25,9 @@ namespace BrainGames.Models
             public string SignupManufacturer { get; set; }
             public string SignupVersion { get; set; }
             public string SignupOS { get; set; }
-            public double SignupScreenHeight;
-            public double SignupScreenWidth;
-            public double SignupScreenDensity;
+            public double SignupScreenHeight { get; set; }
+            public double SignupScreenWidth { get; set; }
+            public double SignupScreenDensity { get; set; }
         }
 
         public class SharingUsersSchema
@@ -37,6 +37,8 @@ namespace BrainGames.Models
             public string UserId1 { get; set; }
             public string UserId2 { get; set; }
             public string game { get; set; }
+            public bool Accepted { get; set; }
+            public bool Declined { get; set; }
         }
 
         public class BrainGameSessionSchema
@@ -53,9 +55,9 @@ namespace BrainGames.Models
             public string Manufacturer { get; set; }
             public string DeviceVersion { get; set; }
             public string OS { get; set; }
-            public double ScreenHeight;
-            public double ScreenWidth;
-            public double ScreenDensity;
+            public double ScreenHeight { get; set; }
+            public double ScreenWidth { get; set; }
+            public double ScreenDensity { get; set; }
         }
 
         public class ITGameRecordSchema
