@@ -21,6 +21,11 @@ namespace BrainGames.Views
         {
             ViewModel = new LSStatsViewModel();
             InitializeComponent();
+            if (ViewModel.Compare)
+            {
+                ToolbarItems.Add(new ToolbarItem { Text = "Compare", Order = ToolbarItemOrder.Secondary, Priority = 1 });
+                ToolbarItems[1].Clicked += Compare_Clicked;
+            }
         }
 
 

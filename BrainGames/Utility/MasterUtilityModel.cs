@@ -37,6 +37,12 @@ namespace BrainGames.Utility
         public List<string> games { get; set; }
     }
 
+    public class GameShare
+    {
+        public string Screenname { get; set; }
+        public string game { get; set; }
+    }
+
     public class MasterUtilityModel
     {
         public static SQLiteAsyncConnection conn;
@@ -102,6 +108,7 @@ namespace BrainGames.Utility
         public int ls_lastgridsize_b;
 
         public bool has_notifications = false;
+        public List<GameShare> GameShares = new List<GameShare>();
         public List<SharingInvitation> Invitations;
         private List<DataSchemas.SharingUsersSchema> BGSharingUserRecords;
 
@@ -438,6 +445,90 @@ namespace BrainGames.Utility
             }
 
             IsBusy = true;
+
+            #region GameShare
+            BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable bguserrecord = Client.GetTable("BGSharingUsers");
+                JToken untypedItems;
+                int pagesize = 50, ctr = 0;
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+                try
+                {
+                    do
+                    {
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId2%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%201$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+                        for (int j = 0; j < untypedItems.Count(); j++)
+                        {
+                            BGSharingUserRecords.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
+                        }
+                    } while (untypedItems.Count() > 0);
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                try
+                {
+                    do
+                    {
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId1%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%201$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+                        for (int j = 0; j < untypedItems.Count(); j++)
+                        {
+                            BGSharingUserRecords.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
+                        }
+                    } while (untypedItems.Count() > 0);
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            if (BGSharingUserRecords.Count() > 0)
+            {
+                has_notifications = true;
+                List<string> userids = BGSharingUserRecords.Select(x => x.UserId1).Distinct().ToList();
+                foreach (string userid in userids)
+                {
+                    GameShare gs = new GameShare();
+                    try
+                    {
+                        var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                        IMobileServiceTable bguserrecord = Client.GetTable("BGUser");
+                        JToken untypedItems;
+                        int pagesize = 50, ctr = 0;
+                        IDictionary<string, string> _headers = new Dictionary<string, string>();
+                        // TODO: Add header with auth-based token in chapter 7
+                        _headers.Add("zumo-api-version", "2.0.0");
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'", _headers);
+                        List<string> games = BGSharingUserRecords.Where(x => x.UserId1 == userid || x.UserId2 == userid).Select(x => x.game).ToList();
+                        foreach (string g in games) 
+                        {
+                            gs.Screenname = untypedItems[0].ToObject<DataSchemas.UserSchema>().Screenname;
+                            gs.game = g;
+                            GameShares.Add(gs); 
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ;
+                    }
+                }
+            }
+            #endregion
+
+
+
 
             #region ITGameRecordSchema;
             ///////  CheckServerForDBUpdates
@@ -1549,7 +1640,14 @@ namespace BrainGames.Utility
             List<string> gs = games.Split(',').ToList();
             foreach (DataSchemas.SharingUsersSchema r in requests)
             {
-                if (gs.Contains(r.game)) r.Accepted = true;
+                if (gs.Contains(r.game))
+                {
+                    var g = new GameShare();
+                    g.game = r.game;
+                    g.Screenname = screenname;
+                    GameShares.Add(g);
+                    r.Accepted = true;
+                }
                 else r.Declined = true;
 
                 while (IsBusy)

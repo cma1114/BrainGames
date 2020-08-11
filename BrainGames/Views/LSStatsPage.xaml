@@ -10,7 +10,7 @@
              Title="Location Span Stats">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Return" Clicked="Return_Clicked" Order="Primary" Priority="0"/>
-        <ToolbarItem Text="Compare" Clicked="Compare_Clicked" Order="Secondary" Priority="1"/>
+<!--        <ToolbarItem Text="Compare" Clicked="Compare_Clicked" Order="Secondary" Priority="1"/>-->
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

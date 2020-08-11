@@ -67,6 +67,13 @@ namespace BrainGames.ViewModels
         private int tdy_longestcorspan_b, tdy_fastestcorstimtimeatlongestcorspan_b, tdy_fastestcorstimtime_b, tdy_longestcorspanatfastestcorstimetime_b;
         private double sf = 0.03;
 
+        private bool _compare = false;
+        public bool Compare
+        {
+            get => _compare;
+            set { SetProperty(ref _compare, value); }
+        }
+
         List<Tuple<DateTime, double>> FillTimeList(List<Tuple<DateTime, double>> daylist, List<Tuple<DateTime, double>> weeklist, List<Tuple<DateTime, double>> monthlist)
         {
             IEnumerable<Tuple<DateTime, double>> t;
@@ -156,6 +163,8 @@ namespace BrainGames.ViewModels
 
         public LSStatsViewModel()
         {
+            if (App.mum.GameShares.Where(x => x.game == "LS")?.Count() > 0) Compare = true;
+
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
