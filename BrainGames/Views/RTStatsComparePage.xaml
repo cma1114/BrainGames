@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:microcharts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
+             xmlns:ValueConverters="clr-namespace:BrainGames.Converters"
+             mc:Ignorable="d"
+             x:Class="BrainGames.Views.RTStatsComparePage"
+             Title="Reaction Time Stats: You vs Them">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Return" Clicked="Return_Clicked" />
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Always">
+            <Grid ColumnSpacing="5" RowSpacing="5">
+                <Grid.Resources>
+                    <ValueConverters:DoubleToStringConverter x:Key="DoubleToString"/>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/>
+                </Grid.RowDefinitions>
+                <Frame Grid.Row="0"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Fastest Block: 1 Choice"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Fastest1" Chart="{Binding Fastest1Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="1"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Fastest Block: 2 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Fastest2" Chart="{Binding Fastest2Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="2"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Fastest Block: 4 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Fastest4" Chart="{Binding Fastest4Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="3"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average RT: 1 Choice"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Average1" Chart="{Binding Average1Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="4"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average RT: 2 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Average2" Chart="{Binding Average2Chart}" />
+                    </StackLayout>
+                </Frame>
+                <Frame Grid.Row="5"
+                       HorizontalOptions="FillAndExpand"
+                       VerticalOptions="FillAndExpand"
+                       Margin="10"
+                       Padding="0"
+                       CornerRadius="0">
+                    <StackLayout Spacing="20" Padding="15">
+                        <Label Text="Average RT: 4 Choices"
+                                            FontSize="Medium"
+                                            LineHeight="1"
+                                            TextColor="Black"
+                                            HorizontalOptions="CenterAndExpand"/>
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Average4" Chart="{Binding Average4Chart}" />
+                    </StackLayout>
+                </Frame>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>

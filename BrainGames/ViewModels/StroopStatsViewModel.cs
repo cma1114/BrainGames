@@ -49,6 +49,13 @@ namespace BrainGames.ViewModels
 
         private double sf = 0.03;
 
+        private bool _compare = false;
+        public bool Compare
+        {
+            get => _compare;
+            set { SetProperty(ref _compare, value); }
+        }
+
         List<Tuple<DateTime, double>> FillTimeList(List<Tuple<DateTime, double>> daylist, List<Tuple<DateTime, double>> weeklist, List<Tuple<DateTime, double>> monthlist)
         {
             IEnumerable<Tuple<DateTime, double>> t;

@@ -41,6 +41,8 @@ namespace BrainGames.Utility
     {
         public string Screenname { get; set; }
         public string game { get; set; }
+        public List<double> bestscore { get; set; }
+        public List<double> avgscore { get; set; }
     }
 
     public class MasterUtilityModel
@@ -110,7 +112,7 @@ namespace BrainGames.Utility
         public bool has_notifications = false;
         public List<GameShare> GameShares = new List<GameShare>();
         public List<SharingInvitation> Invitations;
-        private List<DataSchemas.SharingUsersSchema> BGSharingUserRecords;
+        private List<DataSchemas.SharingUsersSchema> BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
 
         public static string DeviceId;
         object locker = new object();
@@ -169,11 +171,13 @@ namespace BrainGames.Utility
 
             conn_sync = DependencyService.Get<ISQLiteDb>().GetConnection();
             conn = DependencyService.Get<ISQLiteDb>().GetAsyncConnection();
-/*
-            var cmnd = new SQLiteCommand(conn_sync);
-            cmnd.CommandText = "ALTER TABLE UserSchema ADD COLUMN Screenname;";
-            cmnd.ExecuteNonQuery();
-*/
+            /*
+                        var cmnd = new SQLiteCommand(conn_sync);
+                        cmnd.CommandText = "ALTER TABLE UserSchema ADD COLUMN Screenname;";
+                        cmnd.ExecuteNonQuery();
+            */
+
+            LoadGameShare(conn);
             if (Connectivity.NetworkAccess == NetworkAccess.Internet)
                 SyncLocalDBwithServer(conn);
 
@@ -436,7 +440,7 @@ namespace BrainGames.Utility
             #endregion
         }
 
-        private async void SyncLocalDBwithServer(SQLiteAsyncConnection db)
+        private async void LoadGameShare(SQLiteAsyncConnection db)
         {
             bool dbexception = false;
             while (IsBusy)
@@ -445,9 +449,7 @@ namespace BrainGames.Utility
             }
 
             IsBusy = true;
-
             #region GameShare
-            BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
             try
             {
                 var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
@@ -500,7 +502,6 @@ namespace BrainGames.Utility
                 List<string> userids = BGSharingUserRecords.Select(x => x.UserId1).Distinct().ToList();
                 foreach (string userid in userids)
                 {
-                    GameShare gs = new GameShare();
                     try
                     {
                         var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
@@ -512,11 +513,10 @@ namespace BrainGames.Utility
                         _headers.Add("zumo-api-version", "2.0.0");
                         untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'", _headers);
                         List<string> games = BGSharingUserRecords.Where(x => x.UserId1 == userid || x.UserId2 == userid).Select(x => x.game).ToList();
-                        foreach (string g in games) 
+                        foreach (string g in games)
                         {
-                            gs.Screenname = untypedItems[0].ToObject<DataSchemas.UserSchema>().Screenname;
-                            gs.game = g;
-                            GameShares.Add(gs); 
+                            GameShare gs = await LoadGameShareStats(untypedItems[0].ToObject<DataSchemas.UserSchema>().Screenname, g, userid);
+                            GameShares.Add(gs);
                         }
                     }
                     catch (Exception ex)
@@ -527,7 +527,66 @@ namespace BrainGames.Utility
             }
             #endregion
 
+            IsBusy = false;
+        }
 
+        private async Task<GameShare> LoadGameShareStats(string screenname, string game, string userid)
+        {
+            GameShare gs = new GameShare();
+            gs.Screenname = screenname;
+            gs.game = game;
+            switch (game)
+            {
+                case "RT":
+                    List<DataSchemas.RTGameRecordSchema> BGRTOtherUserRecords = new List<DataSchemas.RTGameRecordSchema>();
+                    try
+                    {
+                        var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                        IMobileServiceTable bguserrecord = Client.GetTable("BGRTGameRecord");
+                        JToken untypedItems;
+                        int pagesize = 50, ctr = 0;
+                        IDictionary<string, string> _headers = new Dictionary<string, string>();
+                        _headers = new Dictionary<string, string>();
+                        // TODO: Add header with auth-based token in chapter 7
+                        _headers.Add("zumo-api-version", "2.0.0");
+                        try
+                        {
+                            do
+                            {
+                                untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                                //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+                                for (int j = 0; j < untypedItems.Count(); j++)
+                                {
+                                    BGRTOtherUserRecords.Add(untypedItems[j].ToObject<DataSchemas.RTGameRecordSchema>());
+                                }
+                            } while (untypedItems.Count() > 0);
+                        }
+                        catch (Exception ex)
+                        {
+                            ;
+                        }
+                    }
+                    catch (Exception ex) {; }
+                    gs.bestscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 1 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
+                    gs.bestscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 2 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
+                    gs.bestscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 4 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 4 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
+                    gs.avgscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 1 && x.cor == true).Sum(y => y.reactiontime) / BGRTOtherUserRecords.Where(x => x.boxes == 1 && x.cor == true).Count());
+                    gs.avgscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 2 && x.cor == true).Sum(y => y.reactiontime) / BGRTOtherUserRecords.Where(x => x.boxes == 2 && x.cor == true).Count());
+                    gs.avgscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 4 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 4 && x.cor == true).Sum(y => y.reactiontime) / BGRTOtherUserRecords.Where(x => x.boxes == 4 && x.cor == true).Count());
+                    break;
+            }
+            return gs;
+        }
+
+        private async void SyncLocalDBwithServer(SQLiteAsyncConnection db)
+        {
+            bool dbexception = false;
+            while (IsBusy)
+            {
+                ;
+            }
+
+            IsBusy = true;
 
 
             #region ITGameRecordSchema;
@@ -1642,9 +1701,7 @@ namespace BrainGames.Utility
             {
                 if (gs.Contains(r.game))
                 {
-                    var g = new GameShare();
-                    g.game = r.game;
-                    g.Screenname = screenname;
+                    GameShare g = await LoadGameShareStats(screenname, r.game, r.UserId1);
                     GameShares.Add(g);
                     r.Accepted = true;
                 }

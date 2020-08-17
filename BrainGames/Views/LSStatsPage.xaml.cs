@@ -36,7 +36,7 @@ namespace BrainGames.Views
 
         async void Compare_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushModalAsync(new NavigationPage(new DSStatsPage()));
+            await Navigation.PushModalAsync(new NavigationPage(new LSStatsComparePage()));
         }
     }
 }

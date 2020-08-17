@@ -85,6 +85,7 @@ namespace BrainGames.Models
             public string SessionId { get; set; }
             public string datetime { get; set; }
             public int trialnum { get; set; }
+            public int blocknum { get; set; }
             public double reactiontime { get; set; }
             public double avgrt { get; set; }
             public int boxes { get; set; }

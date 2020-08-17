@@ -22,12 +22,22 @@ namespace BrainGames.Views
         {
             ViewModel = new RTStatsViewModel();
             InitializeComponent();
+            if (ViewModel.Compare)
+            {
+                ToolbarItems.Add(new ToolbarItem { Text = "Compare", Order = ToolbarItemOrder.Secondary, Priority = 1 });
+                ToolbarItems[1].Clicked += Compare_Clicked;
+            }
         }
 
 
         async void Return_Clicked(object sender, EventArgs e)
         {
             await Navigation.PopModalAsync();
+        }
+
+        async void Compare_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushModalAsync(new NavigationPage(new RTStatsComparePage()));
         }
     }
 }

@@ -25,8 +25,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchArch>x86_64</MtouchArch>
-    <MtouchLink>None</MtouchLink>
+    <MtouchLink>SdkOnly</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
+    <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -183,7 +184,7 @@
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <ItemGroup>
     <ProjectReference Include="..\BrainGames\BrainGames.csproj">
-      <Project>{454D147A-51F4-41A7-8501-9F9AA45079AC}</Project>
+      <Project>{025E0281-88AF-4B1A-8861-BA0E1E36510B}</Project>
       <Name>BrainGames</Name>
     </ProjectReference>
   </ItemGroup>

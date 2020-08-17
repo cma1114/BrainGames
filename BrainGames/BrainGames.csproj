@@ -29,6 +29,21 @@
     <Compile Update="Views\ITStatsPage.xaml.cs">
       <DependentUpon>ITStatsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\RTStatsComparePage.xaml.cs">
+      <DependentUpon>RTStatsComparePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\LSStatsComparePage.xaml.cs">
+      <DependentUpon>LSStatsComparePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\DSStatsComparePage.xaml.cs">
+      <DependentUpon>DSStatsComparePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ITStatsComparePage.xaml.cs">
+      <DependentUpon>ITStatsComparePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\StroopStatsComparePage.xaml.cs">
+      <DependentUpon>StroopStatsComparePage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
