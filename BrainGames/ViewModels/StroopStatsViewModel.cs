@@ -145,8 +145,13 @@ namespace BrainGames.ViewModels
 
         public StroopStatsViewModel()
         {
+            if (App.mum.GameShares.Where(x => x.game == "Stroop")?.Count() > 0) Compare = true;
+
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema"); }
-            catch (Exception ex) {; }
+            catch (Exception ex)
+            {
+                ;
+            }
             if (ur != null && ur.Count() > 0)
             {
                 TrialsByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1).ToList();

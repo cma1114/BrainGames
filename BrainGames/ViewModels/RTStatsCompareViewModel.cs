@@ -22,7 +22,7 @@ namespace BrainGames.ViewModels
             if (ur != null && ur.Count() > 0)
             {
                 bestscore1 = ur.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 1 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min();
-                bestscore2 = ur.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 2 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min();
+                bestscore2 = ur.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 2 && x.cor == true && x.reactiontime > 0).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min();
                 bestscore4 = ur.Where(x => x.boxes == 4 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 4 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min();
                 avgscore1 = ur.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 1 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 1 && x.cor == true).Count();
                 avgscore2 = ur.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 2 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 2 && x.cor == true).Count();

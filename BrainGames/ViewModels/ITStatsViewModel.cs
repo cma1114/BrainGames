@@ -120,6 +120,8 @@ namespace BrainGames.ViewModels
 
         public ITStatsViewModel()
         {
+            if (App.mum.GameShares.Where(x => x.game == "IT")?.Count() > 0) Compare = true;
+
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)

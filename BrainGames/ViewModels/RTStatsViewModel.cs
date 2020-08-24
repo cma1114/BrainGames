@@ -142,6 +142,8 @@ namespace BrainGames.ViewModels
 
         public RTStatsViewModel()
         {
+            if (App.mum.GameShares.Where(x => x.game == "RT")?.Count() > 0) Compare = true;
+
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)

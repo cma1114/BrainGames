@@ -163,6 +163,8 @@ namespace BrainGames.ViewModels
 
         public DSStatsViewModel()
         {
+            if (App.mum.GameShares.Where(x => x.game == "DS")?.Count() > 0) Compare = true;
+
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)

@@ -443,13 +443,14 @@ namespace BrainGames.Utility
         private async void LoadGameShare(SQLiteAsyncConnection db)
         {
             bool dbexception = false;
-            while (IsBusy)
-            {
-                ;
-            }
+            /*            while (IsBusy)
+                        {
+                            ;
+                        }
 
-            IsBusy = true;
+                        IsBusy = true;*/
             #region GameShare
+            var BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
             try
             {
                 var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
@@ -463,23 +464,8 @@ namespace BrainGames.Utility
                 {
                     do
                     {
-                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId2%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%201$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
-                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
-                        for (int j = 0; j < untypedItems.Count(); j++)
-                        {
-                            BGSharingUserRecords.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
-                        }
-                    } while (untypedItems.Count() > 0);
-                }
-                catch (Exception ex)
-                {
-                    ;
-                }
-                try
-                {
-                    do
-                    {
-                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId1%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%201$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        untypedItems = await bguserrecord.ReadAsync("$filter=(UserId1%20eq%20'" + Settings.UserId + "'%20or%20UserId2%20eq%20'" + Settings.UserId + "')%20and%20Accepted%20eq%201&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+//                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId2%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%201&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
                         //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
                         for (int j = 0; j < untypedItems.Count(); j++)
                         {
@@ -498,10 +484,11 @@ namespace BrainGames.Utility
             }
             if (BGSharingUserRecords.Count() > 0)
             {
-                has_notifications = true;
                 List<string> userids = BGSharingUserRecords.Select(x => x.UserId1).Distinct().ToList();
+                userids.AddRange(BGSharingUserRecords.Select(x => x.UserId2).Distinct().ToList());
                 foreach (string userid in userids)
                 {
+                    if (userid == Settings.UserId) continue;
                     try
                     {
                         var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
@@ -527,7 +514,7 @@ namespace BrainGames.Utility
             }
             #endregion
 
-            IsBusy = false;
+//            IsBusy = false;
         }
 
         private async Task<GameShare> LoadGameShareStats(string screenname, string game, string userid)
@@ -535,6 +522,8 @@ namespace BrainGames.Utility
             GameShare gs = new GameShare();
             gs.Screenname = screenname;
             gs.game = game;
+            gs.avgscore = new List<double>();
+            gs.bestscore = new List<double>();
             switch (game)
             {
                 case "RT":
@@ -566,7 +555,10 @@ namespace BrainGames.Utility
                             ;
                         }
                     }
-                    catch (Exception ex) {; }
+                    catch (Exception ex)
+                    {
+                        ;
+                    }
                     gs.bestscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 1 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
                     gs.bestscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 2 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
                     gs.bestscore.Add(BGRTOtherUserRecords.Where(x => x.boxes == 4 && x.cor == true).Count() < 5 ? 0 : BGRTOtherUserRecords.Where(x => x.boxes == 4 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
@@ -1428,7 +1420,6 @@ namespace BrainGames.Utility
 
         public async Task<bool> CheckInvitations()
         {
-            BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
             try
             {
                 var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");

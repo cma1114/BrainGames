@@ -8,6 +8,7 @@
              mc:Ignorable="d"
              x:Class="BrainGames.Views.StroopStatsPage"
              Title="Stroop Effect Stats">
+
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Return" Clicked="Return_Clicked" />
     </ContentPage.ToolbarItems>
