@@ -24,5 +24,6 @@ namespace BrainGames.Services
         Task<DataSchemas.UserSchema> UpdateUserEntryAsync(DataSchemas.UserSchema entry);
         Task<DataSchemas.SharingUsersSchema> AddSharingEntryAsync(DataSchemas.SharingUsersSchema entry);
         Task<DataSchemas.SharingUsersSchema> UpdateSharingEntryAsync(DataSchemas.SharingUsersSchema entry);
+        Task<DataSchemas.UserFeedbackSchema> AddUserFeedbackEntryAsync(DataSchemas.UserFeedbackSchema entry);
     }
 }

@@ -34,18 +34,18 @@
                 <Label x:Name="crtLabel" Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Avg Cor RT: " FontSize="Small" Margin="0,0"/>
             </Grid>
             <skia:SKGLView x:Name="canvasView" Grid.Row="1" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0,0" PaintSurface="OnPainting"/>
-            <Button Grid.Row="2" HeightRequest="100" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0"
+            <Button Grid.Row="2" HeightRequest="100" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
                 Command="{Binding ReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready" BackgroundColor="Green"/>
-            <Button Grid.Row="2" HeightRequest="100" Clicked="ReactButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0"
+            <Button Grid.Row="2" HeightRequest="100" Clicked="ReactButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
                 IsVisible="{Binding ShowReact1}" Text="React"/>
             <Grid Grid.Row="2" IsVisible="{Binding ShowReact2}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding LeftButtonCommand}"
+                <Button Grid.Column="0" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding LeftButtonCommand}" Style="{StaticResource buttonStyle}"
                     IsVisible="{Binding ShowReact2}" Text="Left"/>
-                <Button Grid.Column="1" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding RightButtonCommand}"
+                <Button Grid.Column="1" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding RightButtonCommand}" Style="{StaticResource buttonStyle}"
                     IsVisible="{Binding ShowReact2}" Text="Right"/>
             </Grid>
             <Grid Grid.Row="2" IsVisible="{Binding ShowReact4}">
@@ -67,13 +67,13 @@
                     IsVisible="{Binding ShowReact4}" Text="3"/>
                 <Button Grid.Row="1" Grid.Column="1" HeightRequest="75" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button4Command}"
                     IsVisible="{Binding ShowReact4}" Text="4"/>-->
-                <Button Grid.Row="0" Grid.Column="0" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button1Command}"
+                <Button Grid.Row="0" Grid.Column="0" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button1Command}" Style="{StaticResource buttonStyle}"
                     IsVisible="{Binding ShowReact4}" Text="1"/>
-                <Button Grid.Row="0" Grid.Column="1" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button2Command}"
+                <Button Grid.Row="0" Grid.Column="1" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button2Command}" Style="{StaticResource buttonStyle}"
                     IsVisible="{Binding ShowReact4}" Text="2"/>
-                <Button Grid.Row="0" Grid.Column="2" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button3Command}"
+                <Button Grid.Row="0" Grid.Column="2" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button3Command}" Style="{StaticResource buttonStyle}"
                     IsVisible="{Binding ShowReact4}" Text="3"/>
-                <Button Grid.Row="0" Grid.Column="3" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button4Command}"
+                <Button Grid.Row="0" Grid.Column="3" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding Button4Command}" Style="{StaticResource buttonStyle}"
                     IsVisible="{Binding ShowReact4}" Text="4"/>
             </Grid>
         </Grid>

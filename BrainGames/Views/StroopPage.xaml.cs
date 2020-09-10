@@ -43,6 +43,7 @@ namespace BrainGames.Views
 
         public StroopPage()
         {
+            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new StroopViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);

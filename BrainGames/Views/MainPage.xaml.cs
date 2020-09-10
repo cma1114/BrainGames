@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using XF.Material.Forms.UI.Dialogs;
 using Xamarin.Forms.Xaml;
 
 using BrainGames.Models;
@@ -22,7 +23,12 @@ namespace BrainGames.Views
 
             MasterBehavior = MasterBehavior.Popover;
 
-            MenuPages.Add((int)MenuItemType.Play, (NavigationPage)Detail);
+//////            MenuPages.Add((int)MenuItemType.Play, (NavigationPage)Detail);
+
+            masterPage.listView.ItemSelected += OnItemSelected;
+            this.IsPresentedChanged += OnPresentedChanged;
+
+
             /*
             IsPresentedChanged += (sender, args) =>
             {
@@ -35,6 +41,83 @@ namespace BrainGames.Views
                 }
             };*/
             //IsPresentedChanged += CheckNotifications;
+        }
+
+        private void OnPresentedChanged(object sender, EventArgs e)
+        {
+            if (this.IsPresented)
+            {
+                App.AnalyticsService.TrackEvent("SideNavView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
+            }
+        }
+
+        private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            var item = e.SelectedItem as MasterPageItem;
+
+            if (item != null)
+            {
+                if (item.TargetType == null)
+                {
+                    App.AnalyticsService.TrackEvent("FeedbackClick", new Dictionary<string, string> {
+                        { "Type", "MenuSelection" },
+                        { "UserID", Settings.UserId.ToString() }
+                    });
+                    OnFeedbackSelected();
+                }
+                else if (item.TargetType.Name == nameof(InvitePage))
+                {
+                    App.AnalyticsService.TrackEvent("InvitePageClick", new Dictionary<string, string> {
+                        { "Type", "MenuSelection" },
+                        { "UserID", Settings.UserId.ToString()}
+                    });
+                    Detail = new NavigationPage((Page)Activator.CreateInstance(item.TargetType));//, _purchaseService));
+                }
+                else if (item.TargetType.Name == nameof(InvitationsPage))
+                {
+                    App.AnalyticsService.TrackEvent("InvitationsPageClick", new Dictionary<string, string> {
+                        { "Type", "MenuSelection" },
+                        { "UserID", Settings.UserId.ToString()}
+                    });
+                    if (/*Settings.ActiveSubscription ==*/ true)
+                    {
+                        Detail = new NavigationPage((Page)Activator.CreateInstance(item.TargetType));
+                    }
+                    else
+                    {
+//                        OnDiagramsSelected();
+                    }
+                }
+                else
+                {
+                    App.AnalyticsService.TrackEvent(item.Title.Replace(" ", "") + "Click", new Dictionary<string, string> {
+                        { "Type", "MenuSelection" },
+                        { "UserID", Settings.UserId.ToString()}
+                    });
+                    Detail = new NavigationPage((Page)Activator.CreateInstance(item.TargetType));
+                }
+                masterPage.listView.SelectedItem = null;
+                IsPresented = false;
+            }
+        }
+
+        private async void OnFeedbackSelected()
+        {
+            var feedbackView = new Controls.FeedbackView();
+            var input = await MaterialDialog.Instance
+                                            .ShowCustomContentAsync(view: feedbackView,
+                                                                    title: "Feedback",
+                                                                    message: "We'd love to hear your thoughts:",
+                                                                    confirmingText: "Send",
+                                                                    configuration: App.GetMaterialAlertDialogConfiguration());
+            if (input.HasValue && input.Value) // send feedback
+            {
+                var text = feedbackView.FeedbackEditor.Text;
+                MasterUtilityModel.WriteUF("0", "", "", text);
+            }
         }
 
         public void CheckNotifications(object sender, EventArgs args)

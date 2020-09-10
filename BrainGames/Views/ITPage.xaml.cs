@@ -65,20 +65,11 @@ namespace BrainGames.Views
 
         public ITPage()
         {
+            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new ITViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
 //            fpsLabel.SetBinding(Label.TextProperty, new Binding("Value", source: stimdurtext));
-        }
-
-        async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
-        {
-            var item = args.SelectedItem as Item;
-            if (item == null)
-                return;
-
-            await Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
-
         }
 
         async void Stats_Clicked(object sender, EventArgs e)

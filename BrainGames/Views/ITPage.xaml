@@ -41,11 +41,11 @@
         </Grid>
         <!--        <skia:SKCanvasView x:Name="canvasView" Grid.Row="1" PaintSurface="OnPainting"/>-->
         <skia:SKGLView x:Name="canvasView" Grid.Row="1" Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" PaintSurface="OnPainting"/>
-        <Button Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" 
+        <Button Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" Style="{StaticResource buttonStyle}"
                 Command="{Binding ReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
-        <Button Grid.Row="2" Grid.Column="0" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="LeftButton_Clicked" Command="{Binding LeftButtonCommand}"
+        <Button Grid.Row="2" Grid.Column="0" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="LeftButton_Clicked" Command="{Binding LeftButtonCommand}" Style="{StaticResource buttonStyle}"
                 IsVisible="{Binding IsRunning}" Text="Left"/>
-        <Button Grid.Row="2" Grid.Column="1" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="RightButton_Clicked" Command="{Binding RightButtonCommand}"
+        <Button Grid.Row="2" Grid.Column="1" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="RightButton_Clicked" Command="{Binding RightButtonCommand}" Style="{StaticResource buttonStyle}"
                 IsVisible="{Binding IsRunning}" Text="Right"/>
     </Grid>    
 </ContentPage>

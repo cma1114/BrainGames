@@ -10,7 +10,6 @@ namespace BrainGames.Models
 {
     public abstract class DataSchemas
     {
-
         public class UserSchema
         {
             [PrimaryKey, JsonProperty("id")]
@@ -58,6 +57,18 @@ namespace BrainGames.Models
             public double ScreenHeight { get; set; }
             public double ScreenWidth { get; set; }
             public double ScreenDensity { get; set; }
+        }
+
+        public class UserFeedbackSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string DeviceId { get; set; }
+            public string UserId { get; set; }
+            public string datetime { get; set; }
+            public string rating { get; set; }
+            public string feedback { get; set; }
+            public string context { get; set; }
         }
 
         public class ITGameRecordSchema

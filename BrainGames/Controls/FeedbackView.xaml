@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BrainGames.Controls.FeedbackView">
+    <StackLayout Margin="0"
+                 Orientation="Vertical"
+                 BackgroundColor="Transparent">
+        <Editor x:Name="FeedbackEditor"
+                x:FieldModifier="Public"
+                Placeholder="Enter feedback here"
+                Keyboard="Default"
+                BackgroundColor="Transparent"
+                PlaceholderColor="#99FFFFFF"
+                TextColor="White"
+                FontSize="Small"
+                FontFamily="{x:StaticResource FontFamily.RobotoRegular}"
+                HeightRequest="200"/>
+        <View HeightRequest="1"
+              BackgroundColor="{x:StaticResource Secondary}">
+            <View.IsVisible>
+                <OnPlatform x:TypeArguments="x:Boolean">
+                    <On Platform="iOS" Value="True"/>
+                    <On Platform="Android" Value="False"/>
+                </OnPlatform>
+            </View.IsVisible>
+        </View>
+    </StackLayout>
+</ContentView>

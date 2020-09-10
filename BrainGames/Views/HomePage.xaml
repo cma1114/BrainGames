@@ -3,59 +3,108 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              mc:Ignorable="d"
+             NavigationPage.HasNavigationBar="True"
+             Title="Brain Games"
+             ios:Page.UseSafeArea="True"
              x:Class="BrainGames.Views.HomePage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style TargetType="Label">
+                <Setter Property="Font">
+                    <OnPlatform x:TypeArguments="Font">
+                        <On Platform="Android" Value="16"/>
+                        <On Platform="iOS" Value="16"/>
+                    </OnPlatform>
+                </Setter>
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="Font">
+                    <OnPlatform x:TypeArguments="Font">
+                        <On Platform="Android" Value="12"/>
+                        <On Platform="iOS" Value="18"/>
+                    </OnPlatform>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
     <ContentPage.Content>
-        <StackLayout>
+        <StackLayout Padding="0,16,0,0" Margin="20,0">
             <Button x:Name="ITButton"
+                                  FontSize="Medium"
                                   FontFamily="{StaticResource FontFamily.RobotoMedium}"
                                   FontAttributes="Bold"
-                                  TextColor="{Binding Secondary}"
+                                  TextColor="{StaticResource Tertiary}"
                                   Text="Inspection Time"
-                                  Margin="0"
-                                  BackgroundColor="Transparent"
+                                  Margin="4"
+                                  HeightRequest="54"
+                                  BackgroundColor="Transparent" 
+                                  BorderColor="{StaticResource Primary}"
+                                  BorderWidth="1"
+                                  CornerRadius="32"
                                   VerticalOptions="Fill"
-                                  HorizontalOptions="CenterAndExpand"
+                                  HorizontalOptions="FillAndExpand"
                                   Clicked="ITPressed"/>
             <Button x:Name="RTButton"
+                                  FontSize="Medium"
                                   FontFamily="{StaticResource FontFamily.RobotoMedium}"
                                   FontAttributes="Bold"
-                                  TextColor="{Binding Secondary}"
+                                  TextColor="{StaticResource Tertiary}"
                                   Text="Reaction Time"
-                                  Margin="0"
-                                  BackgroundColor="Transparent"
+                                  Margin="4"
+                                  HeightRequest="54"
+                                  BackgroundColor="Transparent" 
+                                  BorderColor="{StaticResource Primary}"
+                                  BorderWidth="1"
+                                  CornerRadius="32"
                                   VerticalOptions="Fill"
-                                  HorizontalOptions="CenterAndExpand"
+                                  HorizontalOptions="FillAndExpand"
                                   Clicked="RTPressed"/>
             <Button x:Name="StroopButton"
+                                  FontSize="Medium"
                                   FontFamily="{StaticResource FontFamily.RobotoMedium}"
                                   FontAttributes="Bold"
-                                  TextColor="{Binding Secondary}"
+                                  TextColor="{StaticResource Tertiary}"
                                   Text="Stroop Effect"
-                                  Margin="0"
-                                  BackgroundColor="Transparent"
+                                  Margin="4"
+                                  HeightRequest="54"
+                                  BackgroundColor="Transparent" 
+                                  BorderColor="{StaticResource Primary}"
+                                  BorderWidth="1"
+                                  CornerRadius="32"
                                   VerticalOptions="Fill"
-                                  HorizontalOptions="CenterAndExpand"
+                                  HorizontalOptions="FillAndExpand"
                                   Clicked="StroopPressed"/>
             <Button x:Name="DSButton"
+                                  FontSize="Medium"
                                   FontFamily="{StaticResource FontFamily.RobotoMedium}"
                                   FontAttributes="Bold"
-                                  TextColor="{Binding Secondary}"
+                                  TextColor="{StaticResource Tertiary}"
                                   Text="Digit Span"
-                                  Margin="0"
-                                  BackgroundColor="Transparent"
+                                  Margin="4"
+                                  HeightRequest="54"
+                                  BackgroundColor="Transparent" 
+                                  BorderColor="{StaticResource Primary}"
+                                  BorderWidth="1"
+                                  CornerRadius="32"
                                   VerticalOptions="Fill"
-                                  HorizontalOptions="CenterAndExpand"
+                                  HorizontalOptions="FillAndExpand"
                                   Clicked="DSPressed"/>
             <Button x:Name="LSButton"
+                                  FontSize="Medium"
                                   FontFamily="{StaticResource FontFamily.RobotoMedium}"
                                   FontAttributes="Bold"
-                                  TextColor="{Binding Secondary}"
+                                  TextColor="{StaticResource Tertiary}"
                                   Text="Location Span"
-                                  Margin="0"
-                                  BackgroundColor="Transparent"
+                                  Margin="4"
+                                  HeightRequest="54"
+                                  BackgroundColor="Transparent" 
+                                  BorderColor="{StaticResource Primary}"
+                                  BorderWidth="1"
+                                  CornerRadius="32"
                                   VerticalOptions="Fill"
-                                  HorizontalOptions="CenterAndExpand"
+                                  HorizontalOptions="FillAndExpand"
                                   Clicked="LSPressed"/>
         </StackLayout>
     </ContentPage.Content>

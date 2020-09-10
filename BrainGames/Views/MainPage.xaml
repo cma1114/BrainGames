@@ -8,7 +8,8 @@
             x:Class="BrainGames.Views.MainPage">
 
     <MasterDetailPage.Master>
-        <views:MenuPage />
+<!--        <views:MenuPage />-->
+        <views:MasterPage x:Name="masterPage" />
     </MasterDetailPage.Master>
 
     <MasterDetailPage.Detail>

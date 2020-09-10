@@ -3,12 +3,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:mtrl="clr-namespace:XF.Material.Forms.Resources;assembly=XF.Material"
+             xmlns:mtrltypo="clr-namespace:XF.Material.Forms.Resources.Typography;assembly=XF.Material"
              mc:Ignorable="d"
              x:Class="BrainGames.App">
 
     <Application.Resources>
-        <Color x:Key="Primary">#387B85</Color>
-        <Color x:Key="Secondary">#8BBCE0</Color>
+        <ResourceDictionary>
+            <Color x:Key="Primary">#387B85</Color>
+            <Color x:Key="Secondary">#8BBCE0</Color>
+            <Color x:Key="Tertiary">#DE000000</Color>
+            <Color x:Key="NavigationPrimary">#387B85</Color>
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
+                <Setter Property="BarTextColor" Value="{StaticResource Secondary}" />
+            </Style>
+            <Style x:Key="buttonStyle" TargetType="Button">
+                <Setter Property="CornerRadius" Value="0" />
+            </Style>
+            <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+                <Setter Property="BackgroundColor" Value="LightGray" />
+            </Style>
+        </ResourceDictionary>
+
         <OnPlatform x:Key="FontFamily.RobotoRegular"
                     x:TypeArguments="x:String"
                     Android="fonts/RobotoRegular.ttf#Roboto-Regular"
@@ -17,23 +34,38 @@
                     x:TypeArguments="x:String"
                     Android="fonts/RobotoMedium.ttf#Roboto-Medium"
                     iOS="Roboto-Medium"/>
-        <ResourceDictionary>
-            <!--Global Styles-->
-            <Color x:Key="NavigationPrimary">#2196F3</Color>
-            <Style TargetType="NavigationPage">
-                <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
-                <Setter Property="BarTextColor" Value="White" />
-            </Style>
-            <Color x:Key="PrimaryColor">#0078D7</Color>
-            <Color x:Key="SecondaryColor">#FFB900</Color>
-            <Color x:Key="TertiaryColor">#00A4EF</Color>
-            <Color x:Key="QuaternaryColor">#7FBA00</Color>
-            <Color x:Key="QuinaryColor">#F25022</Color>
+        <mtrltypo:MaterialFontConfiguration x:Key="Material.Font"
+                                            Body1="{StaticResource FontFamily.RobotoRegular}"
+                                            Body2="{StaticResource FontFamily.RobotoRegular}"
+                                            Button="{StaticResource FontFamily.RobotoMedium}"
+                                            Caption="{StaticResource FontFamily.RobotoRegular}"
+                                            H1="{StaticResource FontFamily.RobotoRegular}"
+                                            H2="{StaticResource FontFamily.RobotoRegular}"
+                                            H3="{StaticResource FontFamily.RobotoRegular}"
+                                            H4="{StaticResource FontFamily.RobotoRegular}"
+                                            H5="{StaticResource FontFamily.RobotoRegular}"
+                                            H6="{StaticResource FontFamily.RobotoMedium}"
+                                            Overline="{StaticResource FontFamily.RobotoRegular}"
+                                            Subtitle1="{StaticResource FontFamily.RobotoRegular}"
+                                            Subtitle2="{StaticResource FontFamily.RobotoMedium}"/>
 
-            <Color x:Key="TextColor">#1d1d1d</Color>
-            <Color x:Key="SecondaryTextColor">#ffffff</Color>
+        <mtrl:MaterialColorConfiguration x:Key="Material.Color"
+                                         Background="#EAEAEA"
+                                         Error="#B00020"
+                                         OnBackground="#000000"
+                                         OnError="#FFFFFF"
+                                         OnPrimary="#FFFFFF"
+                                         OnSecondary="#FFFFFF"
+                                         OnSurface="#000000"
+                                         Primary="#387B85"
+                                         PrimaryVariant="#000000"
+                                         Secondary="#8BBCE0"
+                                         SecondaryVariant="#001229"
+                                         Surface="#FFFFFF"/>
 
-        </ResourceDictionary>
+        <mtrl:MaterialConfiguration x:Key="Material.Configuration"
+                                    ColorConfiguration="{StaticResource Material.Color}"
+                                    FontConfiguration="{StaticResource Material.Font}"/>
     </Application.Resources>
     
 </Application>

@@ -155,5 +155,12 @@ namespace BrainGames.Services
 
             return response;
         }
+        public async Task<DataSchemas.UserFeedbackSchema> AddUserFeedbackEntryAsync(DataSchemas.UserFeedbackSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bguserfeedback");
+            var response = await SendRequestAsync<DataSchemas.UserFeedbackSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
     }
 }
