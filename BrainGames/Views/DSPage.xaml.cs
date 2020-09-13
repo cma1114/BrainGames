@@ -39,7 +39,6 @@ namespace BrainGames.Views
 
         public DSPage()
         {
-            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new DSViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);

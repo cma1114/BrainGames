@@ -10,6 +10,7 @@
              Title="Stroop Effect"
              x:Name="StroopEffectPage"
              Visual="Material">
+
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
     </ContentPage.ToolbarItems>

@@ -14,8 +14,8 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
     </ContentPage.ToolbarItems>
-
-    <Grid>
+    <ContentPage.Content>
+        <Grid>
         <Grid.Resources>
             <converters:InverseBoolConverter x:Key="not"/>
         </Grid.Resources>
@@ -48,4 +48,5 @@
         <Button Grid.Row="2" Grid.Column="1" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="RightButton_Clicked" Command="{Binding RightButtonCommand}" Style="{StaticResource buttonStyle}"
                 IsVisible="{Binding IsRunning}" Text="Right"/>
     </Grid>    
+    </ContentPage.Content>
 </ContentPage>

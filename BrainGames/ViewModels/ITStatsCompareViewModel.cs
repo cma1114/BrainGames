@@ -69,5 +69,21 @@ namespace BrainGames.ViewModels
             return es;
         }
 
+        public Chart AvgCorITChart => new BarChart()
+        {
+            Margin = 10,
+            Entries = GetCompetitors(true),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
+        };
+
+        public Chart EstCorITChart => new BarChart()
+        {
+            Margin = 10,
+            Entries = GetCompetitors(false),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
+        };
+
     }
 }

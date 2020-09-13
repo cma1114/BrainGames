@@ -574,8 +574,8 @@ namespace BrainGames.Utility
                     {
                         ;
                     }
-                    gs.avgscore.Add(BGITOtherUserRecords.Where(x => x.avgcorit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgcorit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
-                    gs.avgscore.Add(BGITOtherUserRecords.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
+                    gs.avgscore.Add(BGITOtherUserRecords.Where(x => x.avgcorit > 0).Count() == 0 ? 9999 : BGITOtherUserRecords.Where(x => x.avgcorit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgcorit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
+                    gs.avgscore.Add(BGITOtherUserRecords.Where(x => x.estit > 0).Count() == 0 ? 9999 : BGITOtherUserRecords.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
                     break;
                 case "RT":
                     List<DataSchemas.RTGameRecordSchema> BGRTOtherUserRecords = new List<DataSchemas.RTGameRecordSchema>();
@@ -649,8 +649,90 @@ namespace BrainGames.Utility
                     {
                         ;
                     }
-                    gs.avgscore.Add(Utilities.MovingAverage(BGStroopOtherUserRecords.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, ((x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()) + (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count())) / 2)).OrderBy(x => x.Item1).ToList(), 1).Last().Item2);
-                    gs.avgscore.Add(Utilities.MovingAverage(BGStroopOtherUserRecords.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1).ToList(), 1).Last().Item2);
+                    if (BGStroopOtherUserRecords.Where(x => x.cor == true && x.congruent == true).Count() > 0 && BGStroopOtherUserRecords.Where(x => x.cor == true && x.congruent == false).Count() > 0)
+                    {
+                        gs.avgscore.Add(Utilities.MovingAverage(BGStroopOtherUserRecords.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, ((x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()) + (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count())) / 2)).OrderBy(x => x.Item1).ToList(), 1).Last().Item2);
+                        gs.avgscore.Add(Utilities.MovingAverage(BGStroopOtherUserRecords.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1).ToList(), 1).Last().Item2);
+                    }
+                    else
+                    {
+                        gs.avgscore.Add(9999);
+                        gs.avgscore.Add(9999);
+                    }
+                    break;
+                case "DS":
+                    List<DataSchemas.DSGameRecordSchema> BGDSOtherUserRecords = new List<DataSchemas.DSGameRecordSchema>();
+                    try
+                    {
+                        var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                        IMobileServiceTable bguserrecord = Client.GetTable("BGDSGameRecord");
+                        JToken untypedItems;
+                        int pagesize = 50, ctr = 0;
+                        IDictionary<string, string> _headers = new Dictionary<string, string>();
+                        _headers = new Dictionary<string, string>();
+                        // TODO: Add header with auth-based token in chapter 7
+                        _headers.Add("zumo-api-version", "2.0.0");
+                        try
+                        {
+                            do
+                            {
+                                untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                                for (int j = 0; j < untypedItems.Count(); j++)
+                                {
+                                    BGDSOtherUserRecords.Add(untypedItems[j].ToObject<DataSchemas.DSGameRecordSchema>());
+                                }
+                            } while (untypedItems.Count() > 0);
+                        }
+                        catch (Exception ex)
+                        {
+                            ;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ;
+                    }
+                    gs.bestscore.Add(BGDSOtherUserRecords.Where(x => x.cor == true && x.direction == "f").Count() == 0 ? 0 : BGDSOtherUserRecords.Where(x => x.cor == true && x.direction == "f").Select(x => x.itemcnt).Max());
+                    gs.bestscore.Add(BGDSOtherUserRecords.Where(x => x.cor == true && x.direction == "b").Count() == 0 ? 0 : BGDSOtherUserRecords.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max());
+                    gs.bestscore.Add(gs.bestscore[0] == 0 ? 9999 : BGDSOtherUserRecords.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == gs.bestscore[0]).Select(x => x.ontimems + x.offtimems).Min());
+                    gs.bestscore.Add(gs.bestscore[1] == 0 ? 9999 : BGDSOtherUserRecords.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == gs.bestscore[1]).Select(x => x.ontimems + x.offtimems).Min());
+                    break;
+                case "LS":
+                    List<DataSchemas.LSGameRecordSchema> BGLSOtherUserRecords = new List<DataSchemas.LSGameRecordSchema>();
+                    try
+                    {
+                        var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                        IMobileServiceTable bguserrecord = Client.GetTable("BGLSGameRecord");
+                        JToken untypedItems;
+                        int pagesize = 50, ctr = 0;
+                        IDictionary<string, string> _headers = new Dictionary<string, string>();
+                        _headers = new Dictionary<string, string>();
+                        // TODO: Add header with auth-based token in chapter 7
+                        _headers.Add("zumo-api-version", "2.0.0");
+                        try
+                        {
+                            do
+                            {
+                                untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                                for (int j = 0; j < untypedItems.Count(); j++)
+                                {
+                                    BGLSOtherUserRecords.Add(untypedItems[j].ToObject<DataSchemas.LSGameRecordSchema>());
+                                }
+                            } while (untypedItems.Count() > 0);
+                        }
+                        catch (Exception ex)
+                        {
+                            ;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ;
+                    }
+                    gs.bestscore.Add(BGLSOtherUserRecords.Where(x => x.cor == true && x.direction == "f").Count() == 0 ? 0 : BGLSOtherUserRecords.Where(x => x.cor == true && x.direction == "f").Select(x => x.itemcnt).Max());
+                    gs.bestscore.Add(BGLSOtherUserRecords.Where(x => x.cor == true && x.direction == "b").Count() == 0 ? 0 : BGLSOtherUserRecords.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max());
+                    gs.bestscore.Add(gs.bestscore[0] == 0 ? 9999 : BGLSOtherUserRecords.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == gs.bestscore[0]).Select(x => x.ontimems + x.offtimems).Min());
+                    gs.bestscore.Add(gs.bestscore[1] == 0 ? 9999 : BGLSOtherUserRecords.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == gs.bestscore[1]).Select(x => x.ontimems + x.offtimems).Min());
                     break;
             }
             return gs;

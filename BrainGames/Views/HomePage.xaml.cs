@@ -22,6 +22,7 @@ namespace BrainGames.Views
 
         public HomePage()
         {
+            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new HomePageViewModel(Navigation);
             InitializeComponent();
 //            BindingContext = new HomePageViewModel(Navigation);

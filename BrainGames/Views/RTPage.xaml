@@ -10,6 +10,7 @@
              Title="Reaction Time"
              x:Name="ReactionTimePage"
              Visual="Material">
+
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
     </ContentPage.ToolbarItems>
