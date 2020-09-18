@@ -103,7 +103,13 @@
       "idiom": "ipad"
     },
     {
-      "filename": "ItunesArtwork@2x.png",
+      "filename" : "iTunesArtwork.png",
+      "size" : "512x512",
+      "scale" : "1x",
+      "idiom" : "ios-marketing"
+    },
+    {
+      "filename": "iTunesArtwork@2x.png",
       "size": "1024x1024",
       "scale": "1x",
       "idiom": "ios-marketing"

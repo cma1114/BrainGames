@@ -237,7 +237,7 @@ namespace BrainGames.Utility
 
             if (itgrs.Count() > 0)
             {
-                itgrs.OrderBy(x => x.datetime);
+                itgrs = itgrs.OrderBy(x => x.datetime).ToList();
                 it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
                 int i = itgrs.Count() - 1;
                 while (i >= 0 && itgrs[i].cor == true && itgrs[i].stimtime == it_laststimtime)
@@ -279,7 +279,7 @@ namespace BrainGames.Utility
             }
             if (rtgrs.Count() > 0)
             {
-                rtgrs.OrderBy(x => x.datetime);
+                rtgrs = rtgrs.OrderBy(x => x.datetime).ToList();
                 rt_trialctr = rtgrs.Max(x => x.trialnum);
                 //                rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
                 rt_ss1_cumrt = rtgrs.Where(x => x.boxes == 1).Sum(x => x.reactiontime);
@@ -306,7 +306,7 @@ namespace BrainGames.Utility
             }
             if (stgrs.Count() > 0)
             {
-                stgrs.OrderBy(x => x.datetime);
+                stgrs = stgrs.OrderBy(x => x.datetime).ToList();
                 st_trialctr = stgrs.Max(x => x.trialnum);
                 //                rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
                 st_cortrialcnt = stgrs.Where(x => x.cor == true).Count();
@@ -334,7 +334,7 @@ namespace BrainGames.Utility
             }
             if (dsgrs.Count() > 0)
             {
-                dsgrs.OrderBy(x => x.datetime);
+                dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
                 ds_lastspan = dsgrs[dsgrs.Count() - 1].itemcnt;
                 int i = dsgrs.Count() - 1;
                 while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan)
@@ -365,7 +365,11 @@ namespace BrainGames.Utility
             }
             if (dsgrs.Count() > 0)
             {
-                dsgrs.OrderBy(x => x.datetime);
+                dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
+                foreach (DataSchemas.DSGameRecordSchema dsgr in dsgrs)
+                    {
+                    Console.WriteLine("{0}, {1}", dsgr.datetime, dsgr.itemcnt);
+                    }
                 ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
                 int i = dsgrs.Count() - 1;
                 while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan_b)
@@ -400,7 +404,7 @@ namespace BrainGames.Utility
             }
             if (lsgrs.Count() > 0)
             {
-                lsgrs.OrderBy(x => x.datetime);
+                lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
                 ls_lastspan = lsgrs[lsgrs.Count() - 1].itemcnt;
                 ls_lastgridsize_f = lsgrs[lsgrs.Count() - 1].gridsize;
                 int i = lsgrs.Count() - 1;
@@ -432,7 +436,7 @@ namespace BrainGames.Utility
             }
             if (lsgrs.Count() > 0)
             {
-                lsgrs.OrderBy(x => x.datetime);
+                lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
                 ls_lastspan_b = lsgrs[lsgrs.Count() - 1].itemcnt;
                 ls_lastgridsize_b = lsgrs[lsgrs.Count() - 1].gridsize;
                 int i = lsgrs.Count() - 1;
@@ -815,7 +819,7 @@ namespace BrainGames.Utility
                     {
                         List<DataSchemas.ITGameRecordSchema> itgrs = new List<DataSchemas.ITGameRecordSchema>();
                         itgrs = conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema");
-                        itgrs.OrderBy(x => x.datetime);
+                        itgrs = itgrs.OrderBy(x => x.datetime).ToList();
                         it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
                         int i = itgrs.Count() - 1;
                         while (i >= 0 && itgrs[i].cor == true && itgrs[i].stimtime == it_laststimtime)
@@ -953,7 +957,7 @@ namespace BrainGames.Utility
                     {
                         List<DataSchemas.RTGameRecordSchema> rtgrs = new List<DataSchemas.RTGameRecordSchema>();
                         rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
-                        rtgrs.OrderBy(x => x.datetime);
+                        rtgrs = rtgrs.OrderBy(x => x.datetime).ToList();
                         rt_trialctr = rtgrs.Max(x => x.trialnum);
                         //rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
                         rt_ss1_cumrt = rtgrs.Where(x => x.boxes == 1).Sum(x => x.reactiontime);
@@ -1076,7 +1080,7 @@ namespace BrainGames.Utility
                     {
                         List<DataSchemas.StroopGameRecordSchema> stgrs = new List<DataSchemas.StroopGameRecordSchema>();
                         stgrs = conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema");
-                        stgrs.OrderBy(x => x.datetime);
+                        stgrs = stgrs.OrderBy(x => x.datetime).ToList();
                         st_trialctr = stgrs.Max(x => x.trialnum);
                         st_cortrialcnt = stgrs.Where(x => x.cor == true).Count();
                         st_cumcorrt = stgrs.Where(x => x.cor == true).Sum(x => x.reactiontime);
@@ -1197,7 +1201,7 @@ namespace BrainGames.Utility
                     {
                         List<DataSchemas.DSGameRecordSchema> dsgrs = new List<DataSchemas.DSGameRecordSchema>();
                         dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'f'");
-                        dsgrs.OrderBy(x => x.datetime);
+                        dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
                         ds_lastspan = dsgrs[dsgrs.Count() - 1].itemcnt;
                         int i = dsgrs.Count() - 1;
                         while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan)
@@ -1218,7 +1222,7 @@ namespace BrainGames.Utility
                         ds_lastdir = "f";
 
                         dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'b'");
-                        dsgrs.OrderBy(x => x.datetime);
+                        dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
                         ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
                         i = dsgrs.Count() - 1;
                         while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan_b)
@@ -1348,7 +1352,7 @@ namespace BrainGames.Utility
                     {
                         List<DataSchemas.LSGameRecordSchema> lsgrs = new List<DataSchemas.LSGameRecordSchema>();
                         lsgrs = conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'f'");
-                        lsgrs.OrderBy(x => x.datetime);
+                        lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
                         ls_lastspan = lsgrs[lsgrs.Count() - 1].itemcnt;
                         ls_lastgridsize_f = lsgrs[lsgrs.Count() - 1].gridsize;
                         int i = lsgrs.Count() - 1;
@@ -1370,7 +1374,7 @@ namespace BrainGames.Utility
                         ls_lastdir = "f";
 
                         lsgrs = conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'b'");
-                        lsgrs.OrderBy(x => x.datetime);
+                        lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
                         ls_lastspan_b = lsgrs[lsgrs.Count() - 1].itemcnt;
                         ls_lastgridsize_b = lsgrs[lsgrs.Count() - 1].gridsize;
                         i = lsgrs.Count() - 1;
