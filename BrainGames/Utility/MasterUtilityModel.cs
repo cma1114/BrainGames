@@ -366,10 +366,6 @@ namespace BrainGames.Utility
             if (dsgrs.Count() > 0)
             {
                 dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
-                foreach (DataSchemas.DSGameRecordSchema dsgr in dsgrs)
-                    {
-                    Console.WriteLine("{0}, {1}", dsgr.datetime, dsgr.itemcnt);
-                    }
                 ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
                 int i = dsgrs.Count() - 1;
                 while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan_b)

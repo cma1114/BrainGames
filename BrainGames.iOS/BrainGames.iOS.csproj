@@ -197,6 +197,43 @@
     <ImageAsset Include="Assets.xcassets\tutorials.imageset\tutorials%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\profile.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\profile.imageset\profile%401x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\profile.imageset\profile%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\profile.imageset\profile%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invite.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invite.imageset\invite%401x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invite.imageset\invite%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invite.imageset\invite%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invitations.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invitations.imageset\invitations%401x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invitations.imageset\invitations%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\invitations.imageset\invitations%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+
     <ImageAsset Include="Assets.xcassets\AppIcon.appiconset\Icon-App-152x152%401x.png">
       <Visible>false</Visible>
     </ImageAsset>
@@ -286,5 +323,8 @@
     <Folder Include="Assets.xcassets\navmenu.imageset\" />
     <Folder Include="Assets.xcassets\settings.imageset\" />
     <Folder Include="Assets.xcassets\tutorials.imageset\" />
+    <Folder Include="Assets.xcassets\profile.imageset\" />
+    <Folder Include="Assets.xcassets\invite.imageset\" />
+    <Folder Include="Assets.xcassets\invitations.imageset\" />
   </ItemGroup>
 </Project>

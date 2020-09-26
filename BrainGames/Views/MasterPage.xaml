@@ -19,10 +19,13 @@
                                           IconSource="dashboard"
                                           TargetType="{x:Type pages:HomePage}" />
                         <pages:MasterPageItem Title="Invite Friends" 
+                                          IconSource="invite"
                                           TargetType="{x:Type pages:InvitePage}" />
                         <pages:MasterPageItem Title="View Invitations" 
+                                          IconSource="invitations"
                                           TargetType="{x:Type pages:InvitationsPage}" />
                         <pages:MasterPageItem Title="Profile" 
+                                          IconSource="profile"
                                           TargetType="{x:Type pages:ProfilePage}" />
                         <pages:MasterPageItem Title="How-To Guide" 
                                           IconSource="tutorials"

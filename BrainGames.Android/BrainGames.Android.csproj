@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -15,13 +15,14 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
+    <AndroidSupportedAbis>armeabi-v7a;arm64-v8a</AndroidSupportedAbis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,11 +33,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <AotAssemblies>false</AotAssemblies>
-    <EnableLLVM>false</EnableLLVM>
-    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-    <BundleAssemblies>false</BundleAssemblies>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -47,7 +43,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
-    <AndroidUseSharedRuntime>false</AndroidUseSharedRuntime>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -81,7 +76,7 @@
       <Version>12.0.3</Version>
     </PackageReference>
     <PackageReference Include="Rg.Plugins.Popup">
-      <Version>2.0.0.4</Version>
+      <Version>2.0.0.5</Version>
     </PackageReference>
     <PackageReference Include="SkiaSharp">
       <Version>2.80.1</Version>
@@ -105,7 +100,7 @@
       <Version>4.8.0.1364</Version>
     </PackageReference>
     <PackageReference Include="XF.Material">
-      <Version>1.7.0</Version>
+      <Version>1.7.4</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -154,10 +149,25 @@
     <AndroidResource Include="Resources\drawable-xxxhdpi\info.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\dashboard.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\settings.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\profile.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\profile.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\profile.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\profile.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\profile.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\invite.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\invite.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\invite.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\invite.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\invite.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\invitations.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\invitations.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\invitations.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\invitations.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\invitations.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BrainGames\BrainGames.csproj">
-      <Project>{454D147A-51F4-41A7-8501-9F9AA45079AC}</Project>
+      <Project>{025E0281-88AF-4B1A-8861-BA0E1E36510B}</Project>
       <Name>BrainGames</Name>
     </ProjectReference>
   </ItemGroup>
