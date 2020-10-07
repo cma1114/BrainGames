@@ -1561,7 +1561,7 @@ namespace BrainGames.Utility
                 if (BGUser != null)
                     onremote = true;
 
-                if (dbexception || (!q5.Any(x => x.Id == BGUser.Id)))//if the local db doesn't have this user, add it
+                if (onremote && (dbexception || (!q5.Any(x => x.Id == BGUser.Id))))//if the local db doesn't have this user, add it
                 {
                     try
                     {
@@ -1579,10 +1579,13 @@ namespace BrainGames.Utility
             {
                 ;
             }
+            finally
+            {
+                IsBusy = false;
+            }
             if (!onlocal) CreateUser(onremote);
             #endregion
 
-            IsBusy = false;
             //            SendToServer(conn);
         }
 

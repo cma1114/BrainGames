@@ -29,7 +29,7 @@
                                           TargetType="{x:Type pages:ProfilePage}" />
                         <pages:MasterPageItem Title="How-To Guide" 
                                           IconSource="tutorials"
-                                          TargetType="{x:Type pages:AboutPage}" />
+                                          TargetType="{x:Type pages:TutorialsPage}" />
                         <pages:MasterPageItem Title="Feedback" 
                                           IconSource="feedback"
                                           TargetType="{x:Null}" />

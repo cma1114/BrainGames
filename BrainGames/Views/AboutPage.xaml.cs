@@ -1,18 +1,28 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Input;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace BrainGames.Views
 {
-    // Learn more about making custom code visible in the Xamarin.Forms previewer
-    // by visiting https://aka.ms/xamarinforms-previewer
-    [DesignTimeVisible(false)]
-    public partial class AboutPage : ContentPage
-    {
-        public AboutPage()
-        {
-            InitializeComponent();
-        }
-    }
+	[XamlCompilation(XamlCompilationOptions.Compile)]
+	public partial class AboutPage : ContentPage
+	{
+		public AboutPage()
+		{
+			InitializeComponent();
+			BindingContext = this;
+		}
+
+
+		public ICommand OpenUrlCommand => new Command<string>((url) =>
+		{
+			Device.OpenUri(new System.Uri(url));
+		});
+	}
 }
