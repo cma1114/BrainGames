@@ -3,10 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:BrainGames"
              xmlns:controls="clr-namespace:BrainGames.Controls"
-             xmlns:material="clr-namespace:XF.Material.Forms.UI;assembly=XF.Material.Forms" 
              xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
              x:Class="BrainGames.Views.TutorialsPage"
-             BackgroundColor="GhostWhite"
+             BackgroundColor="LightGray"
              NavigationPage.HasNavigationBar="True"
              Title="How-To Guide"
              ios:Page.UseSafeArea="True"
@@ -19,8 +18,8 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Label x:Name="ObjectiveHeader" Grid.Row="0" Text = "Purpose" LineHeight="1" FontSize="Header"/>
-                    <Label x:Name="ObjectiveStatement" Grid.Row="1" LineHeight="1" FontSize="Subtitle"  HorizontalOptions="CenterAndExpand">
+                    <Label x:Name="ObjectiveHeader" Grid.Row="0" Text = "Purpose" LineHeight="1" FontSize="Header" FontAttributes="Bold"/>
+                    <Label x:Name="ObjectiveStatement" Grid.Row="1" LineHeight="1" FontSize="Body"  HorizontalOptions="CenterAndExpand">
                         <Label.FormattedText>
                             <FormattedString>
                                 <Span Text="The goal of this app is to help you improve your memory, concentration, and brain processing speed, and have fun doing it. 
@@ -66,7 +65,6 @@
                         <ColumnDefinition Width="50*"/>
                         <ColumnDefinition Width="250*"/>
                     </Grid.ColumnDefinitions>
-
                     <Grid x:Name="ITGrid" Grid.Row="0" Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -91,7 +89,6 @@
                             </Label.FormattedText>
                         </Label>
                     </Grid>
-
                     <Grid x:Name="RTGrid" Grid.Row="1" Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -111,13 +108,11 @@
                         <Label Grid.Row="1" Grid.Column="1" LineHeight="1" FontSize="Body">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="This game tests how quickly your brain sends signals from your visual cortex, through decision-making areas, to your motor cortex. You will see 1, 2, or 4 empty boxes. After some random, short period of time, an X will appear in one of the boxes. As quickly as you can, press the corresponding button. See how far you can respond. See how you decrease your reaction time with practice. Reaction time has been shown to correlate with IQ!"
-                                          />
+                                    <Span Text="This game tests how quickly your brain sends signals from your visual cortex, through decision-making areas, to your motor cortex. You will see 1, 2, or 4 empty boxes. After some random, short period of time, an X will appear in one of the boxes. As quickly as you can, press the corresponding button. See how fast you can respond. See how you decrease your reaction time with practice. Reaction time has been shown to correlate with IQ!&#10;"/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
                     </Grid>
-
                     <Grid x:Name="STGrid" Grid.Row="2" Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -137,12 +132,11 @@
                         <Label Grid.Row="1" Grid.Column="1" LineHeight="1" FontSize="Body">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="Named after the psychologist who invented it, this game is about filtering out irrelevant but salient information. It tests the cognitive control areas of your brain. You will see a color word (&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, or &quot;yellow&quot;) displayed in a certain color (red, blue, green, or yellow). The text and color will sometimes match, but sometimes not match. Your job is to press the button (r, b, g, or y) corresponding to the color of the word, NOT the text of the word.  It's hard at first, but with practice you can get better!"                                          />
+                                    <Span Text="Named after the psychologist who invented it, this game is about filtering out irrelevant but salient information. It tests the cognitive control areas of your brain. You will see a color word (&quot;red&quot;, &quot;blue&quot;, &quot;green&quot;, or &quot;yellow&quot;) displayed in a certain color (red, blue, green, or yellow). The text and color will sometimes match, but sometimes not match. Your job is to press the button (r, b, g, or y) corresponding to the color of the word, NOT the text of the word.  It's hard at first, but with practice you can get better!"/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
                     </Grid>
-
                     <Grid x:Name="DSGrid" Grid.Row="3" Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -167,7 +161,6 @@
                             </Label.FormattedText>
                         </Label>
                     </Grid>
-
                     <Grid x:Name="LSGrid" Grid.Row="4" Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -187,13 +180,11 @@
                         <Label Grid.Row="1" Grid.Column="1" LineHeight="1" FontSize="Body">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="This game is similar to Digit Span, but taxes a different part of the brain: rather than verbal areas, it activates visuospatial cortex. After the span is presented as a sequence of highlighted squares, tap the squares in the order they were highlighted (or the reverse order if playing the backward version)."
-                                          />
+                                    <Span Text="This game is similar to Digit Span, but taxes a different part of the brain: rather than verbal areas, it activates visuospatial cortex. After the span is presented as a sequence of highlighted squares, tap the squares in the order they were highlighted (or the reverse order if playing the backward version)."/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
                     </Grid>
-
                     <Grid x:Name="StatsGrid" Grid.Row="5" Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -213,13 +204,11 @@
                         <Label Grid.Row="1" Grid.Column="1" LineHeight="1" FontSize="Body">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="To see your progress, tap &quot;Stats&quot; in the upper right of each game screen."
-                                          />
+                                    <Span Text="To see your progress, tap &quot;Stats&quot; in the upper right of each game screen.&#10;"/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
                     </Grid>
-
                     <Grid x:Name="FriendsGrid" Grid.Row="6" Grid.ColumnSpan="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -239,8 +228,7 @@
                         <Label Grid.Row="1" Grid.Column="1" LineHeight="1" FontSize="Body">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="You can share your stats with friends to compare and compete. First select a screenname in &quot;Profile&quot; in the side menu. Then go to &quot;Invite Friends&quot; and invite friends (using their screenname) to share whichever games you like. They can also invite you: see any invitations from them under &quot;View Invitations&quot;. You can accept their invitations to view as many or as few games as you like. When you've shared a game with one or more friends (you've accepted their invitation or they've accepted yours), you'll see a &quot;Compare&quot; link on the game page, that when you click will show you how you stack up against them."
-                                          />
+                                    <Span Text="You can share your stats with friends to compare and compete. First select a screenname in &quot;Profile&quot; in the side menu. Then go to &quot;Invite Friends&quot; and invite friends (using their screenname) to share whichever games you like. They can also invite you: see any invitations from them under &quot;View Invitations&quot;. You can accept their invitations to view as many or as few games as you like. When you've shared a game with one or more friends (you've accepted their invitation or they've accepted yours), you'll see a &quot;Compare&quot; link on the game page, that when you click will show you how you stack up against them."/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>

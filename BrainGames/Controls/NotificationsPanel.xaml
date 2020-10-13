@@ -14,11 +14,11 @@
                 HorizontalOptions="CenterAndExpand" />
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" HeightRequest="80" Clicked="GoButton_Clicked" HorizontalOptions="FillAndExpand" Text="Go to Invitations page to view"/>
-                <Button Grid.Column="1" HeightRequest="80" Clicked="CancelButton_Clicked" HorizontalOptions="FillAndExpand" Text="Not now"/>
+                <Button Grid.Column="0" HeightRequest="80" Clicked="GoButton_Clicked" HorizontalOptions="StartAndExpand" Text="Go to Invitations page to view"/>
+                <Button Grid.Column="1" HeightRequest="80" Clicked="CancelButton_Clicked" HorizontalOptions="End" Text="Not now"/>
             </Grid>
         </StackLayout>
     </StackLayout>

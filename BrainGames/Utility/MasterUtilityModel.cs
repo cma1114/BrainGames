@@ -1538,7 +1538,7 @@ namespace BrainGames.Utility
             try
             {
                 q5 = t_q5.Result;
-                if (q5 != null) 
+                if (q5?.Count() > 0) 
                     onlocal = true;
             }
             catch (Exception ex)
@@ -1557,9 +1557,11 @@ namespace BrainGames.Utility
                 // TODO: Add header with auth-based token in chapter 7
                 _headers.Add("zumo-api-version", "2.0.0");
                 untypedItems = await bgsessions.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'", _headers);
-                BGUser = untypedItems[0].ToObject<DataSchemas.UserSchema>();
-                if (BGUser != null)
+                if (untypedItems.Count() > 0)
+                {
+                    BGUser = untypedItems[0].ToObject<DataSchemas.UserSchema>();
                     onremote = true;
+                }
 
                 if (onremote && (dbexception || (!q5.Any(x => x.Id == BGUser.Id))))//if the local db doesn't have this user, add it
                 {
@@ -1583,7 +1585,10 @@ namespace BrainGames.Utility
             {
                 IsBusy = false;
             }
-            if (!onlocal) CreateUser(onremote);
+            if (!onlocal)
+            {
+                CreateUser(onremote);
+            }
             #endregion
 
             //            SendToServer(conn);

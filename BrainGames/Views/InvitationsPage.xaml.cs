@@ -144,10 +144,10 @@ namespace BrainGames.Views
                             new ColumnDefinition()
                         }
                     };
-                    var b = new Button { Text = "Accept Selected", WidthRequest = 100, HorizontalOptions = LayoutOptions.Center, IsEnabled = GamesToAccept};
+                    var b = new Button { Text = "Accept Selected", HorizontalOptions = LayoutOptions.CenterAndExpand, IsEnabled = GamesToAccept};
                     b.Clicked += AcceptButtonPressed;
                     g.Children.Add(b, 0, 0);
-                    b = new Button { Text = "Reject All", WidthRequest = 100, HorizontalOptions = LayoutOptions.Center };
+                    b = new Button { Text = "Reject All", HorizontalOptions = LayoutOptions.CenterAndExpand };
                     b.Clicked += RejectButtonPressed;
                     g.Children.Add(b, 1, 0);
                     sl.Children.Add(g);
