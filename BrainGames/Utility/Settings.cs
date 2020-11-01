@@ -20,6 +20,7 @@ namespace BrainGames.Utility
         #region Setting Constants
 
         private const string UserIdKey = "userid_key";
+//        private static readonly string UserIdDefault = "-1";
         private static readonly string UserIdDefault = "123";
 
         private const string ScreennameKey = "screenname_key";
@@ -36,6 +37,9 @@ namespace BrainGames.Utility
 
         private const string IT_CorTrialsKey = "it_cortrials_key";
         private static readonly int IT_CorTrialsDefault = 0;
+
+        private const string AutoIncrementKey = "autoincrement_key";
+        private static readonly bool AutoIncrementDefault = true;
 
         private const string ActiveSubscriptionKey = "activesubscription_key";
         private static readonly bool ActiveSubscriptionDefault = false;
@@ -115,6 +119,19 @@ namespace BrainGames.Utility
                 AppSettings.AddOrUpdateValue(IT_CorTrialsKey, value);
             }
         }
+
+        public static bool AutoIncrement
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(AutoIncrementKey, AutoIncrementDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(AutoIncrementKey, value);
+            }
+        }
+
 
         public static bool ActiveSubscription
         {

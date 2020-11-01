@@ -12,32 +12,23 @@ using Xamarin.Forms.Xaml;
 namespace BrainGames.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class InvitationsPage : ContentPage
+    public partial class ManageSharingPage : ContentPage
     {
         public InvitationsViewModel viewModel;
 
-        public static readonly BindableProperty GamesToAcceptProperty = BindableProperty.Create(nameof(GamesToAccept), typeof(bool), typeof(HomePage), true, BindingMode.TwoWay);
-        public bool GamesToAccept
+        void EditButtonPressed(object sender, EventArgs e)
         {
-            get => (bool)GetValue(GamesToAcceptProperty);
-            set => SetValue(GamesToAcceptProperty, value);
-        }
-        void OnCheckChanged(object sender, CheckedChangedEventArgs e)
-        {
-            foreach (Element el in (((Grid)((CheckBox)sender).Parent)).Children)
+            foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
             {
                 if (el.GetType() != typeof(CheckBox)) continue;
-                //                if (e.Value)
-                if (((CheckBox)el).IsChecked)
-                {
-                    GamesToAccept = true;
-                    return;
-                }
+                ((CheckBox)el).IsEnabled = true;
             }
-            GamesToAccept = false;
+            ((Button)sender).IsVisible = false;
+            ((Button)((Grid)((Button)sender).Parent).Children[1]).IsVisible = true;
+            ((Button)((Grid)((Button)sender).Parent).Children[2]).IsVisible = true;
         }
 
-        void AcceptButtonPressed(object sender, EventArgs e)
+        void SaveButtonPressed(object sender, EventArgs e)
         {
             string games = "", game = "";
             foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
@@ -52,42 +43,47 @@ namespace BrainGames.Views
                     if (game == "Location Span") games += "LS,";
                 }
             }
-            if (games.Length == 0)
+            if (games.Length > 0) games = games.Substring(0, games.Length - 1);
+
+            string screenname = ((Label)(((StackLayout)((Button)sender).Parent.Parent)).Children[0]).Text;
+            viewModel.UpdateInvite(screenname, games);
+
+            foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
             {
-                DisplayAlert("No Games Selected!", "Select one or more games to share.", "OK");
-                return;
+                if (el.GetType() != typeof(CheckBox)) continue;
+                ((CheckBox)el).IsEnabled = false;
             }
-            games = games.Substring(0, games.Length - 1);
-            string screenname = ((Label)(((StackLayout)((Button)sender).Parent.Parent)).Children[0]).Text.Split(new[] { " has " }, StringSplitOptions.None)[0];
-            viewModel.AcceptInvite(screenname, games);
-            GamesToAccept = false;
-            DisplayAlert("Sharing started!", "You are now sharing with " + screenname + ".", "OK");
-            ((Frame)((Button)sender).Parent.Parent.Parent).BackgroundColor = Color.LightGreen;
+            ((Button)sender).IsVisible = false;
+            ((Button)((Grid)((Button)sender).Parent).Children[0]).IsVisible = true;
+            ((Button)((Grid)((Button)sender).Parent).Children[2]).IsVisible = false;
         }
 
-        void RejectButtonPressed(object sender, EventArgs e)
+        void CancelButtonPressed(object sender, EventArgs e)
         {
-            string screenname = ((Label)(((StackLayout)((Button)sender).Parent.Parent)).Children[0]).Text.Split(new[] { " has " }, StringSplitOptions.None)[0];
-            viewModel.RejectInvite(screenname);
-            DisplayAlert("Sharing rejected!", "You have declined to share with " + screenname + ".", "OK");
-            ((Frame)((Button)sender).Parent.Parent.Parent).BackgroundColor = Color.OrangeRed;
+            foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
+            {
+                if (el.GetType() != typeof(CheckBox)) continue;
+                ((CheckBox)el).IsEnabled = false;
+            }
+            ((Button)sender).IsVisible = false;
+            ((Button)((Grid)((Button)sender).Parent).Children[0]).IsVisible = true;
+            ((Button)((Grid)((Button)sender).Parent).Children[1]).IsVisible = false;
         }
 
-        public InvitationsPage()
+        public ManageSharingPage()
         {
             viewModel = new InvitationsViewModel();
             BindingContext = this;
             InitializeComponent();
-            if (App.mum.has_notifications == false)
+            if (App.mum.Shares.Count() == 0)
             {
-                lblHeadline.Text = "No Outstanding Invitations";
+                lblHeadline.Text = "You are not currently sharing games with anyone; head on over to the Invite Friends page and send some invitations to get started!";
             }
             else
             {
-                lblHeadline.Text = "Invitations";
-                foreach (SharingUserRecord su in App.mum.Invitations)
+                lblHeadline.Text = "Sharing";
+                foreach (SharingUserRecord su in App.mum.Shares)
                 {
-//                    su.games.Sort();
                     var f = new Frame
                     {
                         HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -100,13 +96,13 @@ namespace BrainGames.Views
                     var sl = new StackLayout { VerticalOptions = LayoutOptions.Center };
                     var l = new Label
                     {
-                        Text = su.Screenname + " has invited you to share the following game" + (su.games.Count() > 1 ? "s" : "") + ":",
-                        TextColor = Color.Black 
+                        Text = su.Screenname,
+                        TextColor = Color.Black
                     };
                     sl.Children.Add(l);
-                    var g = new Grid 
-                    { 
-                        Margin = new Thickness(20,35,20,20),
+                    var g = new Grid
+                    {
+                        Margin = new Thickness(20, 35, 20, 20),
                         ColumnDefinitions =
                         {
                             new ColumnDefinition { Width = new GridLength(0.75, GridUnitType.Star) },
@@ -139,8 +135,7 @@ namespace BrainGames.Views
                                 break;
                         }
                         g.Children.Add(lbl, 0, i);
-                        var chk = new CheckBox { IsChecked = true, VerticalOptions = LayoutOptions.Center };
-                        chk.CheckedChanged += OnCheckChanged;
+                        var chk = new CheckBox { IsChecked = su.status[i], VerticalOptions = LayoutOptions.Center, IsEnabled = false };
                         g.Children.Add(chk, 1, i);
                     }
                     sl.Children.Add(g);
@@ -153,11 +148,14 @@ namespace BrainGames.Views
                             new ColumnDefinition()
                         }
                     };
-                    var b = new Button { Text = "Accept Selected", HorizontalOptions = LayoutOptions.CenterAndExpand, IsEnabled = GamesToAccept};
-                    b.Clicked += AcceptButtonPressed;
+                    var b = new Button { Text = "Edit", HorizontalOptions = LayoutOptions.CenterAndExpand };
+                    b.Clicked += EditButtonPressed;
                     g.Children.Add(b, 0, 0);
-                    b = new Button { Text = "Reject All", HorizontalOptions = LayoutOptions.CenterAndExpand };
-                    b.Clicked += RejectButtonPressed;
+                    b = new Button { Text = "Save", HorizontalOptions = LayoutOptions.CenterAndExpand, IsVisible = false };
+                    b.Clicked += SaveButtonPressed;
+                    g.Children.Add(b, 0, 0);
+                    b = new Button { Text = "Cancel", HorizontalOptions = LayoutOptions.CenterAndExpand, IsVisible = false };
+                    b.Clicked += CancelButtonPressed;
                     g.Children.Add(b, 1, 0);
                     sl.Children.Add(g);
                     f.Content = sl;

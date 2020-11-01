@@ -18,5 +18,9 @@ namespace BrainGames.ViewModels
             App.mum.RespondShare(screenname, "");
         }
 
+        public void UpdateInvite(string screenname, string games)
+        {
+            App.mum.UpdateShare(screenname, games);
+        }
     }
 }

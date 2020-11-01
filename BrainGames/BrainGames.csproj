@@ -47,6 +47,9 @@
     <Compile Update="Views\StroopStatsComparePage.xaml.cs">
       <DependentUpon>StroopStatsComparePage.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Views\ManageSharingPage.xaml.cs">
+      <DependentUpon>ManageSharingPage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

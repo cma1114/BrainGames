@@ -42,7 +42,7 @@ namespace BrainGames.ViewModels
         {
             if (first)
             {
-                await App.mum.CheckInvitations();
+                await App.mum.CheckSharing();
                 first = false;
             }
 

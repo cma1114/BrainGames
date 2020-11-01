@@ -151,21 +151,36 @@ namespace BrainGames.ViewModels
                 TrialsByDay = ur.GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);
                 TrialsByWeek = ur.GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);
                 TrialsByMonth = ur.GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, (double)x.Count())).OrderBy(x => x.Item1);
-                AvgCorRTByDay1 = ur.Where(x => x.boxes == 1).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.cor == true).Count(),1))).OrderBy(x => x.Item1);
-                AvgCorRTByWeek1 = ur.Where(x => x.boxes == 1).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByMonth1 = ur.Where(x => x.boxes == 1).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByDay2 = ur.Where(x => x.boxes == 2).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.cor == true).Count(), 1))).OrderBy(x => x.Item1);
-                AvgCorRTByWeek2 = ur.Where(x => x.boxes == 2).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByMonth2 = ur.Where(x => x.boxes == 2).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByDay4 = ur.Where(x => x.boxes == 4).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.cor == true).Count(), 1))).OrderBy(x => x.Item1);
-                AvgCorRTByWeek4 = ur.Where(x => x.boxes == 4).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByMonth4 = ur.Where(x => x.boxes == 4).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByStimType = ur.GroupBy(x => x.boxes).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorPctByStimType = ur.GroupBy(x => x.boxes).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByStimLoc2 = ur.Where(x => x.boxes == 2).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorPctByStimLoc2 = ur.Where(x => x.boxes == 2).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
-                AvgCorRTByStimLoc4 = ur.Where(x => x.boxes == 4).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
-                AvgCorPctByStimLoc4 = ur.Where(x => x.boxes == 4).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
+                if (ur.Where(x => x.boxes == 1 && x.cor == true).Count() > 0)
+                {
+                    AvgCorRTByDay1 = ur.Where(x => x.boxes == 1).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.cor == true).Count(), 1))).OrderBy(x => x.Item1);
+                    AvgCorRTByWeek1 = ur.Where(x => x.boxes == 1).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTByMonth1 = ur.Where(x => x.boxes == 1).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTOverTime1 = FillTimeList(AvgCorRTByDay1.ToList(), AvgCorRTByWeek1.ToList(), AvgCorRTByMonth1.ToList());
+                }
+                if (ur.Where(x => x.boxes == 2 && x.cor == true).Count() > 0)
+                {
+                    AvgCorRTByDay2 = ur.Where(x => x.boxes == 2).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.cor == true).Count(), 1))).OrderBy(x => x.Item1);
+                    AvgCorRTByWeek2 = ur.Where(x => x.boxes == 2).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTByMonth2 = ur.Where(x => x.boxes == 2).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTByStimLoc2 = ur.Where(x => x.boxes == 2).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorPctByStimLoc2 = ur.Where(x => x.boxes == 2).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTOverTime2 = FillTimeList(AvgCorRTByDay2.ToList(), AvgCorRTByWeek2.ToList(), AvgCorRTByMonth2.ToList());
+                }
+                if (ur.Where(x => x.boxes == 4 && x.cor == true).Count() > 0)
+                {
+                    AvgCorRTByDay4 = ur.Where(x => x.boxes == 4).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / Math.Max(x.Where(y => y.cor == true).Count(), 1))).OrderBy(x => x.Item1);
+                    AvgCorRTByWeek4 = ur.Where(x => x.boxes == 4).GroupBy(x => DateTime.Parse(x.datetime).StartOfWeek(DayOfWeek.Monday)).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTByMonth4 = ur.Where(x => x.boxes == 4).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTByStimLoc4 = ur.Where(x => x.boxes == 4).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorPctByStimLoc4 = ur.Where(x => x.boxes == 4).GroupBy(x => x.corbox).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
+                    AvgCorRTOverTime4 = FillTimeList(AvgCorRTByDay4.ToList(), AvgCorRTByWeek4.ToList(), AvgCorRTByMonth4.ToList());
+                }
+                if (ur.Where(x => x.cor == true).Count() > 0)
+                {
+                    AvgCorRTByStimType = ur.GroupBy(x => x.boxes).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Sum(y => y.reactiontime) / x.Where(y => y.cor == true).Count())).OrderBy(x => x.Item1);
+                    AvgCorPctByStimType = ur.GroupBy(x => x.boxes).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Where(y => y.cor == true || y.cor == false).Count())).OrderBy(x => x.Item1);
+                }
 //                CumAvgCorRTByTrial = ur.Where(x => x.avgrt > 0).OrderByDescending(x => x.datetime).Select(x => x.avgrt).Take(30);
 
                 CumAvgCorRTByDay1 = MovingAverage(ur.Where(x => x.avgrt > 0 && x.boxes == 1).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgrt) / x.Count())).OrderBy(x => x.Item1).ToList(), 1);
@@ -179,9 +194,6 @@ namespace BrainGames.ViewModels
                 CumAvgCorRTByMonth4 = MovingAverage(ur.Where(x => x.avgrt > 0 && x.boxes == 4).GroupBy(x => DateTime.Parse(new DateTime(DateTime.Parse(x.datetime).Year, DateTime.Parse(x.datetime).Month, 1).ToString())).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgrt) / x.Count())).OrderBy(x => x.Item1).ToList(), 1);
 
 
-                AvgCorRTOverTime1 = FillTimeList(AvgCorRTByDay1.ToList(), AvgCorRTByWeek1.ToList(), AvgCorRTByMonth1.ToList());
-                AvgCorRTOverTime2 = FillTimeList(AvgCorRTByDay2.ToList(), AvgCorRTByWeek2.ToList(), AvgCorRTByMonth2.ToList());
-                AvgCorRTOverTime4 = FillTimeList(AvgCorRTByDay4.ToList(), AvgCorRTByWeek4.ToList(), AvgCorRTByMonth4.ToList());
                 CumAvgCorRTOverTime1 = CumAvgCorRTByDay1.Count() <= 30 ? CumAvgCorRTByDay1.ToList() : (CumAvgCorRTByWeek1.Count() <= 30 ? CumAvgCorRTByWeek1.ToList() : CumAvgCorRTByMonth1.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
                 CumAvgCorRTOverTime2 = CumAvgCorRTByDay2.Count() <= 30 ? CumAvgCorRTByDay2.ToList() : (CumAvgCorRTByWeek2.Count() <= 30 ? CumAvgCorRTByWeek2.ToList() : CumAvgCorRTByMonth2.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
                 CumAvgCorRTOverTime4 = CumAvgCorRTByDay4.Count() <= 30 ? CumAvgCorRTByDay4.ToList() : (CumAvgCorRTByWeek4.Count() <= 30 ? CumAvgCorRTByWeek4.ToList() : CumAvgCorRTByMonth4.ToList());//FillTimeList(CumAvgCorITByDay, CumAvgCorITByWeek, CumAvgCorITByMonth);
@@ -245,13 +257,13 @@ namespace BrainGames.ViewModels
 */
         public Chart CumAvgCorRTOverTime1Chart => new LineChart()
         {
-            Entries = CumAvgCorRTOverTime1.Select(CreateDayEntryMS),
+            Entries = CumAvgCorRTOverTime1.Count == 0 ? null : CumAvgCorRTOverTime1.Select(CreateDayEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = (float)Math.Max(0, CumAvgCorRTOverTime1.Min(x => x.Item2) - CumAvgCorRTOverTime1.Min(x => x.Item2) * sf),
-            MaxValue = (float)(CumAvgCorRTOverTime1.Max(x => x.Item2) + CumAvgCorRTOverTime1.Max(x => x.Item2) * sf)
+            MinValue = CumAvgCorRTOverTime1.Count == 0 ? 0 : (float)Math.Max(0, CumAvgCorRTOverTime1.Min(x => x.Item2) - CumAvgCorRTOverTime1.Min(x => x.Item2) * sf),
+            MaxValue = CumAvgCorRTOverTime1.Count == 0 ? 0 : (float)(CumAvgCorRTOverTime1.Max(x => x.Item2) + CumAvgCorRTOverTime1.Max(x => x.Item2) * sf)
         };
 
         public Chart CumAvgCorRTOverTime2Chart => new LineChart()
@@ -261,7 +273,7 @@ namespace BrainGames.ViewModels
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = (float)Math.Max(0, (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Min(x => x.Item2)) - (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Min(x => x.Item2)) * sf),
+            MinValue = CumAvgCorRTOverTime2.Count == 0 ? 0 : (float)Math.Max(0, (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Min(x => x.Item2)) - (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Min(x => x.Item2)) * sf),
             MaxValue = (float)((CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Max(x => x.Item2)) + (CumAvgCorRTOverTime2.Count == 0 ? 0 : CumAvgCorRTOverTime2.Max(x => x.Item2)) * sf)
         };
 
@@ -292,62 +304,80 @@ namespace BrainGames.ViewModels
                                                 SKColors.Indigo, SKColors.LightGreen, SKColors.Orange, SKColors.Olive, SKColors.Aquamarine, SKColors.Black };
             int idx = 1;
             List<ChartEntry> es = new List<ChartEntry>();
-            if (AvgCorRTByDay1.Last().Item1 == DateTime.Today && AvgCorRTByDay1.Last().Item2 > 0)
+            if (AvgCorRTByDay1?.Count() > 0)
             {
-                ChartEntry e = new ChartEntry((float)AvgCorRTByDay1.Last().Item2);
-                e.ValueLabel = Math.Round(AvgCorRTByDay1.Last().Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                e.Label = "Today: 1";
-                e.Color = clrs[0];
-                es.Add(e);
+                if (AvgCorRTByDay1.Last().Item1 == DateTime.Today && AvgCorRTByDay1.Last().Item2 > 0)
+                {
+                    ChartEntry e = new ChartEntry((float)AvgCorRTByDay1.Last().Item2);
+                    e.ValueLabel = Math.Round(AvgCorRTByDay1.Last().Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    e.Label = "Today: 1";
+                    e.Color = clrs[0];
+                    es.Add(e);
+                }
             }
-            if (AvgCorRTByDay2.Last().Item1 == DateTime.Today && AvgCorRTByDay2.Last().Item2 > 0)
+            if (AvgCorRTByDay2?.Count() > 0)
             {
-                ChartEntry e = new ChartEntry((float)AvgCorRTByDay2.Last().Item2);
-                e.ValueLabel = Math.Round(AvgCorRTByDay2.Last().Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                e.Label = "Today: 2";
-                e.Color = clrs[0];
-                es.Add(e);
+                if (AvgCorRTByDay2.Last().Item1 == DateTime.Today && AvgCorRTByDay2.Last().Item2 > 0)
+                {
+                    ChartEntry e = new ChartEntry((float)AvgCorRTByDay2.Last().Item2);
+                    e.ValueLabel = Math.Round(AvgCorRTByDay2.Last().Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    e.Label = "Today: 2";
+                    e.Color = clrs[0];
+                    es.Add(e);
+                }
             }
-            if (AvgCorRTByDay4.Last().Item1 == DateTime.Today && AvgCorRTByDay4.Last().Item2 > 0)
+            if (AvgCorRTByDay4?.Count() > 0)
             {
-                ChartEntry e = new ChartEntry((float)AvgCorRTByDay4.Last().Item2);
-                e.ValueLabel = Math.Round(AvgCorRTByDay4.Last().Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                e.Label = "Today: 4";
-                e.Color = clrs[0];
-                es.Add(e);
+                if (AvgCorRTByDay4.Last().Item1 == DateTime.Today && AvgCorRTByDay4.Last().Item2 > 0)
+                {
+                    ChartEntry e = new ChartEntry((float)AvgCorRTByDay4.Last().Item2);
+                    e.ValueLabel = Math.Round(AvgCorRTByDay4.Last().Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    e.Label = "Today: 4";
+                    e.Color = clrs[0];
+                    es.Add(e);
+                }
             }
-            var v = AvgCorRTByDay1.Where(x => x.Item2 > 0 && x.Item1 != DateTime.Today).OrderBy(x => x.Item2).Take(1);
-            foreach (Tuple<DateTime, double> rec in v)
+            if (AvgCorRTByDay1?.Count() > 0)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                e.Label = "1: " + rec.Item1.ToString("M/dd");
-                e.Color = clrs[idx++];
-                es.Add(e);
+                var v = AvgCorRTByDay1.Where(x => x.Item2 > 0 && x.Item1 != DateTime.Today).OrderBy(x => x.Item2).Take(1);
+                foreach (Tuple<DateTime, double> rec in v)
+                {
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    e.Label = "1: " + rec.Item1.ToString("M/dd");
+                    e.Color = clrs[idx++];
+                    es.Add(e);
+                }
             }
-            v = AvgCorRTByDay2.Where(x => x.Item2 > 0 && x.Item1 != DateTime.Today).OrderBy(x => x.Item2).Take(1);
-            foreach (Tuple<DateTime, double> rec in v)
+            if (AvgCorRTByDay2?.Count() > 0)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                e.Label = "2: " + rec.Item1.ToString("M/dd");
-                e.Color = clrs[idx++];
-                es.Add(e);
+                var v = AvgCorRTByDay2.Where(x => x.Item2 > 0 && x.Item1 != DateTime.Today).OrderBy(x => x.Item2).Take(1);
+                foreach (Tuple<DateTime, double> rec in v)
+                {
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    e.Label = "2: " + rec.Item1.ToString("M/dd");
+                    e.Color = clrs[idx++];
+                    es.Add(e);
+                }
             }
-            v = AvgCorRTByDay4.Where(x => x.Item2 > 0 && x.Item1 != DateTime.Today).OrderBy(x => x.Item2).Take(1);
-            foreach (Tuple<DateTime, double> rec in v)
+            if (AvgCorRTByDay4?.Count() > 0)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                e.Label = "4: " + rec.Item1.ToString("M/dd");
-                e.Color = clrs[idx++];
-                es.Add(e);
+                var v = AvgCorRTByDay4.Where(x => x.Item2 > 0 && x.Item1 != DateTime.Today).OrderBy(x => x.Item2).Take(1);
+                foreach (Tuple<DateTime, double> rec in v)
+                {
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    e.Label = "4: " + rec.Item1.ToString("M/dd");
+                    e.Color = clrs[idx++];
+                    es.Add(e);
+                }
             }
             return es;
         }
@@ -420,22 +450,25 @@ namespace BrainGames.ViewModels
         private List<ChartEntry> GetAvgCorRTByStimLoc2()
         {
             List<ChartEntry> es = new List<ChartEntry>();
-            foreach (Tuple<int, double> rec in AvgCorRTByStimLoc2)
+            if (AvgCorRTByStimLoc2 != null)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                if (rec.Item1 == 0)
+                foreach (Tuple<int, double> rec in AvgCorRTByStimLoc2)
                 {
-                    e.Label = "Left box";
-                    e.Color = SKColor.Parse("#2c3e50");
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    if (rec.Item1 == 0)
+                    {
+                        e.Label = "Left box";
+                        e.Color = SKColor.Parse("#2c3e50");
+                    }
+                    else
+                    {
+                        e.Label = "Right box";
+                        e.Color = SKColor.Parse("#77d065");
+                    }
+                    es.Add(e);
                 }
-                else
-                {
-                    e.Label = "Right box";
-                    e.Color = SKColor.Parse("#77d065");
-                }
-                es.Add(e);
             }
             return es;
         }
@@ -443,22 +476,25 @@ namespace BrainGames.ViewModels
         private List<ChartEntry> GetAvgCorPctByStimLoc2()
         {
             List<ChartEntry> es = new List<ChartEntry>();
-            foreach (Tuple<int, double> rec in AvgCorPctByStimLoc2)
+            if (AvgCorPctByStimLoc2 != null)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
-                e.TextColor = SKColors.Black;
-                if (rec.Item1 == 0)
+                foreach (Tuple<int, double> rec in AvgCorPctByStimLoc2)
                 {
-                    e.Label = "Left box";
-                    e.Color = SKColor.Parse("#2c3e50");
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
+                    e.TextColor = SKColors.Black;
+                    if (rec.Item1 == 0)
+                    {
+                        e.Label = "Left box";
+                        e.Color = SKColor.Parse("#2c3e50");
+                    }
+                    else
+                    {
+                        e.Label = "Right box";
+                        e.Color = SKColor.Parse("#77d065");
+                    }
+                    es.Add(e);
                 }
-                else
-                {
-                    e.Label = "Right box";
-                    e.Color = SKColor.Parse("#77d065");
-                }
-                es.Add(e);
             }
             return es;
         }
@@ -466,32 +502,35 @@ namespace BrainGames.ViewModels
         private List<ChartEntry> GetAvgCorRTByStimLoc4()
         {
             List<ChartEntry> es = new List<ChartEntry>();
-            foreach (Tuple<int, double> rec in AvgCorRTByStimLoc4)
+            if (AvgCorRTByStimLoc4 != null)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                if (rec.Item1 == 0)
+                foreach (Tuple<int, double> rec in AvgCorRTByStimLoc4)
                 {
-                    e.Label = "Upper left box";
-                    e.Color = SKColor.Parse("#2c3e50");
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    if (rec.Item1 == 0)
+                    {
+                        e.Label = "Upper left box";
+                        e.Color = SKColor.Parse("#2c3e50");
+                    }
+                    else if (rec.Item1 == 1)
+                    {
+                        e.Label = "Upper right box";
+                        e.Color = SKColor.Parse("#77d065");
+                    }
+                    else if (rec.Item1 == 2)
+                    {
+                        e.Label = "Lower left box";
+                        e.Color = SKColor.Parse("#b455b6");
+                    }
+                    else
+                    {
+                        e.Label = "Lower right box";
+                        e.Color = SKColor.Parse("#3498db");
+                    }
+                    es.Add(e);
                 }
-                else if (rec.Item1 == 1)
-                {
-                    e.Label = "Upper right box";
-                    e.Color = SKColor.Parse("#77d065");
-                }
-                else if (rec.Item1 == 2)
-                {
-                    e.Label = "Lower left box";
-                    e.Color = SKColor.Parse("#b455b6");
-                }
-                else 
-                {
-                    e.Label = "Lower right box";
-                    e.Color = SKColor.Parse("#3498db");
-                }
-                es.Add(e);
             }
             return es;
         }
@@ -499,32 +538,35 @@ namespace BrainGames.ViewModels
         private List<ChartEntry> GetAvgCorPctByStimLoc4()
         {
             List<ChartEntry> es = new List<ChartEntry>();
-            foreach (Tuple<int, double> rec in AvgCorPctByStimLoc4)
+            if (AvgCorPctByStimLoc4 != null)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
-                e.TextColor = SKColors.Black;
-                if (rec.Item1 == 0)
+                foreach (Tuple<int, double> rec in AvgCorPctByStimLoc4)
                 {
-                    e.Label = "Upper left box";
-                    e.Color = SKColor.Parse("#2c3e50");
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
+                    e.TextColor = SKColors.Black;
+                    if (rec.Item1 == 0)
+                    {
+                        e.Label = "Upper left box";
+                        e.Color = SKColor.Parse("#2c3e50");
+                    }
+                    else if (rec.Item1 == 1)
+                    {
+                        e.Label = "Upper right box";
+                        e.Color = SKColor.Parse("#77d065");
+                    }
+                    else if (rec.Item1 == 2)
+                    {
+                        e.Label = "Lower left box";
+                        e.Color = SKColor.Parse("#b455b6");
+                    }
+                    else
+                    {
+                        e.Label = "Lower right box";
+                        e.Color = SKColor.Parse("#3498db");
+                    }
+                    es.Add(e);
                 }
-                else if (rec.Item1 == 1)
-                {
-                    e.Label = "Upper right box";
-                    e.Color = SKColor.Parse("#77d065");
-                }
-                else if (rec.Item1 == 2)
-                {
-                    e.Label = "Lower left box";
-                    e.Color = SKColor.Parse("#b455b6");
-                }
-                else
-                {
-                    e.Label = "Lower right box";
-                    e.Color = SKColor.Parse("#3498db");
-                }
-                es.Add(e);
             }
             return es;
         }

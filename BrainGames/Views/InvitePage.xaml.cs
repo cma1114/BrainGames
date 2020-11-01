@@ -16,6 +16,13 @@ namespace BrainGames.Views
             set => SetValue(InviteOkayProperty, value);
         }
 
+        public static readonly BindableProperty CanSelectProperty = BindableProperty.Create(nameof(CanSelect), typeof(bool), typeof(HomePage), false, BindingMode.TwoWay);
+        public bool CanSelect
+        {
+            get => (bool)GetValue(CanSelectProperty);
+            set => SetValue(CanSelectProperty, value);
+        }
+
         public InviteViewModel viewModel;
 
         public InvitePage()
@@ -84,8 +91,10 @@ namespace BrainGames.Views
             {
                 ScreennameEntry.Placeholder = "Screenname";
                 ScreennameEntry.IsEnabled = false;
+                ScreennameEntry.BackgroundColor = Color.LightGreen;
                 ScreennameLabel.Text = "";
-                foreach (Element el in this.FindByName<Grid>("GameGrid").Children)
+                CanSelect = true;
+/*                foreach (Element el in this.FindByName<Grid>("GameGrid").Children)
                 {
                     if (el.GetType() != typeof(CheckBox)) continue;
                     //                if (e.Value)
@@ -94,7 +103,7 @@ namespace BrainGames.Views
                         InviteOkay = true;
                         return;
                     }
-                }
+                }*/
 
             }
             else

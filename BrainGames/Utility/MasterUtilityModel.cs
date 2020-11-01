@@ -46,11 +46,12 @@ namespace BrainGames.Utility
 
     }
 
-    public class SharingInvitation
+    public class SharingUserRecord
     {
         public string UserId { get; set; }
         public string Screenname { get; set; }
-        public List<string> games { get; set; }
+        public List<string> games { get; set; } = new List<string>();
+        public List<bool> status { get; set; } = new List<bool>();
     }
 
     public class GameShare
@@ -60,6 +61,7 @@ namespace BrainGames.Utility
         public List<double> bestscore { get; set; }
         public List<double> avgscore { get; set; }
     }
+
 
     public class MasterUtilityModel
     {
@@ -127,9 +129,10 @@ namespace BrainGames.Utility
 
         public bool has_notifications = false;
         public List<GameShare> GameShares = new List<GameShare>();
-        public List<SharingInvitation> Invitations;
+        public List<SharingUserRecord> Invitations;
+        public List<SharingUserRecord> Shares;
+        private List<DataSchemas.SharingUsersSchema> BGSharingInvitations = new List<DataSchemas.SharingUsersSchema>();
         private List<DataSchemas.SharingUsersSchema> BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
-
         public static string DeviceId;
         object locker = new object();
         //Function to get random number
@@ -155,6 +158,24 @@ namespace BrainGames.Utility
             { // synchronize
                 return ((long)random.Next() << 32) | random.Next();
             }
+        }
+        public static int findgameshare(List<GameShare> gs, string name, string g)
+        {
+            int i = 0;
+            for (; i < gs.Count(); i++)
+            {
+                if (gs[i].Screenname == name && gs[i].game == g) return i;
+            }
+            return -1;
+        }
+        public static int findshare(List<SharingUserRecord> s, string name, string g)
+        {
+            int i = 0;
+            for (; i < s.Count(); i++)
+            {
+                if (s[i].Screenname == name && s[i].games.Contains(g)) return i;
+            }
+            return -1;
         }
 
 
@@ -466,7 +487,7 @@ namespace BrainGames.Utility
 
                         IsBusy = true;*/
             #region GameShare
-            var BGSharingUserRecords = new List<DataSchemas.SharingUsersSchema>();
+            var sharingrecs = new List<DataSchemas.SharingUsersSchema>();
             try
             {
                 var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
@@ -480,12 +501,12 @@ namespace BrainGames.Utility
                 {
                     do
                     {
-                        untypedItems = await bguserrecord.ReadAsync("$filter=(UserId1%20eq%20'" + Settings.UserId + "'%20or%20UserId2%20eq%20'" + Settings.UserId + "')%20and%20Accepted%20eq%201&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        untypedItems = await bguserrecord.ReadAsync("$filter=(UserId1%20eq%20'" + Settings.UserId + "'%20or%20UserId2%20eq%20'" + Settings.UserId + "')%20and%20Accepted1%20eq%201%20and%20Accepted2%20eq%201&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
 //                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId2%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%201&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
                         //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
                         for (int j = 0; j < untypedItems.Count(); j++)
                         {
-                            BGSharingUserRecords.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
+                            sharingrecs.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
                         }
                     } while (untypedItems.Count() > 0);
                 }
@@ -498,10 +519,10 @@ namespace BrainGames.Utility
             {
                 ;
             }
-            if (BGSharingUserRecords.Count() > 0)
+            if (sharingrecs.Count() > 0)
             {
-                List<string> userids = BGSharingUserRecords.Select(x => x.UserId1).Distinct().ToList();
-                userids.AddRange(BGSharingUserRecords.Select(x => x.UserId2).Distinct().ToList());
+                List<string> userids = sharingrecs.Select(x => x.UserId1).Distinct().ToList();
+                userids.AddRange(sharingrecs.Select(x => x.UserId2).Distinct().ToList());
                 foreach (string userid in userids)
                 {
                     if (userid == Settings.UserId) continue;
@@ -515,7 +536,7 @@ namespace BrainGames.Utility
                         // TODO: Add header with auth-based token in chapter 7
                         _headers.Add("zumo-api-version", "2.0.0");
                         untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'", _headers);
-                        List<string> games = BGSharingUserRecords.Where(x => x.UserId1 == userid || x.UserId2 == userid).Select(x => x.game).ToList();
+                        List<string> games = sharingrecs.Where(x => x.UserId1 == userid || x.UserId2 == userid).Select(x => x.game).ToList();
                         foreach (string g in games)
                         {
                             GameShare gs = await LoadGameShareStats(untypedItems[0].ToObject<DataSchemas.UserSchema>().Screenname, g, userid);
@@ -1594,7 +1615,7 @@ namespace BrainGames.Utility
             //            SendToServer(conn);
         }
 
-        public async Task<bool> CheckInvitations()
+        public async Task<bool> CheckSharing()
         {
             try
             {
@@ -1609,11 +1630,16 @@ namespace BrainGames.Utility
                 {
                     do
                     {
-                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId2%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%200%20and%20Declined%20eq%200&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
-                        //untypedItems = await bguserrecord.ReadAsync("$select=UserId");
+//                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId2%20eq%20'" + Settings.UserId + "'%20and%20Accepted%20eq%200%20and%20Declined%20eq%200&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId1%20eq%20'" + Settings.UserId + "'%20or%20UserId2%20eq%20'" + Settings.UserId + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
                         for (int j = 0; j < untypedItems.Count(); j++)
-                        {
+                        { 
                             BGSharingUserRecords.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
+                            if (BGSharingUserRecords[BGSharingUserRecords.Count() - 1].UserId2 == Settings.UserId && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Accepted2 == false && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Declined2 == false)
+                            {
+                                BGSharingInvitations.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
+                                BGSharingUserRecords.RemoveAt(BGSharingUserRecords.Count() - 1);
+                            }
                         }
                     } while (untypedItems.Count() > 0);
                 }
@@ -1626,14 +1652,55 @@ namespace BrainGames.Utility
             {
                 ;
             }
+
             if (BGSharingUserRecords.Count() > 0)
             {
-                has_notifications = true;
-                Invitations = new List<SharingInvitation>();
-                List<string> userids = BGSharingUserRecords.Select(x => x.UserId1).Distinct().ToList();
+                Shares = new List<SharingUserRecord>();
+                List<string> userids = BGSharingUserRecords.Where(x => x.Accepted1 == true && x.Accepted2 == true).Select(x => x.UserId1).Distinct().ToList();
+                userids.AddRange(BGSharingUserRecords.Where(x => x.Accepted1 == true && x.Accepted2 == true).Select(x => x.UserId2).Distinct().ToList());
+                userids = userids.Distinct().OrderBy(str => str).ToList();
+
                 foreach (string userid in userids)
                 {
-                    SharingInvitation invite = new SharingInvitation();
+                    if (userid == Settings.UserId) continue;
+                    SharingUserRecord share = new SharingUserRecord();
+                    try
+                    {
+                        var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                        IMobileServiceTable bguserrecord = Client.GetTable("BGUser");
+                        JToken untypedItems;
+                        int pagesize = 50, ctr = 0;
+                        IDictionary<string, string> _headers = new Dictionary<string, string>();
+                        // TODO: Add header with auth-based token in chapter 7
+                        _headers.Add("zumo-api-version", "2.0.0");
+                        untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'", _headers);
+                        share.UserId = userid;
+                        share.Screenname = untypedItems[0].ToObject<DataSchemas.UserSchema>().Screenname;
+                        List<Tuple<string, bool>> gameshares = BGSharingUserRecords.Where(x => x.UserId1 == userid && (x.Accepted1 == true || x.Declined1 == true)).Select(y => Tuple.Create(y.game, y.Accepted1));
+                        gameshares.AddRange(BGSharingUserRecords.Where(x => x.UserId2 == userid && (x.Accepted2 == true || x.Declined2 == true)).Select(y => Tuple.Create(y.game, y.Accepted2));
+                        gameshares = gameshares.OrderBy(x => x.Item1).ToList();
+                        for (int i = 0; i < gameshares.Count(); i++)
+                        {
+                            share.games.Add(gameshares[i].Item1);
+                            share.status.Add(gameshares[i].Item2);
+                        }
+                        Shares.Add(share);
+                    }
+                    catch (Exception ex)
+                    {
+                        ;
+                    }
+                }
+            }
+
+            if (BGSharingInvitations.Count() > 0)
+            {
+                has_notifications = true;
+                Invitations = new List<SharingUserRecord>();
+                List<string> userids = BGSharingInvitations.Select(x => x.UserId1).OrderBy(str => str).Distinct().ToList();
+                foreach (string userid in userids)
+                {
+                    SharingUserRecord invite = new SharingUserRecord();
                     try
                     {
                         var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
@@ -1646,7 +1713,7 @@ namespace BrainGames.Utility
                         untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + userid + "'", _headers);
                         invite.UserId = userid;
                         invite.Screenname = untypedItems[0].ToObject<DataSchemas.UserSchema>().Screenname;
-                        invite.games = BGSharingUserRecords.Where(x => x.UserId1 == userid).Select(x => x.game).ToList();
+                        invite.games = BGSharingInvitations.Where(x => x.UserId1 == userid).Select(x => x.game).OrderBy(str => str).ToList();
                         Invitations.Add(invite);
                     }
                     catch (Exception ex)
@@ -1655,6 +1722,7 @@ namespace BrainGames.Utility
                     }
                 }
             }
+
             return has_notifications;
         }
 
@@ -1676,6 +1744,7 @@ namespace BrainGames.Utility
                 var s = new DataSchemas.UserSchema();
                 s.Id = Guid.NewGuid().ToString();
                 s.SubscriptionId = new Guid().ToString();
+//////                if (Settings.UserId == -1) Settings.UserId = RandomNumberLong().ToString(); else
                 s.UserId = Settings.UserId;
                 s.Screenname = Settings.Screenname;
                 s.LastSubscriptionVerificationDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
@@ -1823,13 +1892,23 @@ namespace BrainGames.Utility
 
         public async static void SetShare(string user, string games)
         {
+            var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+            IMobileServiceTable bgsessions = Client.GetTable("BGSharingUsers");
+            //                IMobileServiceTable lguserfeedback_typed = Client.GetTable<LogicGame.LGUserFeedback>();
+            JToken untypedItems;
+            IDictionary<string, string> _headers = new Dictionary<string, string>();
+            // TODO: Add header with auth-based token in chapter 7
+            _headers.Add("zumo-api-version", "2.0.0");
+
             string[] garr = games.Split(',');
             foreach (string g in garr)
             {
                 var s = new DataSchemas.SharingUsersSchema();
                 s.Id = Guid.NewGuid().ToString();
-                s.Accepted = false;
-                s.Declined = false;
+                s.Accepted1 = true;
+                s.Declined1 = false;
+                s.Accepted2 = false;
+                s.Declined2 = false;
                 s.UserId1 = Settings.UserId;
                 s.UserId2 = user;
                 s.game = g;
@@ -1841,9 +1920,13 @@ namespace BrainGames.Utility
 
                 IsBusy = true;
 
-                try
+                try//no double invites
                 {
-                    await bguserinfoService.AddSharingEntryAsync(s);
+                    untypedItems = await bgsessions.ReadAsync("$filter=(UserId1%20eq%20'" + Settings.UserId + "'%20or%20UserId2%20eq%20'" + Settings.UserId + "')%20and%20(UserId1%20eq%20'" + s.UserId2 + "'%20or%20UserId2%20eq%20'" + s.UserId2 + "')%20and%20game%20eq%20'" + g + "'", _headers);
+                    if (untypedItems.Count() == 0)
+                    {
+                        await bguserinfoService.AddSharingEntryAsync(s);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -1861,7 +1944,7 @@ namespace BrainGames.Utility
             List<string> invitedgames = Invitations.Where(x => x.Screenname == screenname).ToList()[0].games;
 
             List<DataSchemas.SharingUsersSchema> requests = new List<DataSchemas.SharingUsersSchema>();
-            requests = BGSharingUserRecords.Where(x => x.UserId1 == Invitations.Where(y => y.Screenname == screenname).ToList()[0].UserId).ToList();
+            requests = BGSharingInvitations.Where(x => x.UserId1 == Invitations.Where(y => y.Screenname == screenname).ToList()[0].UserId).ToList();
 
             List<string> gs = games.Split(',').ToList();
             foreach (DataSchemas.SharingUsersSchema r in requests)
@@ -1870,9 +1953,15 @@ namespace BrainGames.Utility
                 {
                     GameShare g = await LoadGameShareStats(screenname, r.game, r.UserId1);
                     GameShares.Add(g);
-                    r.Accepted = true;
+                    r.Accepted2 = true;
+                    r.Declined2 = false;
                 }
-                else r.Declined = true;
+                else
+                {
+                    r.Accepted2 = false;
+                    r.Declined2 = true;
+                }
+
 
                 while (IsBusy)
                 {
@@ -1892,10 +1981,127 @@ namespace BrainGames.Utility
                 finally
                 {
                     IsBusy = false;
-                    BGSharingUserRecords.Remove(r);
+                    BGSharingInvitations.Remove(r);
                 }
             }
-            if (BGSharingUserRecords.Count() == 0) has_notifications = false;
+            if (BGSharingInvitations.Count() == 0) has_notifications = false;
+        }
+
+        public async void UpdateShare(string screenname, string games)
+        {
+            List<string> sharegames = Shares.Where(x => x.Screenname == screenname).ToList()[0].games;
+
+            List<DataSchemas.SharingUsersSchema> shares = new List<DataSchemas.SharingUsersSchema>();
+            List<string> gs = games.Split(',').ToList();
+            shares = BGSharingUserRecords.Where(x => x.UserId1 == Shares.Where(y => y.Screenname == screenname).ToList()[0].UserId).ToList();
+
+            foreach (DataSchemas.SharingUsersSchema r in shares)
+            {
+                if (gs.Contains(r.game))
+                {
+                    if (findgameshare(GameShares, screenname, r.game) == -1)
+                    {
+                        GameShare g = await LoadGameShareStats(screenname, r.game, r.UserId1);
+                        GameShares.Add(g);
+                    }
+                    r.Accepted1 = true;
+                    r.Declined1 = false;
+                }
+                else
+                {
+                    int idx = findgameshare(GameShares, screenname, r.game);
+                    if (idx > -1)
+                    {
+                        GameShares.RemoveAt(idx);
+                    }
+                    idx = findshare(Shares, screenname, r.game);
+                    if (idx > -1)
+                    {
+                        int idx2 = Shares[idx].games.IndexOf(r.game);
+                        Shares[idx].games.RemoveAt(idx2);
+                        Shares[idx].status.RemoveAt(idx2);
+                        if(Shares[idx].games.Count() == 0) Shares.RemoveAt(idx);
+                    }
+                    r.Accepted1 = false;
+                    r.Declined1 = true;
+                }
+
+
+                while (IsBusy)
+                {
+                    ;
+                }
+
+                IsBusy = true;
+
+                try
+                {
+                    await bguserinfoService.UpdateSharingEntryAsync(r);
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+            }
+
+            shares = BGSharingUserRecords.Where(x => x.UserId2 == Shares.Where(y => y.Screenname == screenname).ToList()[0].UserId).ToList();
+
+            foreach (DataSchemas.SharingUsersSchema r in shares)
+            {
+                if (gs.Contains(r.game))
+                {
+                    if (findgameshare(GameShares, screenname, r.game) == -1)
+                    {
+                        GameShare g = await LoadGameShareStats(screenname, r.game, r.UserId2);
+                        GameShares.Add(g);
+                    }
+                    r.Accepted2 = true;
+                    r.Declined2 = false;
+                }
+                else
+                {
+                    int idx = findgameshare(GameShares, screenname, r.game);
+                    if (idx > -1)
+                    {
+                        GameShares.RemoveAt(idx);
+                    }
+                    idx = findshare(Shares, screenname, r.game);
+                    if (idx > -1)
+                    {
+                        int idx2 = Shares[idx].games.IndexOf(r.game);
+                        Shares[idx].games.RemoveAt(idx2);
+                        Shares[idx].status.RemoveAt(idx2);
+                        if (Shares[idx].games.Count() == 0) Shares.RemoveAt(idx);
+                    }
+                    r.Accepted2 = false;
+                    r.Declined2 = true;
+                }
+
+
+                while (IsBusy)
+                {
+                    ;
+                }
+
+                IsBusy = true;
+
+                try
+                {
+                    await bguserinfoService.UpdateSharingEntryAsync(r);
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
+            }
         }
 
         public async static void WriteITGR(Guid sessionid, int trialctr, int reversalctr, double curstimdur, double empstimdur, double avgcorit, double estit, int cor_ans, bool cor)

@@ -21,10 +21,16 @@ namespace BrainGames.ViewModels
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
-                longest_f = ur.Where(x => x.cor == true && x.direction == "f").Select(x => x.itemcnt).Max();
-                longest_b = ur.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max();
-                fastest_f = ur.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == longest_f).Select(x => x.ontimems + x.offtimems).Min();
-                fastest_b = ur.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == longest_b).Select(x => x.ontimems + x.offtimems).Min();
+                if (ur.Where(x => x.cor == true && x.direction == "f").Count() > 0)
+                {
+                    longest_f = ur.Where(x => x.cor == true && x.direction == "f").Select(x => x.itemcnt).Max();
+                    fastest_f = ur.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == longest_f).Select(x => x.ontimems + x.offtimems).Min();
+                }
+                if (ur.Where(x => x.cor == true && x.direction == "b").Count() > 0)
+                {
+                    longest_b = ur.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max();
+                    fastest_b = ur.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == longest_b).Select(x => x.ontimems + x.offtimems).Min();
+                }
             }
         }
 

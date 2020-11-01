@@ -24,6 +24,7 @@ namespace BrainGames.Views
                 new HomeMenuItem {Id = MenuItemType.Invite, Title="Invite Friends" },
                 new HomeMenuItem {Id = MenuItemType.Invitations, Title="View Invitations" },
                 new HomeMenuItem {Id = MenuItemType.Profile, Title="Profile" },
+                new HomeMenuItem {Id = MenuItemType.Sharing, Title="Manage Sharing" },
                 new HomeMenuItem {Id = MenuItemType.About, Title="About" }
             };
 

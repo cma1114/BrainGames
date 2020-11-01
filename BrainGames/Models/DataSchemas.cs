@@ -36,8 +36,10 @@ namespace BrainGames.Models
             public string UserId1 { get; set; }
             public string UserId2 { get; set; }
             public string game { get; set; }
-            public bool Accepted { get; set; }
-            public bool Declined { get; set; }
+            public bool Accepted1 { get; set; }
+            public bool Declined1 { get; set; }
+            public bool Accepted2 { get; set; }
+            public bool Declined2 { get; set; }
         }
 
         public class BrainGameSessionSchema

@@ -18,6 +18,9 @@
                 <util:TextChangedBehavior />
             </SearchBar.Behaviors>
         </SearchBar>-->
+             <Button Clicked="EditButton_Clicked" HorizontalOptions="FillAndExpand" Style="{StaticResource buttonStyle}"
+                IsVisible="{Binding Editable}" Text="Edit"/>
+
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
