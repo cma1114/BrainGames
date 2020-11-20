@@ -62,13 +62,13 @@ namespace BrainGames.ViewModels
             {
                 if (fwd)
                 {
-                    e = new ChartEntry((float)gs.bestscore[0]);
-                    e.ValueLabel = gs.bestscore[0].ToString();
+                    e = new ChartEntry((float)gs.bestscores[0]);
+                    e.ValueLabel = gs.bestscores[0].ToString();
                 }
                 else
                 {
-                    e = new ChartEntry((float)gs.bestscore[1]);
-                    e.ValueLabel = gs.bestscore[1].ToString();
+                    e = new ChartEntry((float)gs.bestscores[1]);
+                    e.ValueLabel = gs.bestscores[1].ToString();
                 }
                 e.TextColor = SKColors.Black;
                 e.Label = gs.Screenname;
@@ -106,13 +106,13 @@ namespace BrainGames.ViewModels
             {
                 if (fwd)
                 {
-                    e = new ChartEntry((float)gs.bestscore[2]);
-                    e.ValueLabel = Math.Round(gs.bestscore[2], 1).ToString() + " ms";
+                    e = new ChartEntry((float)gs.bestscores[2]);
+                    e.ValueLabel = Math.Round(gs.bestscores[2], 1).ToString() + " ms";
                 }
                 else
                 {
-                    e = new ChartEntry((float)gs.bestscore[3]);
-                    e.ValueLabel = Math.Round(gs.bestscore[3], 1).ToString() + " ms";
+                    e = new ChartEntry((float)gs.bestscores[3]);
+                    e.ValueLabel = Math.Round(gs.bestscores[3], 1).ToString() + " ms";
                 }
                 e.TextColor = SKColors.Black;
                 e.Label = gs.Screenname;

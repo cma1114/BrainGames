@@ -10,6 +10,9 @@ namespace BrainGames.Models
 {
     public abstract class DataSchemas
     {
+
+        public static List<string> GameTypes = new List<string> { "IT", "RT", "Stroop", "DS", "LS" };
+
         public class UserSchema
         {
             [PrimaryKey, JsonProperty("id")]
@@ -27,6 +30,27 @@ namespace BrainGames.Models
             public double SignupScreenHeight { get; set; }
             public double SignupScreenWidth { get; set; }
             public double SignupScreenDensity { get; set; }
+        }
+
+        public class UserStatsSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId { get; set; }
+            public string game { get; set; }
+            public string avgs { get; set; }
+            public string bests { get; set; }
+        }
+
+        public class ConnectedUsersSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId1 { get; set; }
+            public string UserId2 { get; set; }
+            public bool connected { get; set; }
+            public bool blocked1 { get; set; }
+            public bool blocked2 { get; set; }
         }
 
         public class SharingUsersSchema

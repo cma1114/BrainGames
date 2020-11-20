@@ -50,6 +50,12 @@ namespace BrainGames.Views
             Init();
         }
 
+        protected override void OnDisappearing()
+        {
+            viewModel.OnDisappearing();
+            base.OnDisappearing();
+        }
+
         private SkiaTextFigure MakeWord(string w, float fsize, SKColor clr)
         {
             float tl_x, tl_y, br_x, br_y;

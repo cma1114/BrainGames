@@ -53,13 +53,13 @@ namespace BrainGames.ViewModels
             {
                 if (avg)
                 {
-                    e = new ChartEntry((float)gs.avgscore[0]);
-                    e.ValueLabel = Math.Round(gs.avgscore[0], 1).ToString() + " ms";
+                    e = new ChartEntry((float)gs.avgscores[0]);
+                    e.ValueLabel = Math.Round(gs.avgscores[0], 1).ToString() + " ms";
                 }
                 else
                 {
-                    e = new ChartEntry((float)gs.avgscore[1]);
-                    e.ValueLabel = Math.Round(gs.avgscore[1], 1).ToString() + " ms";
+                    e = new ChartEntry((float)gs.avgscores[1]);
+                    e.ValueLabel = Math.Round(gs.avgscores[1], 1).ToString() + " ms";
                 }
                 e.TextColor = SKColors.Black;
                 e.Label = gs.Screenname;

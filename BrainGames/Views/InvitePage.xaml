@@ -11,7 +11,7 @@
              Visual="Material">
     <ContentPage.Content>
         <StackLayout VerticalOptions="Center">
-            <Entry x:Name="ScreennameEntry" Placeholder="Screenname" Completed="Entry_Completed" PlaceholderColor="Olive" MaxLength="20" IsTextPredictionEnabled="false"/>
+            <Entry x:Name="ScreennameEntry" Text="{Binding ScreenName, Mode=TwoWay}" Placeholder="Screenname" TextChanged="OnTextChanged" Unfocused="OnUnfocus" Completed="Entry_Completed" PlaceholderColor="Olive" MaxLength="20" IsTextPredictionEnabled="false"/>
             <Label x:Name="ScreennameLabel" Text="Enter Screenname of user you wish to invite" TextColor="Gray" FontSize="Small"/>
             <Grid x:Name="GameGrid" Margin="20,35,20,20">
                 <Grid.ColumnDefinitions>

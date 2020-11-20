@@ -143,6 +143,12 @@ namespace BrainGames.Views
             Init();
         }
 
+        protected override void OnDisappearing()
+        {
+            viewModel.OnDisappearing();
+            base.OnDisappearing();
+        }
+
         private void Init()
         {
             if (Settings.IT_AvgCorDur > 0)

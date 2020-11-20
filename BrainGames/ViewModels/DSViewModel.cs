@@ -334,6 +334,23 @@ namespace BrainGames.ViewModels
             return true;
         }
 
+        public void OnDisappearing()
+        {
+            List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
+            catch (Exception ex) {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<double> avgs = new List<double>();
+                List<double> bests = new List<double>();
+                bests.Add(ur.Where(x => x.cor == true && x.direction == "f").Count() == 0 ? 0 : ur.Where(x => x.cor == true && x.direction == "f").Select(x => x.itemcnt).Max());
+                bests.Add(ur.Where(x => x.cor == true && x.direction == "b").Count() == 0 ? 0 : ur.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max());
+                bests.Add(bests[0] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == bests[0]).Select(x => x.ontimems + x.offtimems).Min());
+                bests.Add(bests[1] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == bests[1]).Select(x => x.ontimems + x.offtimems).Min());
+                App.mum.UpdateUserStats("DS", avgs, bests);
+            }
+        }
+
         public void ResponseButton()
         {
             if (responselist.Count() < digitlist.Count() && MatchLists() && !timedout) return; //no errors yet, and you haven't timed out

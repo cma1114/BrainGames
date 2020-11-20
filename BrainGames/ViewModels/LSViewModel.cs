@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Xamarin.Forms;
+using BrainGames.Models;
 using BrainGames.Utility;
 using BrainGames.Controls;
 
@@ -333,6 +334,23 @@ namespace BrainGames.ViewModels
                 if (responselist[i] != testlist[i].ToString()) return false;
             }
             return true;
+        }
+
+        public void OnDisappearing()
+        {
+            List<DataSchemas.LSGameRecordSchema> ur = new List<DataSchemas.LSGameRecordSchema>();
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema"); }
+            catch (Exception ex) {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<double> avgs = new List<double>();
+                List<double> bests = new List<double>();
+                bests.Add(ur.Where(x => x.cor == true && x.direction == "f").Count() == 0 ? 0 : ur.Where(x => x.cor == true && x.direction == "f").Select(x => x.itemcnt).Max());
+                bests.Add(ur.Where(x => x.cor == true && x.direction == "b").Count() == 0 ? 0 : ur.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max());
+                bests.Add(bests[0] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == bests[0]).Select(x => x.ontimems + x.offtimems).Min());
+                bests.Add(bests[1] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == bests[1]).Select(x => x.ontimems + x.offtimems).Min());
+                App.mum.UpdateUserStats("LS", avgs, bests);
+            }
         }
 
         public void ResponseButton()

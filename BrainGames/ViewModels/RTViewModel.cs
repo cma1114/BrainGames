@@ -236,6 +236,25 @@ namespace BrainGames.ViewModels
 //            MasterUtilityModel.WriteRTGR(game_session_id, trialctr, reactiontime, cumrt/trialctr, boxes, corboxes[blocktrialctr], cor);
             MasterUtilityModel.WriteRTGR(game_session_id, tctr, rt, avgrt, boxes, corbox, correct);
         }
+
+        public void OnDisappearing()
+        {
+            List<DataSchemas.RTGameRecordSchema> ur = new List<DataSchemas.RTGameRecordSchema>();
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema"); }
+            catch (Exception ex) {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<double> avgs = new List<double>();
+                List<double> bests = new List<double>();
+                bests.Add(ur.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 1 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
+                bests.Add(ur.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 2 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
+                bests.Add(ur.Where(x => x.boxes == 4 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 4 && x.cor == true).GroupBy(x => (int)Math.Ceiling(x.trialnum / 6.0)).Where(x => x.Count() >= 5).Select(x => x.Sum(y => y.reactiontime) / x.Count()).Min());
+                avgs.Add(ur.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 1 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 1 && x.cor == true).Count());
+                avgs.Add(ur.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 2 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 2 && x.cor == true).Count());
+                avgs.Add(ur.Where(x => x.boxes == 4 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 4 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 4 && x.cor == true).Count());
+                App.mum.UpdateUserStats("RT", avgs, bests);
+            }
+        }
     }
 }
 

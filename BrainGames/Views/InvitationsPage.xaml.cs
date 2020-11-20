@@ -61,8 +61,9 @@ namespace BrainGames.Views
             string screenname = ((Label)(((StackLayout)((Button)sender).Parent.Parent)).Children[0]).Text.Split(new[] { " has " }, StringSplitOptions.None)[0];
             viewModel.AcceptInvite(screenname, games);
             GamesToAccept = false;
-            DisplayAlert("Sharing started!", "You are now sharing with " + screenname + ".", "OK");
+            DisplayAlert("Sharing started!", "You are now sharing with " + screenname + ". You can modify this at any time on the Manage Sharing page.", "OK");
             ((Frame)((Button)sender).Parent.Parent.Parent).BackgroundColor = Color.LightGreen;
+            ((Frame)((Button)sender).Parent.Parent.Parent).IsEnabled = false;
         }
 
         void RejectButtonPressed(object sender, EventArgs e)
@@ -71,6 +72,7 @@ namespace BrainGames.Views
             viewModel.RejectInvite(screenname);
             DisplayAlert("Sharing rejected!", "You have declined to share with " + screenname + ".", "OK");
             ((Frame)((Button)sender).Parent.Parent.Parent).BackgroundColor = Color.OrangeRed;
+            ((Frame)((Button)sender).Parent.Parent.Parent).IsEnabled = false;
         }
 
         public InvitationsPage()
