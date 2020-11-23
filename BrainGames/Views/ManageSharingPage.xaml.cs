@@ -21,6 +21,7 @@ namespace BrainGames.Views
             foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
             {
                 if (el.GetType() != typeof(CheckBox)) continue;
+                if (((CheckBox)el).IsVisible == false) continue;
                 ((CheckBox)el).IsEnabled = true;
             }
             ((Button)sender).IsVisible = false;
@@ -34,7 +35,7 @@ namespace BrainGames.Views
             foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
             {
                 if (el.GetType() == typeof(Label)) { game = ((Label)el).Text; continue; }
-                if (el.GetType() == typeof(CheckBox) && ((CheckBox)el).IsChecked)
+                if (el.GetType() == typeof(CheckBox) && ((CheckBox)el).IsChecked && ((CheckBox)el).IsVisible)
                 {
                     if (game == "Inspection Time") games += "IT,";
                     if (game == "Reaction Time") games += "RT,";
@@ -51,6 +52,7 @@ namespace BrainGames.Views
             foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
             {
                 if (el.GetType() != typeof(CheckBox)) continue;
+                if(((CheckBox)el).IsVisible == false) continue;
                 ((CheckBox)el).IsEnabled = false;
             }
             ((Button)sender).IsVisible = false;
@@ -60,9 +62,16 @@ namespace BrainGames.Views
 
         void CancelButtonPressed(object sender, EventArgs e)
         {
+            bool shadowon = false;
             foreach (Element el in ((Grid)(((StackLayout)((Button)sender).Parent.Parent)).Children[1]).Children)
             {
                 if (el.GetType() != typeof(CheckBox)) continue;
+                if (((CheckBox)el).IsVisible == false)
+                {
+                    shadowon = ((CheckBox)el).IsChecked;
+                    continue;
+                }
+                ((CheckBox)el).IsChecked = shadowon;
                 ((CheckBox)el).IsEnabled = false;
             }
             ((Button)sender).IsVisible = false;
@@ -105,7 +114,8 @@ namespace BrainGames.Views
                         Margin = new Thickness(20, 35, 20, 20),
                         ColumnDefinitions =
                         {
-                            new ColumnDefinition { Width = new GridLength(0.75, GridUnitType.Star) },
+                            new ColumnDefinition { Width = new GridLength(1.5, GridUnitType.Star) },
+                            new ColumnDefinition { Width = new GridLength(0.25, GridUnitType.Star) },
                             new ColumnDefinition { Width = new GridLength(0.25, GridUnitType.Star) }
                         }
                     };
@@ -135,8 +145,12 @@ namespace BrainGames.Views
                                 break;
                         }
                         g.Children.Add(lbl, 0, i);
+                        var origchk = new CheckBox { IsVisible = false, IsChecked = su.status[i], VerticalOptions = LayoutOptions.Center, IsEnabled = false };
+                        g.Children.Add(origchk, 1, i);
                         var chk = new CheckBox { IsChecked = su.status[i], VerticalOptions = LayoutOptions.Center, IsEnabled = false };
                         g.Children.Add(chk, 1, i);
+                        var rb = new RadioButton { IsChecked = su.theirstatus[i], VerticalOptions = LayoutOptions.Center, IsEnabled = false };
+                        g.Children.Add(rb, 2, i);
                     }
                     sl.Children.Add(g);
                     g = new Grid

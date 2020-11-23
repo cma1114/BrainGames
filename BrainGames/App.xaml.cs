@@ -23,6 +23,8 @@ namespace BrainGames
 
         public App()
         {
+            Device.SetFlags(new string[] { "RadioButton_Experimental" });
+
             InitializeComponent();
             mum = new MasterUtilityModel();
 

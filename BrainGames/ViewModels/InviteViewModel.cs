@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
@@ -50,7 +51,9 @@ namespace BrainGames.ViewModels
 
         public void SendInvite(string games)
         {
-            MasterUtilityModel.SetShare(user2, games);
+//            MasterUtilityModel.SetShare(user2, games);
+            Thread t = new Thread(()=>App.mum.SetShare(user2, games));
+            t.Start();
         }
 
         public InviteViewModel()
