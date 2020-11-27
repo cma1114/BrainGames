@@ -90,11 +90,11 @@ namespace BrainGames.Views
         {
             centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
             centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
-
+            /*
             if (viewModel.EstSpan > 0)
             {
-                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
-            }
+                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 1).ToString("N0", CultureInfo.InvariantCulture) + " items";
+            }*/
         }
 
         async void Stats_Clicked(object sender, EventArgs e)

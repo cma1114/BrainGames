@@ -119,11 +119,14 @@ namespace BrainGames.Views
                             new ColumnDefinition { Width = new GridLength(0.25, GridUnitType.Star) }
                         }
                     };
-                    for (int i = 0; i < su.games.Count(); i++)
+                    for (int i = 0; i < DataSchemas.GameTypes.Count(); i++)
+//                    for (int i = 0; i < su.games.Count(); i++)
                     {
+                        int sidx = su.games.IndexOf(DataSchemas.GameTypes[i]);
+
                         g.RowDefinitions.Add(new RowDefinition());
                         var lbl = new Label { VerticalOptions = LayoutOptions.Center };
-                        switch (su.games[i])
+                        switch (DataSchemas.GameTypes[i]/*su.games[i]*/)
                         {
                             case "IT":
                                 lbl.Text = "Inspection Time";
@@ -145,11 +148,11 @@ namespace BrainGames.Views
                                 break;
                         }
                         g.Children.Add(lbl, 0, i);
-                        var origchk = new CheckBox { IsVisible = false, IsChecked = su.status[i], VerticalOptions = LayoutOptions.Center, IsEnabled = false };
+                        var origchk = new CheckBox { IsVisible = false, IsChecked = (sidx >= 0 ? su.status[sidx] : false), VerticalOptions = LayoutOptions.Center, IsEnabled = false };
                         g.Children.Add(origchk, 1, i);
-                        var chk = new CheckBox { IsChecked = su.status[i], VerticalOptions = LayoutOptions.Center, IsEnabled = false };
+                        var chk = new CheckBox { IsChecked = (sidx >= 0 ? su.status[sidx] : false), VerticalOptions = LayoutOptions.Center, IsEnabled = false };
                         g.Children.Add(chk, 1, i);
-                        var rb = new RadioButton { IsChecked = su.theirstatus[i], VerticalOptions = LayoutOptions.Center, IsEnabled = false };
+                        var rb = new RadioButton { IsChecked = (sidx >= 0 ? su.theirstatus[sidx] : false), VerticalOptions = LayoutOptions.Center, IsEnabled = false };
                         g.Children.Add(rb, 2, i);
                     }
                     sl.Children.Add(g);

@@ -18,6 +18,7 @@
     <Grid>
         <Grid.Resources>
             <converters:InverseBoolConverter x:Key="not"/>
+            <converters:DoubleToBoolConverter x:Key="dtb"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -32,7 +33,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <Label x:Name="spanlenLabel" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" Text="{Binding spanlen, StringFormat='Digits: {0}'}" FontSize="Small" Margin="0,0"/>
-            <Label x:Name="estspanLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" FontSize="Small" Text="Est Span: " TextColor="LightGray" Margin="0,0"/>
+            <Label x:Name="estspanLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="CenterAndExpand" FontSize="Small" Text="{Binding EstSpan, StringFormat='Est Span: {0:F1} items'}" TextColor="LightGray" Margin="0,0" IsVisible="{Binding EstSpan, Converter={StaticResource dtb}}" />
             <StackLayout Grid.Column="2" Orientation="Horizontal">
                 <Label x:Name="_autocheckboxLabel"
                Text="Auto"

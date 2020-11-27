@@ -62,6 +62,7 @@ namespace BrainGames.ViewModels
         private List<Tuple<int, int>> last_offtimes_by_spanlen;
         private List<Tuple<int, bool>> last_outcomes_by_spanlen;
         private int spanlen_f, spanlen_b, stimonms_f, stimonms_b, stimoffms_f, stimoffms_b;
+        private double estspan_f = 0, estspan_b = 0;
         private int cortrialstreak_b, errtrialstreak_b;
         private List<Tuple<int, int>> last_ontimes_by_spanlen_b;
         private List<Tuple<int, int>> last_offtimes_by_spanlen_b;
@@ -81,18 +82,21 @@ namespace BrainGames.ViewModels
                     spanlen_b = spanlen;
                     stimonms_b = stimonms;
                     stimoffms_b = stimoffms;
+                    estspan_b = EstSpan;
                 }
                 else
                 {
                     spanlen_f = spanlen;
                     stimonms_f = stimonms;
                     stimoffms_f = stimoffms;
+                    estspan_f = EstSpan;
                 }
                 SetProperty(ref _backward, value);
                 //restore values
                 spanlen = _backward ? spanlen_b : spanlen_f;
                 stimonms = _backward ? stimonms_b : stimonms_f;
                 stimoffms = _backward ? stimoffms_b : stimoffms_f;
+                EstSpan = _backward ? estspan_b : estspan_f;
             }
         }
 
@@ -225,6 +229,8 @@ namespace BrainGames.ViewModels
                 stimoffms_f = last_offtimes_by_spanlen.Count() == 0 ? initofftimems : last_offtimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
                 stimonms_b = last_ontimes_by_spanlen_b.Count() == 0 ? initontimems : last_ontimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
                 stimoffms_b = last_offtimes_by_spanlen_b.Count() == 0 ? initofftimems : last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
+                estspan_f = App.mum.ds_estspan_f;
+                estspan_b = App.mum.ds_estspan_b;
 
                 if (AutoIncrement)
                 {
@@ -254,6 +260,7 @@ namespace BrainGames.ViewModels
                 spanlen = spanlen_f;
                 stimonms = stimonms_f;
                 stimoffms = stimoffms_f;
+                EstSpan = estspan_f;
                 if (App.mum.ds_lastdir == "f")
                 {
                     Backward = false;
@@ -396,7 +403,28 @@ namespace BrainGames.ViewModels
                 }
                 AnsClr = Color.OrangeRed;
             }
-            MasterUtilityModel.WriteDSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
+            Tuple<double, double> estspans = null;
+            bool done = false;
+            Task.Run(async () => {
+                try
+                {
+                    estspans = await MasterUtilityModel.WriteDSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
+                    done = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("error: " + ex.Message);
+                    done = true;
+                }
+            });
+            while (!done)
+            {
+                ;
+            }
+            estspan_f = estspans.Item1;
+            estspan_b = estspans.Item2;
+            if (Backward) EstSpan = estspan_b;
+            else EstSpan = estspan_f;
 
             if (AutoIncrement)
             {

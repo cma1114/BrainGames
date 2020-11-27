@@ -76,11 +76,11 @@ namespace BrainGames.Views
 
         private void Init()
         {
-
+            /*
             if (viewModel.EstSpan > 0)
             {
-                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
-            }
+                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 1).ToString("N0", CultureInfo.InvariantCulture) + " items";
+            }*/
         }
 
         async void Stats_Clicked(object sender, EventArgs e)
