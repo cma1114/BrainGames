@@ -56,6 +56,13 @@ namespace BrainGames.ViewModels
             set { SetProperty(ref _isRunning, value); }
         }
 
+        private string _boxopt = "auto";
+        public string boxopt
+        {
+            get => _boxopt;
+            set { SetProperty(ref _boxopt, value); }
+        }
+
         private bool _showReact1 = false;
         public bool ShowReact1
         {
@@ -92,6 +99,7 @@ namespace BrainGames.ViewModels
 
         public RTViewModel()
         {
+            App.mum.LoadRTGR();
             ReadyButtonCommand = new Command(ReadyButton);
 //            ReactButtonCommand = new Command(ReactButton);
             LeftButtonCommand = new Command(LeftButton);
@@ -110,6 +118,8 @@ namespace BrainGames.ViewModels
             ss1_cumrt = App.mum.rt_ss1_cumrt;
             ss2_cumcorrt = App.mum.rt_ss2_cumcorrt;
             ss4_cumcorrt = App.mum.rt_ss4_cumcorrt;
+            if (App.mum.rt_auto) boxopt = "auto";
+            else boxopt = Convert.ToString(App.mum.rt_lastboxes);
 
             if (ss2_trialcnt >= 10 && (float)ss2_cortrialcnt / ss2_trialcnt >= 0.9 && ss4_trialcnt >= 10 && (float)ss4_cortrialcnt / ss4_trialcnt >= 0.9)
             {
@@ -199,8 +209,9 @@ namespace BrainGames.ViewModels
         {
             cor = true;//default to this in the 1-box case
             blocktrialctr = 0;
-            boxes = (int)Math.Pow(2,MasterUtilityModel.RandomNumber(0, 3));
-            if(boxes == 1)
+            if (boxopt == "auto") boxes = (int)Math.Pow(2, MasterUtilityModel.RandomNumber(0, 3));
+            else boxes = Convert.ToInt32(boxopt);
+            if (boxes == 1)
             {
                 ShowReact1 = true;
                 ShowReact2 = false;
@@ -234,7 +245,7 @@ namespace BrainGames.ViewModels
         public void ReactButton(int tctr, double rt, double avgrt, int corbox, bool correct)
         {
 //            MasterUtilityModel.WriteRTGR(game_session_id, trialctr, reactiontime, cumrt/trialctr, boxes, corboxes[blocktrialctr], cor);
-            MasterUtilityModel.WriteRTGR(game_session_id, tctr, rt, avgrt, boxes, corbox, correct);
+            MasterUtilityModel.WriteRTGR(game_session_id, tctr, rt, avgrt, boxes, (boxopt == "auto" ? true : false), corbox, correct);
         }
 
         public void OnDisappearing()

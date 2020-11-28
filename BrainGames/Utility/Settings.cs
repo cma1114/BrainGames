@@ -38,6 +38,9 @@ namespace BrainGames.Utility
         private const string IT_CorTrialsKey = "it_cortrials_key";
         private static readonly int IT_CorTrialsDefault = 0;
 
+        private const string RT_BoxOptKey = "rt_boxopt_key";
+        private static readonly string RT_BoxOptDefault = "auto";
+
         private const string AutoIncrementKey = "autoincrement_key";
         private static readonly bool AutoIncrementDefault = true;
 
@@ -108,6 +111,7 @@ namespace BrainGames.Utility
                 AppSettings.AddOrUpdateValue(IT_LastStimDurKey, value);
             }
         }
+
         public static int IT_CorTrials
         {
             get
@@ -131,7 +135,6 @@ namespace BrainGames.Utility
                 AppSettings.AddOrUpdateValue(AutoIncrementKey, value);
             }
         }
-
 
         public static bool ActiveSubscription
         {
@@ -166,6 +169,18 @@ namespace BrainGames.Utility
             set
             {
                 AppSettings.AddOrUpdateValue(LastVerifiedDateKey, value);
+            }
+        }
+
+        public static string RT_BoxOpt
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(RT_BoxOptKey, RT_BoxOptDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(RT_BoxOptKey, value);
             }
         }
 

@@ -90,6 +90,7 @@ namespace BrainGames.ViewModels
 
         public StroopViewModel()
         {
+            App.mum.LoadStroopGR();
             textcolors = new textcolortypes[trialsperset];
             ReadyButtonCommand = new Command(ReadyButton);
             //            ReactButtonCommand = new Command(ReactButton);

@@ -127,6 +127,7 @@ namespace BrainGames.Models
             public double avgrt { get; set; }
             public int boxes { get; set; }
             public int corbox { get; set; }
+            public bool auto { get; set; }
             public bool cor { get; set; }
         }
 

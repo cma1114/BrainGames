@@ -63,6 +63,7 @@ namespace BrainGames.ViewModels
         private List<Tuple<int, bool>> last_outcomes_by_spanlen;
         private int spanlen_f, spanlen_b, stimonms_f, stimonms_b, stimoffms_f, stimoffms_b;
         private double estspan_f = 0, estspan_b = 0;
+        private bool auto_f = true, auto_b = true;
         private int cortrialstreak_b, errtrialstreak_b;
         private List<Tuple<int, int>> last_ontimes_by_spanlen_b;
         private List<Tuple<int, int>> last_offtimes_by_spanlen_b;
@@ -83,6 +84,7 @@ namespace BrainGames.ViewModels
                     stimonms_b = stimonms;
                     stimoffms_b = stimoffms;
                     estspan_b = EstSpan;
+                    auto_b = AutoIncrement;
                 }
                 else
                 {
@@ -90,6 +92,7 @@ namespace BrainGames.ViewModels
                     stimonms_f = stimonms;
                     stimoffms_f = stimoffms;
                     estspan_f = EstSpan;
+                    auto_f = AutoIncrement;
                 }
                 SetProperty(ref _backward, value);
                 //restore values
@@ -97,6 +100,7 @@ namespace BrainGames.ViewModels
                 stimonms = _backward ? stimonms_b : stimonms_f;
                 stimoffms = _backward ? stimoffms_b : stimoffms_f;
                 EstSpan = _backward ? estspan_b : estspan_f;
+                AutoIncrement = _backward ? auto_b : auto_f;
             }
         }
 
@@ -107,6 +111,8 @@ namespace BrainGames.ViewModels
             set
             {
                 SetProperty(ref _autoIncrement, value);
+                if (Backward) auto_b = AutoIncrement;
+                else auto_f = AutoIncrement;
             }
         }
 
@@ -174,6 +180,7 @@ namespace BrainGames.ViewModels
 
         public DSViewModel()
         {
+            App.mum.LoadDSGR();
             ReadyButtonCommand = new Command(ReadyButton);
             Button0Command = new Command(Button0);
             Button1Command = new Command(Button1);
@@ -231,6 +238,10 @@ namespace BrainGames.ViewModels
                 stimoffms_b = last_offtimes_by_spanlen_b.Count() == 0 ? initofftimems : last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
                 estspan_f = App.mum.ds_estspan_f;
                 estspan_b = App.mum.ds_estspan_b;
+                auto_f = App.mum.ds_auto_f;
+                auto_b = App.mum.ds_auto_b;
+                if (App.mum.ds_lastdir == "f") AutoIncrement = auto_f;
+                else AutoIncrement = auto_b;
 
                 if (AutoIncrement)
                 {
@@ -261,6 +272,7 @@ namespace BrainGames.ViewModels
                 stimonms = stimonms_f;
                 stimoffms = stimoffms_f;
                 EstSpan = estspan_f;
+                AutoIncrement = auto_f;
                 if (App.mum.ds_lastdir == "f")
                 {
                     Backward = false;

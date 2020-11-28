@@ -71,6 +71,7 @@ namespace BrainGames.ViewModels
 
         public ITViewModel()
         {
+            App.mum.LoadITGR();
             ReadyButtonCommand = new Command(ReadyButton);
             LeftButtonCommand = new Command(LeftButton);
             RightButtonCommand = new Command(RightButton);

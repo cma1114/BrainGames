@@ -49,6 +49,7 @@ namespace BrainGames.ViewModels
         private List<Tuple<int, bool>> last_outcomes_by_spanlen;
         private int spanlen_f, spanlen_b, stimonms_f, stimonms_b, stimoffms_f, stimoffms_b, gridsize_f, gridsize_b;
         private double estspan_f = 0, estspan_b = 0;
+        private bool auto_f = true, auto_b = true;
         private int cortrialstreak_b, errtrialstreak_b;
         private List<Tuple<int, int>> last_ontimes_by_spanlen_b;
         private List<Tuple<int, int>> last_offtimes_by_spanlen_b;
@@ -72,6 +73,7 @@ namespace BrainGames.ViewModels
                     stimonms_b = stimonms;
                     stimoffms_b = stimoffms;
                     estspan_b = EstSpan;
+                    auto_b = AutoIncrement;
                 }
                 else
                 {
@@ -79,6 +81,7 @@ namespace BrainGames.ViewModels
                     stimonms_f = stimonms;
                     stimoffms_f = stimoffms;
                     estspan_f = EstSpan;
+                    auto_f = AutoIncrement;
                 }
                 SetProperty(ref _backward, value);
                 //restore values
@@ -86,6 +89,7 @@ namespace BrainGames.ViewModels
                 stimonms = _backward ? stimonms_b : stimonms_f;
                 stimoffms = _backward ? stimoffms_b : stimoffms_f;
                 EstSpan = _backward ? estspan_b : estspan_f;
+                AutoIncrement = _backward ? auto_b : auto_f;
             }
         }
 
@@ -96,6 +100,8 @@ namespace BrainGames.ViewModels
             set
             {
                 SetProperty(ref _autoIncrement, value);
+                if (Backward) auto_b = AutoIncrement;
+                else auto_f = AutoIncrement;
             }
         }
 
@@ -184,6 +190,7 @@ namespace BrainGames.ViewModels
 
         public LSViewModel()
         {
+            App.mum.LoadLSGR();
             ReadyButtonCommand = new Command(ReadyButton);
             game_session_id = MasterUtilityModel.WriteGameSession("LS");
 
@@ -236,6 +243,10 @@ namespace BrainGames.ViewModels
                 gridsize_b = 4;// App.mum.ls_lastgridsize_b == 0 ? initgridsize : App.mum.ls_lastgridsize_b;
                 estspan_f = App.mum.ds_estspan_f;
                 estspan_b = App.mum.ds_estspan_b;
+                auto_f = App.mum.ls_auto_f;
+                auto_b = App.mum.ls_auto_b;
+                if (App.mum.ls_lastdir == "f") AutoIncrement = auto_f;
+                else AutoIncrement = auto_b;
 
                 if (AutoIncrement)
                 {
@@ -267,6 +278,7 @@ namespace BrainGames.ViewModels
                 stimoffms = stimoffms_f;
                 gridsize = gridsize_f;
                 EstSpan = estspan_f;
+                AutoIncrement = auto_f;
                 if (App.mum.ls_lastdir == "f")
                 {
                     Backward = false;

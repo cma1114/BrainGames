@@ -86,6 +86,8 @@ namespace BrainGames.Utility
         public int rt_ss2_cortrialcnt = 0;
         public int rt_ss4_trialcnt = 0;
         public int rt_ss4_cortrialcnt = 0;
+        public int rt_lastboxes = 0;
+        public bool rt_auto = true;
 
         public int st_trialctr = 0;
         public double st_cumcorrt = 0;
@@ -113,6 +115,8 @@ namespace BrainGames.Utility
         public List<Tuple<int, int>> ds_last_offtimes_by_spanlen_b = new List<Tuple<int, int>>();
         public List<Tuple<int, bool>> ds_last_outcomes_by_spanlen_b = new List<Tuple<int, bool>>();
         public string ds_lastdir;
+        public bool ds_auto_f = true;
+        public bool ds_auto_b = true;
 
         public int ls_trialctr = 0;
         public int ls_errtrialstreak = 0;
@@ -132,6 +136,8 @@ namespace BrainGames.Utility
         public string ls_lastdir;
         public int ls_lastgridsize_f;
         public int ls_lastgridsize_b;
+        public bool ls_auto_f = true;
+        public bool ls_auto_b = true;
 
         public static List<string> UserStatsList = new List<string>();//which games you have stats for
 
@@ -323,7 +329,10 @@ namespace BrainGames.Utility
                 Thread thrCS = new Thread(CheckSharing);//Accesses User, SharingUsers
                 thrCS.Start();
             }*/
+        }
 
+        public void LoadITGR()
+        {
             #region itgr
             List<DataSchemas.ITGameRecordSchema> itgrs = new List<DataSchemas.ITGameRecordSchema>();
             bool exists;
@@ -393,11 +402,16 @@ namespace BrainGames.Utility
                 Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
             }
             #endregion
+        }
 
+        public void LoadRTGR()
+        {
             #region rtgr
             List<DataSchemas.RTGameRecordSchema> rtgrs = new List<DataSchemas.RTGameRecordSchema>();
-            try {
+            try
+            {
                 conn_sync.CreateTable<DataSchemas.RTGameRecordSchema>();
+                //                conn_sync.Query<DataSchemas.RTGameRecordSchema>("UPDATE RTGameRecordSchema SET auto = true");
                 rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
             }
             catch (Exception ex2)
@@ -417,9 +431,14 @@ namespace BrainGames.Utility
                 rt_ss4_trialcnt = rtgrs.Where(x => x.boxes == 4).Count();
                 rt_ss4_cortrialcnt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Count();
                 rt_ss4_cumcorrt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Sum(x => x.reactiontime);
+                rt_lastboxes = rtgrs[rtgrs.Count() - 1].boxes;
+                rt_auto = rtgrs[rtgrs.Count() - 1].auto;
             }
             #endregion
+        }
 
+        public void LoadStroopGR()
+        {
             #region stroopgr
             List<DataSchemas.StroopGameRecordSchema> stgrs = new List<DataSchemas.StroopGameRecordSchema>();
             try
@@ -447,7 +466,10 @@ namespace BrainGames.Utility
                 st_cuminconcorrt = stgrs.Where(x => x.congruent == false && x.cor == true).Sum(x => x.reactiontime);
             }
             #endregion
+        }
 
+        public void LoadDSGR()
+        {
             #region dsgr
             List<DataSchemas.DSGameRecordSchema> dsgrs = new List<DataSchemas.DSGameRecordSchema>();
             try
@@ -481,6 +503,7 @@ namespace BrainGames.Utility
                 ds_last_offtimes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ds_last_outcomes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                 ds_lastdir = "f";
+                ds_auto_f = dsgrs[dsgrs.Count() - 1].autoinc;
             }
             try
             {
@@ -513,9 +536,13 @@ namespace BrainGames.Utility
                 ds_last_ontimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
                 ds_last_offtimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ds_last_outcomes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
+                ds_auto_b = dsgrs[dsgrs.Count() - 1].autoinc;
             }
             #endregion
+        }
 
+        public void LoadLSGR()
+        {
             #region lsgr
             List<DataSchemas.LSGameRecordSchema> lsgrs = new List<DataSchemas.LSGameRecordSchema>();
             try
@@ -544,12 +571,13 @@ namespace BrainGames.Utility
                     ls_errtrialstreak++;
                     i--;
                 }
-                ls_estspan_f = lsgrs[dsgrs.Count() - 1].estSpan_f;
+                ls_estspan_f = lsgrs[lsgrs.Count() - 1].estSpan_f;
                 ls_trialctr = lsgrs.Max(x => x.trialnum);
                 ls_last_ontimes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_offtimes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_outcomes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                 ls_lastdir = "f";
+                ls_auto_f = lsgrs[lsgrs.Count() - 1].autoinc;
             }
             try
             {
@@ -577,15 +605,15 @@ namespace BrainGames.Utility
                     ls_errtrialstreak_b++;
                     i--;
                 }
-                ls_estspan_b = lsgrs[dsgrs.Count() - 1].estSpan_b;
+                ls_estspan_b = lsgrs[lsgrs.Count() - 1].estSpan_b;
                 if (lsgrs.Max(x => x.trialnum) > ls_trialctr) ls_lastdir = "b";
                 ls_trialctr = Math.Max(ls_trialctr, lsgrs.Max(x => x.trialnum));
                 ls_last_ontimes_by_spanlen_b = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_offtimes_by_spanlen_b = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_outcomes_by_spanlen_b = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
+                ls_auto_b = lsgrs[lsgrs.Count() - 1].autoinc;
             }
             #endregion
-
         }
 
         public async Task HandleSharingAndSync()
@@ -2496,7 +2524,7 @@ namespace BrainGames.Utility
             }
         }
 
-        public async static void WriteRTGR(Guid sessionid, int trialctr, double reactiontime, double avgrt, int boxes, int corbox, bool cor)
+        public async static void WriteRTGR(Guid sessionid, int trialctr, double reactiontime, double avgrt, int boxes, bool auto, int corbox, bool cor)
         {
             var s = new DataSchemas.RTGameRecordSchema();
             s.Id = Guid.NewGuid().ToString();
@@ -2509,6 +2537,7 @@ namespace BrainGames.Utility
             s.cor = cor;
             s.trialnum = trialctr;
             s.avgrt = avgrt;
+            s.auto = auto;
             if (!IsBusy_local)
             {
                 IsBusy_local = true;

@@ -81,6 +81,10 @@ namespace BrainGames.Views
 
         private void Init()
         {
+            if (viewModel.boxopt == "1") ((RadioButton)FindByName("box1opt")).IsChecked = true;
+            if (viewModel.boxopt == "2") ((RadioButton)FindByName("box2opt")).IsChecked = true;
+            if (viewModel.boxopt == "4") ((RadioButton)FindByName("box4opt")).IsChecked = true;
+            if (viewModel.boxopt == "auto") ((RadioButton)FindByName("autoopt")).IsChecked = true;
 
             if (viewModel.AvgRT > 0)
             {
@@ -228,6 +232,14 @@ namespace BrainGames.Views
             crossfigure4D.Path.LineTo(new SKPoint(boxfigure4D.Rectangle.Right - crossmargin, boxfigure4D.Rectangle.Top + crossmargin));
             crossfigure4D.Path.MoveTo(boxfigure4D.Rectangle.Right - crossmargin, boxfigure4D.Rectangle.Bottom - crossmargin);
             crossfigure4D.Path.LineTo(new SKPoint(boxfigure4D.Rectangle.Left + crossmargin, boxfigure4D.Rectangle.Top + crossmargin));
+        }
+
+        void BoxOptChanged(object sender, CheckedChangedEventArgs e)
+        {
+            if (((RadioButton)FindByName("box1opt")).IsChecked) viewModel.boxopt = "1";
+            if (((RadioButton)FindByName("box2opt")).IsChecked) viewModel.boxopt = "2";
+            if (((RadioButton)FindByName("box4opt")).IsChecked) viewModel.boxopt = "4";
+            if (((RadioButton)FindByName("autoopt")).IsChecked) viewModel.boxopt = "auto";
         }
 
         async void Stats_Clicked(object sender, EventArgs e)
@@ -410,5 +422,8 @@ namespace BrainGames.Views
             }
         }
 
+        void box1opt_CheckedChanged(System.Object sender, Xamarin.Forms.CheckedChangedEventArgs e)
+        {
+        }
     }
 }
