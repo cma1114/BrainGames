@@ -660,7 +660,7 @@ namespace BrainGames.Utility
                                 sharingrecs.Add(BGSharingUserRecords[BGSharingUserRecords.Count() - 1]);
                             }
 
-                            if (BGSharingUserRecords[BGSharingUserRecords.Count() - 1].UserId2 == Settings.UserId && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Accepted1 == true && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Accepted2 == false && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Declined2 == false)
+                            if (!ConnectedUsers.Contains(BGSharingUserRecords[BGSharingUserRecords.Count() - 1].UserId1) && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].UserId2 == Settings.UserId && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Accepted1 == true && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Accepted2 == false && BGSharingUserRecords[BGSharingUserRecords.Count() - 1].Declined2 == false)
                             {
                                 BGSharingInvitations.Add(untypedItems[j].ToObject<DataSchemas.SharingUsersSchema>());
                                 BGSharingUserRecords.RemoveAt(BGSharingUserRecords.Count() - 1);//remove invitations you haven't acted upon
