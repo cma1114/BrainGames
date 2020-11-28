@@ -108,7 +108,7 @@
                         <Label Grid.Row="1" Grid.Column="1" LineHeight="1" FontSize="Body">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="This game tests how quickly your brain sends signals from your visual cortex, through decision-making areas, to your motor cortex. You will see 1, 2, or 4 empty boxes. After some random, short period of time, an X will appear in one of the boxes. As quickly as you can, press the corresponding button. See how fast you can respond. See how you decrease your reaction time with practice. Reaction time has been shown to correlate with IQ!&#10;"/>
+                                    <Span Text="This game tests how quickly your brain sends signals from your visual cortex, through decision-making areas, to your motor cortex. You will see 1, 2, or 4 empty boxes (randomly chosen by default; you can also select to be shown any of those). After some random, short period of time, an X will appear in one of the boxes. As quickly as you can, press the corresponding button. See how fast you can respond. See how you decrease your reaction time with practice. Reaction time has been shown to correlate with IQ!&#10;"/>
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>

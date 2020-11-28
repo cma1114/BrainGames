@@ -77,6 +77,7 @@ namespace BrainGames.Utility
         public int it_reversalctr = 0;
         public int it_errtrialstreak = 0;
         public int it_cortrialstreak = 0;
+
         public int rt_trialctr = 0;
         public double rt_ss1_cumrt = 0;
         public double rt_ss2_cumcorrt = 0;
@@ -139,7 +140,7 @@ namespace BrainGames.Utility
         public bool ls_auto_f = true;
         public bool ls_auto_b = true;
 
-        public static List<string> UserStatsList = new List<string>();//which games you have stats for
+        public static Dictionary<string,string> UserStatsDict = new Dictionary<string, string>();//which games you have stats for
 
         public bool has_notifications = false;//for notifications panel
         public List<GameShare> GameShares = new List<GameShare>();//for compare pages
@@ -334,6 +335,8 @@ namespace BrainGames.Utility
         public void LoadITGR()
         {
             #region itgr
+            it_cortrialstreak = 0;
+            it_errtrialstreak = 0;
             List<DataSchemas.ITGameRecordSchema> itgrs = new List<DataSchemas.ITGameRecordSchema>();
             bool exists;
             try
@@ -411,7 +414,7 @@ namespace BrainGames.Utility
             try
             {
                 conn_sync.CreateTable<DataSchemas.RTGameRecordSchema>();
-                //                conn_sync.Query<DataSchemas.RTGameRecordSchema>("UPDATE RTGameRecordSchema SET auto = true");
+//                conn_sync.Query<DataSchemas.RTGameRecordSchema>("UPDATE RTGameRecordSchema SET auto = true");
                 rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
             }
             catch (Exception ex2)
@@ -471,6 +474,10 @@ namespace BrainGames.Utility
         public void LoadDSGR()
         {
             #region dsgr
+            ds_cortrialstreak = 0;
+            ds_errtrialstreak = 0;
+            ds_cortrialstreak_b = 0;
+            ds_errtrialstreak_b = 0;
             List<DataSchemas.DSGameRecordSchema> dsgrs = new List<DataSchemas.DSGameRecordSchema>();
             try
             {
@@ -544,6 +551,10 @@ namespace BrainGames.Utility
         public void LoadLSGR()
         {
             #region lsgr
+            ls_cortrialstreak = 0;
+            ls_errtrialstreak = 0;
+            ls_cortrialstreak_b = 0;
+            ls_errtrialstreak_b = 0;
             List<DataSchemas.LSGameRecordSchema> lsgrs = new List<DataSchemas.LSGameRecordSchema>();
             try
             {
@@ -899,13 +910,13 @@ namespace BrainGames.Utility
             }
             IsBusyUserStats = true;
 
-            if (UserStatsList.Count() == 0)//only do this (check your own stats) the first time through
+            if (UserStatsDict.Count() == 0)//only do this (check your own stats) the first time through
             {
                 untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'", _headers);
                 for (int j = 0; j < untypedItems.Count(); j++)
                 {
                     DataSchemas.UserStatsSchema BGUserStats = untypedItems[j].ToObject<DataSchemas.UserStatsSchema>();
-                    UserStatsList.Add(BGUserStats.game);
+                    UserStatsDict.Add(BGUserStats.game, BGUserStats.Id);
                 }
             }
 
@@ -2422,7 +2433,6 @@ namespace BrainGames.Utility
         public async void UpdateUserStats(string game, List<double> avgs, List<double> bests)
         {
             var s = new DataSchemas.UserStatsSchema();
-            s.Id = Guid.NewGuid().ToString();
             s.UserId = Settings.UserId;
             s.game = game;
             string avgstr = "", beststr = "";
@@ -2443,14 +2453,16 @@ namespace BrainGames.Utility
 
             try
             {
-                if (UserStatsList.Contains(game))
+                if (UserStatsDict.ContainsKey(game))
                 {
+                    s.Id = UserStatsDict[game];
                     await bguserinfoService.UpdateUserStatsEntryAsync(s);
                 }
                 else
                 {
+                    s.Id = Guid.NewGuid().ToString();
                     await bguserinfoService.AddUserStatsEntryAsync(s);
-                    UserStatsList.Add(game);
+                    UserStatsDict.Add(game, s.Id);
                 }
             }
             catch (Exception ex)
