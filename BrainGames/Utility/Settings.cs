@@ -21,7 +21,7 @@ namespace BrainGames.Utility
 
         private const string UserIdKey = "userid_key";
 //        private static readonly string UserIdDefault = "-1";
-        private static readonly string UserIdDefault = "123";
+        private static readonly string UserIdDefault = "789";
 
         private const string ScreennameKey = "screenname_key";
         private static readonly string ScreennameDefault = "";

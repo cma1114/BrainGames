@@ -414,7 +414,8 @@ namespace BrainGames.Utility
             try
             {
                 conn_sync.CreateTable<DataSchemas.RTGameRecordSchema>();
-//                conn_sync.Query<DataSchemas.RTGameRecordSchema>("UPDATE RTGameRecordSchema SET auto = true");
+                //                conn_sync.Query<DataSchemas.RTGameRecordSchema>("UPDATE RTGameRecordSchema SET auto = true");
+                //conn_sync.Query<DataSchemas.RTGameRecordSchema>("delete from RTGameRecordSchema where reactiontime<0");
                 rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
             }
             catch (Exception ex2)
@@ -673,6 +674,32 @@ namespace BrainGames.Utility
                 ;
             }
 
+            IsBusyUserStats = true;
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable bguserrecord = Client.GetTable("BGUserStats");
+                JToken untypedItems;
+                int pagesize = 50, ctr = 0;
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+
+                untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'", _headers);
+                for (int j = 0; j < untypedItems.Count(); j++)
+                {
+                    DataSchemas.UserStatsSchema BGUserStats = untypedItems[j].ToObject<DataSchemas.UserStatsSchema>();
+                    UserStatsDict.Add(BGUserStats.game, BGUserStats.Id);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            IsBusyUserStats = false;
+
             IsBusySharingUser = true;
             var sharingrecs = new List<DataSchemas.SharingUsersSchema>();
             try
@@ -909,16 +936,6 @@ namespace BrainGames.Utility
                 Thread.Sleep(1000);
             }
             IsBusyUserStats = true;
-
-            if (UserStatsDict.Count() == 0)//only do this (check your own stats) the first time through
-            {
-                untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'", _headers);
-                for (int j = 0; j < untypedItems.Count(); j++)
-                {
-                    DataSchemas.UserStatsSchema BGUserStats = untypedItems[j].ToObject<DataSchemas.UserStatsSchema>();
-                    UserStatsDict.Add(BGUserStats.game, BGUserStats.Id);
-                }
-            }
 
             string gamestr = "";
             for(int i = 0; i < games.Count(); i++)
@@ -2118,6 +2135,39 @@ namespace BrainGames.Utility
             Settings.LastVerifiedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
         }
         */
+
+        public static async Task SetUserIdFromServer(string subscriptionToken)
+        {
+            if (IsBusy)
+            {
+                return;
+            }
+
+            IsBusy = true;
+
+            DataSchemas.UserSchema us = new DataSchemas.UserSchema();
+            try
+            {
+                var Client = new MobileServiceClient("https://logicgames.azurewebsites.net");
+                IMobileServiceTable lguser = Client.GetTable("BGUser");
+                JToken untypedItems;
+                IDictionary<string, string> _headers = new Dictionary<string, string>();
+                // TODO: Add header with auth-based token in chapter 7
+                _headers.Add("zumo-api-version", "2.0.0");
+                untypedItems = await lguser.ReadAsync("$filter=SubscriptionId%20eq%20'" + subscriptionToken + "'", _headers);
+                us = untypedItems[0].ToObject<DataSchemas.UserSchema>();
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+            if (us != null) Settings.UserId = us.UserId;
+        }
+
         public async static Task<string> CheckScreenname(string sname)//return userid to allow invitation to proceed if 1) userid exisits, 2) the users are not already connected, and 3) the other user hasn't blocked you
         {
             try
@@ -2270,6 +2320,13 @@ namespace BrainGames.Utility
 
         public async void RespondShare(string screenname, string games)//respond to invite
         {
+            while (IsBusySharingUser)
+            {
+                Thread.Sleep(1000);
+            }
+
+            IsBusySharingUser = true;
+
             List<DataSchemas.SharingUsersSchema> requests = new List<DataSchemas.SharingUsersSchema>();
             requests = BGSharingInvitations.Where(x => x.UserId1 == Invitations.Where(y => y.Screenname == screenname).ToList()[0].UserId).ToList();
 
@@ -2283,13 +2340,6 @@ namespace BrainGames.Utility
                 cu.blocked1 = false;
                 cu.blocked2 = false;
 
-                while (IsBusySharingUser)
-                {
-                    Thread.Sleep(1000);
-                }
-
-                IsBusySharingUser = true;
-
                 try
                 {
                     await bguserinfoService.AddConnectedEntryAsync(cu);
@@ -2297,10 +2347,6 @@ namespace BrainGames.Utility
                 catch (Exception ex)
                 {
                     ;
-                }
-                finally
-                {
-                    IsBusySharingUser = false;
                 }
             }
 
@@ -2328,13 +2374,6 @@ namespace BrainGames.Utility
                 }
 
 
-                while (IsBusy)
-                {
-                    ;
-                }
-
-                IsBusy = true;
-
                 try
                 {
                     await bguserinfoService.UpdateSharingEntryAsync(r);
@@ -2345,7 +2384,6 @@ namespace BrainGames.Utility
                 }
                 finally
                 {
-                    IsBusy = false;
                     BGSharingInvitations.Remove(r);
                 }
             }
@@ -2354,6 +2392,7 @@ namespace BrainGames.Utility
                 Shares.Add(share);
             }
             if (BGSharingInvitations.Count() == 0) has_notifications = false;
+            IsBusySharingUser = false;
         }
 
         public async void UpdateShare(string screenname, string games)//manage sharing
@@ -2655,126 +2694,133 @@ namespace BrainGames.Utility
             }
         }
 
+        private static Tuple<double, double> GetP(List<int> spanarr, List<bool> corarr)
+        {
+            Dictionary<int, List<int>> spanstats = new Dictionary<int, List<int>>();
+            for (int i = 0; i < spanarr.Count(); i++)
+            {
+                for (int j = spanarr[i]; j > 0; j--)//credit all cnts <= itemcnt with correct answer
+                {
+                    if (spanstats.ContainsKey(j))
+                    {
+                        spanstats[j][0]++;
+                        if (corarr[i]) spanstats[j][1]++;
+                        else break;//only count the error towards the itemcnt
+                    }
+                    else
+                    {
+                        spanstats.Add(j, new List<int> { 1, Convert.ToInt32(corarr[i]) });
+                        if (!corarr[i]) break;
+                    }
+                }
+            }
+            List<double> spanarr_cln = new List<double>();
+            List<double> corarr_cln = new List<double>();
+            var items = from pair in spanstats
+                        orderby pair.Key ascending
+                        select pair;
+            foreach (var kvp in items)
+            {
+                spanarr_cln.Add(Convert.ToDouble(kvp.Key));
+                corarr_cln.Add((double)kvp.Value[1] / kvp.Value[0]);
+            }
+            Tuple<double, double> p;
+
+            try
+            {
+                p = Fit.Line(spanarr_cln.ToArray(), corarr_cln.ToArray());
+            }
+            catch (Exception ex)
+            {
+                p = Tuple.Create<double, double>(0.0, 0.0);
+            }
+
+            return p;
+        }
+
+        public static List<double> GetEstSpanStats (IEnumerable<DataSchemas.SpanGameRecordSchema> ur, string dir, string direction = "", bool cor = false, int itemcnt = 0, int ontimems = 0, int offtimems = 0)
+        {
+            List<double> estspanstats = new List<double>();
+            double estSpan = 0, estStimTime = 0;
+
+            List<bool> corarr = ur.Where(x => x.direction == dir).Select(x => x.cor).ToList();
+            List<int> spanlenarr = ur.Where(x => x.direction == dir).Select(x => x.itemcnt).ToList();
+            if (direction == dir)
+            {
+                corarr.Add(cor);
+                spanlenarr.Add(itemcnt);
+            }
+
+            Tuple<double, double> p = GetP(spanlenarr, corarr);
+
+            List<Tuple<int, double>> AvgCorStatsBySpan;
+            if (p.Item2 >= 0 || p.Item1 <= 0.9)
+            {
+                AvgCorStatsBySpan = ur.Where(x => x.direction == dir).GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
+                if (AvgCorStatsBySpan.Count() == 0)// || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                {
+                    estSpan = 0.0;
+                }
+                else
+                {
+                    estSpan = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
+                }
+            }
+            else
+            {
+                estSpan = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
+            }
+
+            estspanstats.Add(estSpan);
+
+            corarr = ur.Where(x => x.itemcnt <= estSpan && x.direction == dir).Select(x => x.cor).ToList();
+            List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan && x.direction == dir).Select(x => x.ontimems + x.offtimems).ToList();
+            if (direction == dir && itemcnt <= estSpan)
+            {
+                corarr.Add(cor);
+                stimtimearr.Add(ontimems + offtimems);
+            }
+
+            try
+            {
+                p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray());
+            }
+            catch (Exception ex)
+            {
+                p = Tuple.Create<double, double>(0.0, 0.0);
+            }
+
+            if (p.Item2 < 0 || p.Item1 > 0.9)
+            {
+                AvgCorStatsBySpan = ur.Where(x => x.direction == dir).GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
+                if (AvgCorStatsBySpan.Count() == 0)// || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
+                {
+                    estStimTime = 0.0;
+                }
+                else
+                {
+                    estStimTime = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
+                }
+            }
+            else
+            {
+                estStimTime = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
+            }
+            estspanstats.Add(estStimTime);
+            return estspanstats;
+        }
+
         public async static Task<Tuple<double,double>> WriteDSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, int resptimems, string direction, string items, bool repeats, bool repeats_cons, bool auto, bool cor)
         {
-            List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
-            double estSpan_f = 0, estStimTime_f = 0, estSpan_b = 0, estStimTime_b = 0;
+            IEnumerable<DataSchemas.SpanGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
+            List<double> pf = null, pb = null;
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
-                List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
-                List<int> spanlenarr = ur.Where(x => x.direction == "f").Select(x => x.itemcnt).ToList();
-                if(direction == "f")
-                {
-                    corarr.Add(cor);
-                    spanlenarr.Add(itemcnt);
-                }
-                //                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                //                estSpan_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
-                Tuple<double, double> p;
-                List<Tuple<int, double>> AvgCorStatsBySpan;
+                pf = GetEstSpanStats(ur, "f", direction, cor, itemcnt, ontimems, offtimems);
 
-                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0,0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estSpan_f = 0.0;
-                    }
-                    else
-                    {
-                        estSpan_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estSpan_f = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-
-                corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
-                List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.ontimems + x.offtimems).ToList();
-                if (direction == "f" && itemcnt <= estSpan_f)
-                {
-                    corarr.Add(cor);
-                    stimtimearr.Add(ontimems + offtimems);
-                }
-                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9 || corarr.Count() == 0)
-                    {
-                        estStimTime_f = 0.0;
-                    }
-                    else
-                    {
-                        estStimTime_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estStimTime_f = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-                corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
-                spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
-                if (direction == "b")
-                {
-                    corarr.Add(cor);
-                    spanlenarr.Add(itemcnt);
-                }
-//                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0,0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estSpan_b = 0.0;
-                    }
-                    else
-                    {
-                        estSpan_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estSpan_b = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-
-                corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
-                stimtimearr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.ontimems + x.offtimems).ToList();
-                if (direction == "b" && itemcnt <= estSpan_b)
-                {
-                    corarr.Add(cor);
-                    stimtimearr.Add(ontimems + offtimems);
-                }
-                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9 || corarr.Count() == 0)
-                    {
-                        estStimTime_b = 0.0;
-                    }
-                    else
-                    {
-                        estStimTime_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estStimTime_b = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
+                pb = GetEstSpanStats(ur, "b", direction, cor, itemcnt, ontimems, offtimems);
             }
 
             var s = new DataSchemas.DSGameRecordSchema();
@@ -2792,10 +2838,10 @@ namespace BrainGames.Utility
             s.direction = direction;
             s.items = items;
             s.autoinc = auto;
-            s.estSpan_b = estSpan_b;
-            s.estSpan_f = estSpan_f;
-            s.estStimTime_b = estStimTime_b;
-            s.estStimTime_f = estStimTime_f;
+            s.estSpan_b = pb[0];
+            s.estSpan_f = pf[0];
+            s.estStimTime_b = pb[1];
+            s.estStimTime_f = pf[1];
             s.resptimems = resptimems;
             if (!IsBusy_local)
             {
@@ -2816,129 +2862,20 @@ namespace BrainGames.Utility
                 Thread t = new Thread(() => SendDSGRToServer(s));
                 t.Start();
             }
-            return Tuple.Create(estSpan_f, estSpan_b);
+            return Tuple.Create(pf[0], pb[0]);
         }
 
         public async static Task<Tuple<double, double>> WriteLSGR(Guid sessionid, int trialctr, int itemcnt, int ontimems, int offtimems, int gridsize, int resptimems, string direction, string items, bool repeats, bool repeats_cons, bool auto, bool cor)
         {
-            List<DataSchemas.LSGameRecordSchema> ur = new List<DataSchemas.LSGameRecordSchema>();
-            double estSpan_f = 0, estStimTime_f = 0, estSpan_b = 0, estStimTime_b = 0;
+            IEnumerable<DataSchemas.SpanGameRecordSchema> ur = new List<DataSchemas.LSGameRecordSchema>();
+            List<double> pf = null, pb = null;
             try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
-                List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
-                List<int> spanlenarr = ur.Where(x => x.direction == "f").Select(x => x.itemcnt).ToList();
-                if (direction == "f")
-                {
-                    corarr.Add(cor);
-                    spanlenarr.Add(itemcnt);
-                }
-                //                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                //                estSpan_f = llsi.Slope == 0 ? llsi.AverageX : (0.9 - llsi.Intercept) / llsi.Slope;
-                Tuple<double, double> p;
-                List<Tuple<int, double>> AvgCorStatsBySpan;
+                pf = GetEstSpanStats(ur, "f", direction, cor, itemcnt, ontimems, offtimems);
 
-                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estSpan_f = 0.0;
-                    }
-                    else
-                    {
-                        estSpan_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estSpan_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-
-                corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
-                List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.ontimems + x.offtimems).ToList();
-                if (direction == "f" && itemcnt <= estSpan_f)
-                {
-                    corarr.Add(cor);
-                    stimtimearr.Add(ontimems + offtimems);
-                }
-                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estStimTime_f = 0.0;
-                    }
-                    else
-                    {
-                        estStimTime_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estStimTime_f = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-                corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
-                spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
-                if (direction == "b")
-                {
-                    corarr.Add(cor);
-                    spanlenarr.Add(itemcnt);
-                }
-                //                var llsi = new LinearLeastSquaresInterpolation(spanlenarr.Select(Convert.ToDouble), corarr.Select(Convert.ToDouble));
-                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estSpan_b = 0.0;
-                    }
-                    else
-                    {
-                        estSpan_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estSpan_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-
-                corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
-                stimtimearr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.ontimems + x.offtimems).ToList();
-                if (direction == "b" && itemcnt <= estSpan_b)
-                {
-                    corarr.Add(cor);
-                    stimtimearr.Add(ontimems + offtimems);
-                }
-                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estStimTime_b = 0.0;
-                    }
-                    else
-                    {
-                        estStimTime_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estStimTime_b = p.Item2 == 0 ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
+                pb = GetEstSpanStats(ur, "b", direction, cor, itemcnt, ontimems, offtimems);
             }
 
             var s = new DataSchemas.LSGameRecordSchema();
@@ -2956,10 +2893,10 @@ namespace BrainGames.Utility
             s.direction = direction;
             s.items = items;
             s.autoinc = auto;
-            s.estSpan_b = estSpan_b;
-            s.estSpan_f = estSpan_f;
-            s.estStimTime_b = estStimTime_b;
-            s.estStimTime_f = estStimTime_f;
+            s.estSpan_b = pb[0];
+            s.estSpan_f = pf[0];
+            s.estStimTime_b = pb[1];
+            s.estStimTime_f = pf[1];
             s.resptimems = resptimems;
             s.gridsize = gridsize;
             if (!IsBusy_local)
@@ -2981,7 +2918,7 @@ namespace BrainGames.Utility
                 Thread t = new Thread(() => SendLSGRToServer(s));
                 t.Start();
             }
-            return Tuple.Create(estSpan_f, estSpan_b);
+            return Tuple.Create(pf[0], pb[0]);
         }
 
         private async static void SendDSGRToServer(DataSchemas.DSGameRecordSchema gr)

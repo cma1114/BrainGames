@@ -23,13 +23,8 @@ namespace BrainGames.Views
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class ITPage : ContentPage
+    public partial class ITView : Grid
     {
-        public ITViewModel viewModel
-        {
-            get { return BindingContext as ITViewModel; }
-            set { BindingContext = value; }
-        }
 
         private readonly Stopwatch _stopWatch = new Stopwatch();
         static float toplen = 120;
@@ -68,7 +63,7 @@ namespace BrainGames.Views
             viewModel = new ITViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
-//            fpsLabel.SetBinding(Label.TextProperty, new Binding("Value", source: stimdurtext));
+            //            fpsLabel.SetBinding(Label.TextProperty, new Binding("Value", source: stimdurtext));
         }
 
         async void Stats_Clicked(object sender, EventArgs e)
@@ -79,9 +74,9 @@ namespace BrainGames.Views
 
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
-//            fpsLabel.Text = "";
-//            stimdurtext = "Stim Dur: ";
-//            corLabel.Text = "";
+            //            fpsLabel.Text = "";
+            //            stimdurtext = "Stim Dur: ";
+            //            corLabel.Text = "";
             fpsLabel.BackgroundColor = Color.Gray;
             _stopWatch.Restart();
             Device.StartTimer(ts, TimerLoop);
@@ -92,15 +87,15 @@ namespace BrainGames.Views
             if (!viewModel.shown) return;
             if (viewModel.cor_ans == ITViewModel.answertype.left)
             {
-//                corLabel.Text = "Correct!";
-//                corLabel.TextColor = Color.ForestGreen;
+                //                corLabel.Text = "Correct!";
+                //                corLabel.TextColor = Color.ForestGreen;
                 fpsLabel.BackgroundColor = Color.ForestGreen;
                 asdLabel.Text = "Avg Dur: " + (viewModel.cumcorstimdur / viewModel.cortrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
             }
             else
             {
-//                corLabel.Text = "Wrong!";
-//                corLabel.TextColor = Color.OrangeRed;
+                //                corLabel.Text = "Wrong!";
+                //                corLabel.TextColor = Color.OrangeRed;
                 fpsLabel.BackgroundColor = Color.OrangeRed;
             }
             if (Settings.IT_EstIT > 0)
@@ -115,15 +110,15 @@ namespace BrainGames.Views
             if (!viewModel.shown) return;
             if (viewModel.cor_ans == ITViewModel.answertype.right)
             {
-//                corLabel.Text = "Correct!";
-//                corLabel.TextColor = Color.ForestGreen;
+                //                corLabel.Text = "Correct!";
+                //                corLabel.TextColor = Color.ForestGreen;
                 fpsLabel.BackgroundColor = Color.ForestGreen;
                 asdLabel.Text = "Avg Dur: " + (viewModel.cumcorstimdur / viewModel.cortrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
             }
             else
             {
-//                corLabel.Text = "Wrong!";
-//                corLabel.TextColor = Color.OrangeRed;
+                //                corLabel.Text = "Wrong!";
+                //                corLabel.TextColor = Color.OrangeRed;
                 fpsLabel.BackgroundColor = Color.OrangeRed;
             }
             if (Settings.IT_EstIT > 0)
@@ -136,9 +131,9 @@ namespace BrainGames.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
-/*
-            if (viewModel.Items.Count == 0)
-                viewModel.LoadItemsCommand.Execute(null);*/
+            /*
+                        if (viewModel.Items.Count == 0)
+                            viewModel.LoadItemsCommand.Execute(null);*/
 
             Init();
         }
@@ -174,7 +169,7 @@ namespace BrainGames.Views
             tr_x = centerx + toplen / 2;
             tr_y = centery - shortleglen / 2;
             bl_x = centerx - toplen / 2;
-            br_x = centerx + toplen / 2; 
+            br_x = centerx + toplen / 2;
 
             bl_y = centery - shortleglen / 2 + longleglen;
             br_y = centery - shortleglen / 2 + shortleglen;
@@ -255,12 +250,12 @@ namespace BrainGames.Views
                 }
                 else
                 {
-                    if (viewModel.empstimdur == 0) 
+                    if (viewModel.empstimdur == 0)
                     {
-                        viewModel.empstimdur = dt - viewModel.emppausedur; 
-                        viewModel.stimtimearr.Add(viewModel.curstimdur); 
+                        viewModel.empstimdur = dt - viewModel.emppausedur;
+                        viewModel.stimtimearr.Add(viewModel.curstimdur);
                         viewModel.empstimtimearr.Add(viewModel.empstimdur);
-//                        stimdurtext = stimdurtext + empstimdur.ToString("N0", CultureInfo.InvariantCulture) + "ms";
+                        //                        stimdurtext = stimdurtext + empstimdur.ToString("N0", CultureInfo.InvariantCulture) + "ms";
                         fpsLabel.Text = "Stim Dur: " + viewModel.empstimdur.ToString("N0", CultureInfo.InvariantCulture) + " ms";
                         viewModel.shown = true;
                     }
@@ -326,14 +321,14 @@ namespace BrainGames.Views
             var canvas = surface.Canvas;
 
             // clear the view with the specified background color
-//            canvas.Clear(_fillColor);
+            //            canvas.Clear(_fillColor);
             canvas.Clear();
             if (pifigure is null) return;
-//            canvas.DrawPoints(SKPointMode.Lines, skMaskPointsList, skMaskPaint);
+            //            canvas.DrawPoints(SKPointMode.Lines, skMaskPointsList, skMaskPaint);
             canvas.DrawPath(((SkiaPathDrawingFigure)pifigure).Path, pifigure.FigurePaint);
-/*            canvas.DrawPath(((SkiaPathDrawingFigure)pifigure1).Path, pifigure1.FigurePaint);
-            canvas.DrawPath(((SkiaPathDrawingFigure)pifigure2).Path, pifigure2.FigurePaint);
-            canvas.DrawPath(((SkiaPathDrawingFigure)pifigure3).Path, pifigure3.FigurePaint);*/
+            /*            canvas.DrawPath(((SkiaPathDrawingFigure)pifigure1).Path, pifigure1.FigurePaint);
+                        canvas.DrawPath(((SkiaPathDrawingFigure)pifigure2).Path, pifigure2.FigurePaint);
+                        canvas.DrawPath(((SkiaPathDrawingFigure)pifigure3).Path, pifigure3.FigurePaint);*/
         }
     }
 }

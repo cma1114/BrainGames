@@ -97,5 +97,10 @@ namespace BrainGames.Views
         {
             await Navigation.PushAsync(new LSPage());
         }
+
+        public async void TMDPressed(object sender, EventArgs args)
+        {
+            await Navigation.PushAsync(new TMDPage());
+        }
     }
 }

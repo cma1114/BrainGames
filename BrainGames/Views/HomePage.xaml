@@ -106,6 +106,21 @@
                                   VerticalOptions="Fill"
                                   HorizontalOptions="FillAndExpand"
                                   Clicked="LSPressed"/>
+            <Button x:Name="TMDButton"
+                                  FontSize="Medium"
+                                  FontFamily="{StaticResource FontFamily.RobotoMedium}"
+                                  FontAttributes="Bold"
+                                  TextColor="{StaticResource Tertiary}"
+                                  Text="Two-Minute Drill"
+                                  Margin="4"
+                                  HeightRequest="54"
+                                  BackgroundColor="Transparent" 
+                                  BorderColor="{StaticResource Primary}"
+                                  BorderWidth="1"
+                                  CornerRadius="32"
+                                  VerticalOptions="Fill"
+                                  HorizontalOptions="FillAndExpand"
+                                  Clicked="TMDPressed"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

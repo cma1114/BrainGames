@@ -19,9 +19,9 @@
                     <ValueConverters:DoubleToStringConverter x:Key="DoubleToString"/>
                 </Grid.Resources>
                 <Grid.RowDefinitions>
+<!--                    <RowDefinition Height="250*"/>
                     <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250*"/> -->
                     <RowDefinition Height="250*"/>
                     <RowDefinition Height="250*"/>
                     <RowDefinition Height="250*"/>
@@ -116,7 +116,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="EstSpan" Chart="{Binding EstSpanChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="5"
+<!--                <Frame Grid.Row="5"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -130,8 +130,8 @@
                                             HorizontalOptions="CenterAndExpand"/>
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="EstStimTime" Chart="{Binding EstStimTimeChart}" />
                     </StackLayout>
-                </Frame>
-                <Frame Grid.Row="6"
+                </Frame> -->
+                <Frame Grid.Row="5"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -146,7 +146,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstSpanFOverTime" Chart="{Binding CumEstSpanFOverTimeChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="7"
+                <Frame Grid.Row="6"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -161,7 +161,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstSpanBOverTime" Chart="{Binding CumEstSpanBOverTimeChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="8"
+<!--                <Frame Grid.Row="8"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -190,8 +190,8 @@
                                             HorizontalOptions="CenterAndExpand"/>
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="CumEstStimTimeBOverTime" Chart="{Binding CumEstStimTimeBOverTimeChart}" />
                     </StackLayout>
-                </Frame>
-                <Frame Grid.Row="10"
+                </Frame>-->
+                <Frame Grid.Row="7"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -206,7 +206,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="MaxCorFwdSpanLenOverTime" Chart="{Binding MaxCorFwdSpanLenOverTimeChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="11"
+                <Frame Grid.Row="8"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -221,7 +221,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="MaxCorBwdSpanLenOverTime" Chart="{Binding MaxCorBwdSpanLenOverTimeChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="12"
+                <Frame Grid.Row="9"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -236,7 +236,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="TrialCountOverTime" Chart="{Binding TrialCountOverTimeChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="13"
+                <Frame Grid.Row="10"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -251,7 +251,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctBySpanLen_f" Chart="{Binding AvgCorPctBySpanLen_fChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="14"
+                <Frame Grid.Row="11"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -266,7 +266,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorPctBySpanLen_b" Chart="{Binding AvgCorPctBySpanLen_bChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="15"
+                <Frame Grid.Row="12"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -281,7 +281,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOnTimeBySpanLen_f" Chart="{Binding AvgCorOnTimeBySpanLen_fChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="16"
+                <Frame Grid.Row="13"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -296,7 +296,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOffTimeBySpanLen_f" Chart="{Binding AvgCorOffTimeBySpanLen_fChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="17"
+                <Frame Grid.Row="14"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -311,7 +311,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOnTimeBySpanLen_b" Chart="{Binding AvgCorOnTimeBySpanLen_bChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="18"
+                <Frame Grid.Row="15"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -326,7 +326,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorOffTimeBySpanLen_b" Chart="{Binding AvgCorOffTimeBySpanLen_bChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="19"
+                <Frame Grid.Row="16"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"
@@ -341,7 +341,7 @@
                         <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="FastestCorStimTimeBySpanLen_f" Chart="{Binding FastestCorStimTimeBySpanLen_fChart}" />
                     </StackLayout>
                 </Frame>
-                <Frame Grid.Row="20"
+                <Frame Grid.Row="17"
                        HorizontalOptions="FillAndExpand"
                        VerticalOptions="FillAndExpand"
                        Margin="10"

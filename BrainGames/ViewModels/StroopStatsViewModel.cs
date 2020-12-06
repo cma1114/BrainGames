@@ -369,8 +369,8 @@ namespace BrainGames.ViewModels
             List<ChartEntry> es = new List<ChartEntry>();
             if (AvgCorRTByDay.Last().Item1 == DateTime.Today)
             {
-                ChartEntry e = new ChartEntry((float)AvgICDifCorRTByDay.Last().Item2);
-                e.ValueLabel = Math.Round(AvgICDifCorRTByDay.Last().Item2, 1).ToString() + " ms";
+                ChartEntry e = new ChartEntry((float)AvgCorRTByDay.Last().Item2);
+                e.ValueLabel = Math.Round(AvgCorRTByDay.Last().Item2, 1).ToString() + " ms";
                 e.TextColor = SKColors.Black;
                 e.Label = "Today";
                 e.Color = clrs[0];

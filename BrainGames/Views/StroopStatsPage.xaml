@@ -70,7 +70,7 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Cumulative Average C-I Dif RT Over Time"
+                        <Label Text="Cumulative Average I-C Dif RT Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
@@ -100,7 +100,7 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average C-I Dif RT Over Time"
+                        <Label Text="Average I-C Dif RT Over Time"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
@@ -130,7 +130,7 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Cumulative Average C-I Dif RT By Block"
+                        <Label Text="Cumulative Average I-C Dif RT By Block"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
@@ -190,7 +190,7 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average Correct C-I Dif RT By Stimulus Word"
+                        <Label Text="Average Correct I-C Dif RT By Stimulus Word"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
@@ -205,7 +205,7 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average Correct C-I Dif RT By Stimulus Color"
+                        <Label Text="Average Correct I-C Dif RT By Stimulus Color"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
