@@ -51,7 +51,7 @@ namespace BrainGames.Views
                 switch (g)
                 {
                     case "IT":
-                        this.GameView.Content = new ITView();
+                        this.GameView.Content = new ITView(viewModel);
                         break;
                 }
             }

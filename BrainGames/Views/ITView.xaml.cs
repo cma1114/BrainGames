@@ -58,105 +58,21 @@ namespace BrainGames.Views
 
         private TimeSpan ts;
 
-        public ITPage(int _cnt = 0)
+        public ITView(TMDViewModel viewModel)
         {
-            viewModel = new ITViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
-            //            fpsLabel.SetBinding(Label.TextProperty, new Binding("Value", source: stimdurtext));
-        }
-
-        async void Stats_Clicked(object sender, EventArgs e)
-        {
-            if (viewModel.trialctr == 0) return;
-            await Navigation.PushModalAsync(new NavigationPage(new ITStatsPage()));
+            Init();
         }
 
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
-            //            fpsLabel.Text = "";
-            //            stimdurtext = "Stim Dur: ";
-            //            corLabel.Text = "";
-            fpsLabel.BackgroundColor = Color.Gray;
             _stopWatch.Restart();
             Device.StartTimer(ts, TimerLoop);
         }
 
-        public void LeftButton_Clicked(object sender, EventArgs e)
-        {
-            if (!viewModel.shown) return;
-            if (viewModel.cor_ans == ITViewModel.answertype.left)
-            {
-                //                corLabel.Text = "Correct!";
-                //                corLabel.TextColor = Color.ForestGreen;
-                fpsLabel.BackgroundColor = Color.ForestGreen;
-                asdLabel.Text = "Avg Dur: " + (viewModel.cumcorstimdur / viewModel.cortrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
-            }
-            else
-            {
-                //                corLabel.Text = "Wrong!";
-                //                corLabel.TextColor = Color.OrangeRed;
-                fpsLabel.BackgroundColor = Color.OrangeRed;
-            }
-            if (Settings.IT_EstIT > 0)
-            {
-                itLabel.Text = "Est IT: " + Settings.IT_EstIT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
-                itLabel.TextColor = Color.Black;
-            }
-        }
-
-        public void RightButton_Clicked(object sender, EventArgs e)
-        {
-            if (!viewModel.shown) return;
-            if (viewModel.cor_ans == ITViewModel.answertype.right)
-            {
-                //                corLabel.Text = "Correct!";
-                //                corLabel.TextColor = Color.ForestGreen;
-                fpsLabel.BackgroundColor = Color.ForestGreen;
-                asdLabel.Text = "Avg Dur: " + (viewModel.cumcorstimdur / viewModel.cortrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
-            }
-            else
-            {
-                //                corLabel.Text = "Wrong!";
-                //                corLabel.TextColor = Color.OrangeRed;
-                fpsLabel.BackgroundColor = Color.OrangeRed;
-            }
-            if (Settings.IT_EstIT > 0)
-            {
-                itLabel.Text = "Est IT: " + Settings.IT_EstIT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
-                itLabel.TextColor = Color.Black;
-            }
-        }
-
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            /*
-                        if (viewModel.Items.Count == 0)
-                            viewModel.LoadItemsCommand.Execute(null);*/
-
-            Init();
-        }
-
-        protected override void OnDisappearing()
-        {
-            viewModel.OnDisappearing();
-            base.OnDisappearing();
-        }
-
         private void Init()
         {
-            if (Settings.IT_AvgCorDur > 0)
-            {
-                asdLabel.Text = "Avg Dur: " + (viewModel.cumcorstimdur / viewModel.cortrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
-            }
-            if (Settings.IT_EstIT > 0)
-            {
-                itLabel.Text = "Est IT: " + Settings.IT_EstIT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
-                itLabel.TextColor = Color.Black;
-            }
-            //            stimdurtext = "Stim Dur: ";
-
             centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
             centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
 
@@ -272,43 +188,6 @@ namespace BrainGames.Views
                     }
                 }
             }
-            /*
-            if (dt >= emppausedur + empstimdur + maskdur - minstimdur / 2) //You've shown stim and mask; clear screen
-            {
-                empmaskdur = dt - emppausedur - empstimdur;
-                pifigure = null;
-                canvasView.InvalidateSurface();
-                return false;
-            }
-
-            if (dt >= emppausedur + curstimdur - minstimdur / 2) //You're done with stim; show mask
-            {
-                empstimdur = dt - emppausedur;
-                if (fpsLabel.Text == "") fpsLabel.Text = empstimdur.ToString("N3", CultureInfo.InvariantCulture);
-                pifigure = pifigure_mask;
-            }
-            else if (dt >= pausedur - minstimdur / 2) //You're done with pause; show stim
-            {
-                emppausedur = dt;
-                if (pifigure == pifigure_dot) //Start of round; decide which stim to show
-                {
-                    if (random.Next(0, 2) == 1)
-                    {
-                        pifigure = pifigure_l;
-                        cor = answertype.left;
-                    }
-                    else
-                    {
-                        pifigure = pifigure_r;
-                        cor = answertype.right;
-                    }
-                }
-            }
-            else //show orienting cue
-            {
-                pifigure = pifigure_dot;
-            }
-            */
             // trigger the redrawing of the view
             canvasView.InvalidateSurface();
 
@@ -321,14 +200,9 @@ namespace BrainGames.Views
             var canvas = surface.Canvas;
 
             // clear the view with the specified background color
-            //            canvas.Clear(_fillColor);
             canvas.Clear();
             if (pifigure is null) return;
-            //            canvas.DrawPoints(SKPointMode.Lines, skMaskPointsList, skMaskPaint);
             canvas.DrawPath(((SkiaPathDrawingFigure)pifigure).Path, pifigure.FigurePaint);
-            /*            canvas.DrawPath(((SkiaPathDrawingFigure)pifigure1).Path, pifigure1.FigurePaint);
-                        canvas.DrawPath(((SkiaPathDrawingFigure)pifigure2).Path, pifigure2.FigurePaint);
-                        canvas.DrawPath(((SkiaPathDrawingFigure)pifigure3).Path, pifigure3.FigurePaint);*/
         }
     }
 }
