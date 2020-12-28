@@ -77,6 +77,8 @@ namespace BrainGames.Utility
         public int it_reversalctr = 0;
         public int it_errtrialstreak = 0;
         public int it_cortrialstreak = 0;
+        public Dictionary<double, double> it_AvgCorPctByStimDur = null;
+
 
         public int rt_trialctr = 0;
         public double rt_ss1_cumrt = 0;
@@ -118,6 +120,7 @@ namespace BrainGames.Utility
         public string ds_lastdir;
         public bool ds_auto_f = true;
         public bool ds_auto_b = true;
+        public Dictionary<int, double> ds_AvgCorPctBySpanLen_f = null;
 
         public int ls_trialctr = 0;
         public int ls_errtrialstreak = 0;
@@ -139,6 +142,7 @@ namespace BrainGames.Utility
         public int ls_lastgridsize_b;
         public bool ls_auto_f = true;
         public bool ls_auto_b = true;
+        public Dictionary<int, double> ls_AvgCorPctBySpanLen_f = null;
 
         public static Dictionary<string,string> UserStatsDict = new Dictionary<string, string>();//which games you have stats for
 
@@ -400,9 +404,10 @@ namespace BrainGames.Utility
                 it_trialctr = itgrs.Max(x => x.trialnum);
                 it_reversalctr = itgrs.Max(x => x.reversalctr);
                 Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
-                Settings.IT_AvgCorDur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials;
+                Settings.IT_AvgCorDur = Settings.IT_CorTrials > 0 ? itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials : 0;
                 Settings.IT_LastStimDur = it_laststimtime;
                 Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
+                it_AvgCorPctByStimDur = itgrs.GroupBy(x => x.stimtime).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Count())).OrderByDescending(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
             }
             #endregion
         }
@@ -512,6 +517,7 @@ namespace BrainGames.Utility
                 ds_last_outcomes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                 ds_lastdir = "f";
                 ds_auto_f = dsgrs[dsgrs.Count() - 1].autoinc;
+                ds_AvgCorPctBySpanLen_f = dsgrs.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
             }
             try
             {
@@ -590,6 +596,7 @@ namespace BrainGames.Utility
                 ls_last_outcomes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                 ls_lastdir = "f";
                 ls_auto_f = lsgrs[lsgrs.Count() - 1].autoinc;
+                ls_AvgCorPctBySpanLen_f = lsgrs.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
             }
             try
             {
@@ -1220,7 +1227,7 @@ namespace BrainGames.Utility
                         it_trialctr = itgrs.Max(x => x.trialnum);
                         it_reversalctr = itgrs.Max(x => x.reversalctr);
                         Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
-                        Settings.IT_AvgCorDur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials;
+                        Settings.IT_AvgCorDur = Settings.IT_CorTrials > 0? itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials : 0;
                         Settings.IT_LastStimDur = it_laststimtime;
                         Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
                     }

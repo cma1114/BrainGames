@@ -122,7 +122,7 @@ namespace BrainGames.ViewModels
         {
             if (App.mum.GameShares.Where(x => x.game == "IT")?.Count() > 0) Compare = true;
 
-            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema"); }
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema where trialnum > 0"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {

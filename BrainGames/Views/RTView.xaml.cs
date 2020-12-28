@@ -11,11 +11,11 @@ using BrainGames.ViewModels;
 
 namespace BrainGames.Views
 {
-    public partial class RTPage : ContentPage
+    public partial class RTView : Grid
     {
-        public RTViewModel viewModel
+        public TMDViewModel viewModel
         {
-            get { return BindingContext as RTViewModel; }
+            get { return BindingContext as TMDViewModel; }
             set { BindingContext = value; }
         }
 
@@ -25,12 +25,11 @@ namespace BrainGames.Views
         static float boxsize = 150;//200;
         static float crossmargin = 30;
         static float crossfont = 30;//40;
-        float centerx, centery;
+        float centerx = 0, centery = 0;
         bool showbox = false;
         bool showcross = false;
         bool clicked = false;
         bool firstshown = false;
-        double blockcumrt = 0;
         double ontime = 0;
 
         List<SkiaRectangleDrawingFigure> boxfigures;
@@ -51,37 +50,22 @@ namespace BrainGames.Views
             StrokeWidth = 2
         };
 
-        public RTPage()
+        public RTView(TMDViewModel _viewModel)
         {
-            viewModel = new RTViewModel();
             InitializeComponent();
+            viewModel = _viewModel;
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
             boxfigures = new List<SkiaRectangleDrawingFigure>();
         }
 
-        protected override void OnAppearing()
+        protected override void OnSizeAllocated(double w, double h)
         {
-            base.OnAppearing();
-            Init();
-        }
-
-        protected override void OnDisappearing()
-        {
-            viewModel.OnDisappearing();
-            base.OnDisappearing();
+            base.OnSizeAllocated(w, h);
+//            if (w != -1 && h != -1) Init();
         }
 
         private void Init()
         {
-            if (viewModel.boxopt == "1") ((RadioButton)FindByName("box1opt")).IsChecked = true;
-            if (viewModel.boxopt == "2") ((RadioButton)FindByName("box2opt")).IsChecked = true;
-            if (viewModel.boxopt == "4") ((RadioButton)FindByName("box4opt")).IsChecked = true;
-            if (viewModel.boxopt == "auto") ((RadioButton)FindByName("autoopt")).IsChecked = true;
-
-            if (viewModel.AvgRT > 0)
-            {
-                crtLabel.Text = "Avg Cor RT: " + viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
-            }
             centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
             centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
 
@@ -142,28 +126,6 @@ namespace BrainGames.Views
             crossfigure2B.Path.LineTo(new SKPoint(boxfigure2B.Rectangle.Right - crossmargin, tr_y + crossmargin));
             crossfigure2B.Path.MoveTo(boxfigure2B.Rectangle.Right - crossmargin, br_y - crossmargin);
             crossfigure2B.Path.LineTo(new SKPoint(boxfigure2B.Rectangle.Left + crossmargin, tl_y + crossmargin));
-
-            /*
-            boxfigure4A = new SkiaRectangleDrawingFigure();
-            boxfigure4A.FigurePaint = skBoxPaint;
-            boxfigure4A.StartPoint = new SKPoint(tl_x - boxsize / 2 - buffer, tl_y - boxsize / 2 - buffer);
-            boxfigure4A.EndPoint = new SKPoint(br_x - boxsize / 2 - buffer, br_y - boxsize / 2 - buffer);
-
-            boxfigure4B = new SkiaRectangleDrawingFigure();
-            boxfigure4B.FigurePaint = skBoxPaint;
-            boxfigure4B.StartPoint = new SKPoint(tl_x + boxsize / 2 + buffer, tl_y - boxsize / 2 - buffer);
-            boxfigure4B.EndPoint = new SKPoint(br_x + boxsize / 2 + buffer, br_y - boxsize / 2 - buffer);
-
-            boxfigure4C = new SkiaRectangleDrawingFigure();
-            boxfigure4C.FigurePaint = skBoxPaint;
-            boxfigure4C.StartPoint = new SKPoint(tl_x - boxsize / 2 - buffer, tl_y + boxsize / 2 + buffer);
-            boxfigure4C.EndPoint = new SKPoint(br_x - boxsize / 2 - buffer, br_y + boxsize / 2 + buffer);
-
-            boxfigure4D = new SkiaRectangleDrawingFigure();
-            boxfigure4D.FigurePaint = skBoxPaint;
-            boxfigure4D.StartPoint = new SKPoint(tl_x + boxsize / 2 + buffer, tl_y + boxsize / 2 + buffer);
-            boxfigure4D.EndPoint = new SKPoint(br_x + boxsize / 2 + buffer, br_y + boxsize / 2 + buffer);
-            */
 
             boxfigure4A = new SkiaRectangleDrawingFigure();
             boxfigure4A.FigurePaint = skBoxPaint;
@@ -226,132 +188,72 @@ namespace BrainGames.Views
             crossfigure4D.Path.LineTo(new SKPoint(boxfigure4D.Rectangle.Left + crossmargin, boxfigure4D.Rectangle.Top + crossmargin));
         }
 
-        void BoxOptChanged(object sender, CheckedChangedEventArgs e)
-        {
-            if (((RadioButton)FindByName("box1opt")).IsChecked) viewModel.boxopt = "1";
-            if (((RadioButton)FindByName("box2opt")).IsChecked) viewModel.boxopt = "2";
-            if (((RadioButton)FindByName("box4opt")).IsChecked) viewModel.boxopt = "4";
-            if (((RadioButton)FindByName("autoopt")).IsChecked) viewModel.boxopt = "auto";
-        }
-
-        async void Stats_Clicked(object sender, EventArgs e)
-        {
-            if (viewModel.trialctr == 0) return;
-            await Navigation.PushModalAsync(new NavigationPage(new RTStatsPage()));
-        }
-
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
-            rtLabel.BackgroundColor = Color.Gray;
-            crtLabel.Text = "SS Cor RT: ";
-            viewModel.AvgRT = 0;
             boxfigures.Clear();
-            if (viewModel.boxes == 1)
+            Init();
+            if (viewModel.RTboxes == 1)
             {
-                viewModel.AvgRT = (float)viewModel.ss1_cumrt / viewModel.ss1_trialcnt;
                 crossfigure = crossfigure1;
                 boxfigures.Add(boxfigure1);
             }
-            else if (viewModel.boxes == 2)
+            else if (viewModel.RTboxes == 2)
             {
-                if (viewModel.ss2_trialcnt >= 10 && (float)viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } else { viewModel.AvgRT = 0; }
                 boxfigures.Add(boxfigure2A);
                 boxfigures.Add(boxfigure2B);
-                if (viewModel.corboxes[0] == 0) crossfigure = crossfigure2A;
+                if (viewModel.RTcorboxes[0] == 0) crossfigure = crossfigure2A;
                 else crossfigure = crossfigure2B;
             }
-            else if (viewModel.boxes == 4)
+            else if (viewModel.RTboxes == 4)
             {
-                if (viewModel.ss4_trialcnt >= 10 && (float)viewModel.ss4_cortrialcnt / viewModel.ss4_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss4_cumcorrt / viewModel.ss4_cortrialcnt; } else { viewModel.AvgRT = 0; }
                 boxfigures.Add(boxfigure4A);
                 boxfigures.Add(boxfigure4B);
                 boxfigures.Add(boxfigure4C);
                 boxfigures.Add(boxfigure4D);
-                if (viewModel.corboxes[viewModel.blocktrialctr] == 0) { crossfigure = crossfigure4A; }
-                else if (viewModel.corboxes[viewModel.blocktrialctr] == 1) { crossfigure = crossfigure4B; }
-                else if (viewModel.corboxes[viewModel.blocktrialctr] == 2) { crossfigure = crossfigure4C; }
+                if (viewModel.RTcorboxes[viewModel.RTblocktrialctr] == 0) { crossfigure = crossfigure4A; }
+                else if (viewModel.RTcorboxes[viewModel.RTblocktrialctr] == 1) { crossfigure = crossfigure4B; }
+                else if (viewModel.RTcorboxes[viewModel.RTblocktrialctr] == 2) { crossfigure = crossfigure4C; }
                 else { crossfigure = crossfigure4D; }
             }
 
             clicked = false;
             firstshown = false;
             showbox = true;
-            blockcumrt = 0;
             _stopWatch.Restart();
             Device.StartTimer(ts, TimerLoop);
         }
 
         public void ReactButton_Clicked(object sender, EventArgs e)
         {
-//            Console.WriteLine("blocktrialctr = {0}", viewModel.blocktrialctr);
+            //            Console.WriteLine("blocktrialctr = {0}", viewModel.blocktrialctr);
             if (showcross) //ignore it if it's not during a trial
             {
                 double rt = _stopWatch.Elapsed.TotalMilliseconds;
-                viewModel.ReactionTime = Math.Min(rt - ontime, viewModel.timeout);
-                blockcumrt += viewModel.ReactionTime;
-                viewModel.trialctr++;
-                viewModel.blocktrialctr++;
-                rtLabel.Text = "RT: " + viewModel.ReactionTime.ToString("N0", CultureInfo.InvariantCulture) + " ms";
-                artLabel.Text = "Block RT: " + (blockcumrt / viewModel.blocktrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
+                viewModel.RTReactionTime += Math.Min(rt - ontime, viewModel.RTtimeout);
+                viewModel.RTtrialctr++;
+                viewModel.RTblocktrialctr++;
                 clicked = true;
 
-                if (viewModel.boxes == 1)
+                if (viewModel.RTblocktrialctr < viewModel.RTtrialsperset) //load up next stim
                 {
-                    viewModel.ss1_trialcnt++;
-                    viewModel.ss1_cumrt += viewModel.ReactionTime;
-                    viewModel.AvgRT = viewModel.ss1_cumrt / viewModel.ss1_trialcnt;
-                }
-                else if (viewModel.boxes == 2)
-                {
-                    viewModel.ss2_trialcnt++;
-                    if (viewModel.cor)
-                    {
-                        viewModel.ss2_cortrialcnt++;
-                        viewModel.ss2_cumcorrt += viewModel.ReactionTime;
-                        if (viewModel.ss2_trialcnt >= 10 && (float)viewModel.ss2_cortrialcnt / viewModel.ss2_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss2_cumcorrt / viewModel.ss2_cortrialcnt; } else { viewModel.AvgRT = 0; }
-                    }
-                }
-                else if (viewModel.boxes == 4)
-                {
-                    viewModel.ss4_trialcnt++;
-                    if (viewModel.cor)
-                    {
-                        viewModel.ss4_cortrialcnt++;
-                        viewModel.ss4_cumcorrt += viewModel.ReactionTime;
-                        if (viewModel.ss4_trialcnt >= 10 && (float)viewModel.ss4_cortrialcnt / viewModel.ss4_trialcnt > 0.9) { viewModel.AvgRT = (float)viewModel.ss4_cumcorrt / viewModel.ss4_cortrialcnt; } else { viewModel.AvgRT = 0; }
-                    }
-                }
-
-                crtLabel.Text = "SS Cor RT: " + (viewModel.AvgRT > 0 ? viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms" : "");
-
-                if (viewModel.blocktrialctr < viewModel.trialsperset) //load up next stim
-                { 
-                    if (viewModel.boxes == 1)
+                    if (viewModel.RTboxes == 1)
                     {
                         crossfigure = crossfigure1;
                     }
-                    else if (viewModel.boxes == 2)
+                    else if (viewModel.RTboxes == 2)
                     {
-                        if (viewModel.corboxes[viewModel.blocktrialctr] == 0) crossfigure = crossfigure2A;
+                        if (viewModel.RTcorboxes[viewModel.RTblocktrialctr] == 0) crossfigure = crossfigure2A;
                         else crossfigure = crossfigure2B;
                     }
-                    else if (viewModel.boxes == 4)
+                    else if (viewModel.RTboxes == 4)
                     {
-                        if (viewModel.corboxes[viewModel.blocktrialctr] == 0) { crossfigure = crossfigure4A; }
-                        else if (viewModel.corboxes[viewModel.blocktrialctr] == 1) { crossfigure = crossfigure4B; }
-                        else if (viewModel.corboxes[viewModel.blocktrialctr] == 2) { crossfigure = crossfigure4C; }
+                        if (viewModel.RTcorboxes[viewModel.RTblocktrialctr] == 0) { crossfigure = crossfigure4A; }
+                        else if (viewModel.RTcorboxes[viewModel.RTblocktrialctr] == 1) { crossfigure = crossfigure4B; }
+                        else if (viewModel.RTcorboxes[viewModel.RTblocktrialctr] == 2) { crossfigure = crossfigure4C; }
                         else { crossfigure = crossfigure4D; }
                     }
-
                 }
-                if (viewModel.boxes > 1)
-                {
-                    if (viewModel.cor) { rtLabel.BackgroundColor = Color.ForestGreen; }
-                    else { rtLabel.BackgroundColor = Color.OrangeRed; }
-                }
-
-                //                viewModel.ReactButtonCommand.Execute(null);
-                viewModel.ReactButton(viewModel.trialctr, viewModel.ReactionTime, viewModel.AvgRT, viewModel.corboxes[viewModel.blocktrialctr -1], viewModel.cor);
+                viewModel.ResponseButton(viewModel.RTboxes == 1 ? -1 : Convert.ToInt32(viewModel.cor), viewModel.RTblocktrialctr == viewModel.RTtrialsperset);
             }
         }
 
@@ -360,29 +262,28 @@ namespace BrainGames.Views
             // get the elapsed time from the stopwatch because the 1/30 timer interval is not accurate and can be off by 2 ms
             var dt = _stopWatch.Elapsed.TotalMilliseconds;
 
-            if (viewModel.blocktrialctr < viewModel.trialsperset && dt < viewModel.pausedurarr[viewModel.blocktrialctr]) //keep orienting cue onscreen
+            if (viewModel.RTblocktrialctr < viewModel.RTtrialsperset && dt < viewModel.RTpausedurarr[viewModel.RTblocktrialctr]) //keep orienting cue onscreen
             {
                 showcross = false;
             }
-            else if (viewModel.blocktrialctr < viewModel.trialsperset && dt < viewModel.pausedurarr[viewModel.blocktrialctr] + viewModel.timeout && !clicked)
+            else if (viewModel.RTblocktrialctr < viewModel.RTtrialsperset && dt < viewModel.RTpausedurarr[viewModel.RTblocktrialctr] + viewModel.RTtimeout && !clicked)
             {
                 showcross = true;
             }
             else //clicked or timeout, done with trial
             {
-                //if (viewModel.blocktrialctr < viewModel.trialsperset && dt >= viewModel.pausedurarr[viewModel.blocktrialctr] + viewModel.timeout) 
                 showcross = false;
                 firstshown = false;
                 _stopWatch.Restart();
                 clicked = false;
-                if (viewModel.blocktrialctr == viewModel.trialsperset) //done with block
+                if (viewModel.RTblocktrialctr == viewModel.RTtrialsperset) //done with block
                 {
                     showbox = false;
                     canvasView.InvalidateSurface();
                     viewModel.IsRunning = false;
-                    viewModel.ShowReact1 = false;
-                    viewModel.ShowReact2 = false;
-                    viewModel.ShowReact4 = false;
+                    viewModel.RTShowReact1 = false;
+                    viewModel.RTShowReact2 = false;
+                    viewModel.RTShowReact4 = false;
                     return false;
                 }
             }
@@ -411,10 +312,6 @@ namespace BrainGames.Views
                     firstshown = true;
                 }
             }
-        }
-
-        void box1opt_CheckedChanged(System.Object sender, Xamarin.Forms.CheckedChangedEventArgs e)
-        {
         }
     }
 }

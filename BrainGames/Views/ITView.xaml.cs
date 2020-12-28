@@ -25,6 +25,11 @@ namespace BrainGames.Views
     [DesignTimeVisible(false)]
     public partial class ITView : Grid
     {
+        public TMDViewModel viewModel
+        {
+            get { return BindingContext as TMDViewModel; }
+            set { BindingContext = value; }
+        }
 
         private readonly Stopwatch _stopWatch = new Stopwatch();
         static float toplen = 120;
@@ -58,17 +63,62 @@ namespace BrainGames.Views
 
         private TimeSpan ts;
 
-        public ITView(TMDViewModel viewModel)
+        public ITView(TMDViewModel _viewModel)
         {
             InitializeComponent();
+            viewModel = _viewModel;
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
-            Init();
+        }
+
+        protected override void OnSizeAllocated(double w, double h)
+        {
+            base.OnSizeAllocated(w, h);
+            if (w != -1 && h != -1) Init();
+            //RunIt();
         }
 
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
             _stopWatch.Restart();
             Device.StartTimer(ts, TimerLoop);
+        }
+
+        public void LeftButton_Clicked(object sender, EventArgs e)
+        {
+            if (!viewModel.ITshown) return;
+            if (viewModel.ITcor_ans == TMDViewModel.ITanswertype.left)
+            {
+//                fpsLabel.BackgroundColor = Color.ForestGreen;
+//                asdLabel.Text = "Avg Dur: " + (viewModel.cumcorstimdur / viewModel.cortrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
+            }
+            else
+            {
+//                fpsLabel.BackgroundColor = Color.OrangeRed;
+            }
+            if (Settings.IT_EstIT > 0)
+            {
+//                itLabel.Text = "Est IT: " + Settings.IT_EstIT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
+//                itLabel.TextColor = Color.Black;
+            }
+        }
+
+        public void RightButton_Clicked(object sender, EventArgs e)
+        {
+            if (!viewModel.ITshown) return;
+            if (viewModel.ITcor_ans == TMDViewModel.ITanswertype.right)
+            {
+//                fpsLabel.BackgroundColor = Color.ForestGreen;
+//                asdLabel.Text = "Avg Dur: " + (viewModel.cumcorstimdur / viewModel.cortrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
+            }
+            else
+            {
+//                fpsLabel.BackgroundColor = Color.OrangeRed;
+            }
+            if (Settings.IT_EstIT > 0)
+            {
+//                itLabel.Text = "Est IT: " + Settings.IT_EstIT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
+//                itLabel.TextColor = Color.Black;
+            }
         }
 
         private void Init()
@@ -143,18 +193,18 @@ namespace BrainGames.Views
             // get the elapsed time from the stopwatch because the 1/30 timer interval is not accurate and can be off by 2 ms
             var dt = _stopWatch.Elapsed.TotalMilliseconds;
 
-            if (dt < viewModel.pausedur - viewModel.minstimdur / 2) //keep orienting cue onscreen
+            if (dt < viewModel.ITpausedur - viewModel.ITminstimdur / 2) //keep orienting cue onscreen
             {
                 pifigure = pifigure_dot;
             }
             else
             {
-                if (viewModel.emppausedur == 0) viewModel.emppausedur = dt;
-                if (dt < viewModel.emppausedur + viewModel.curstimdur - viewModel.minstimdur / 2) //keep stim onscreen
+                if (viewModel.ITemppausedur == 0) viewModel.ITemppausedur = dt;
+                if (dt < viewModel.ITemppausedur + viewModel.ITcurstimdur - viewModel.ITminstimdur / 2) //keep stim onscreen
                 {
                     if (pifigure == pifigure_dot) //Start of round; decide which stim to show
                     {
-                        if (viewModel.cor_ans == ITViewModel.answertype.left)
+                        if (viewModel.ITcor_ans == TMDViewModel.ITanswertype.left)
                         {
                             pifigure = pifigure_l;
                         }
@@ -166,22 +216,20 @@ namespace BrainGames.Views
                 }
                 else
                 {
-                    if (viewModel.empstimdur == 0)
+                    if (viewModel.ITempstimdur == 0)
                     {
-                        viewModel.empstimdur = dt - viewModel.emppausedur;
-                        viewModel.stimtimearr.Add(viewModel.curstimdur);
-                        viewModel.empstimtimearr.Add(viewModel.empstimdur);
-                        //                        stimdurtext = stimdurtext + empstimdur.ToString("N0", CultureInfo.InvariantCulture) + "ms";
-                        fpsLabel.Text = "Stim Dur: " + viewModel.empstimdur.ToString("N0", CultureInfo.InvariantCulture) + " ms";
-                        viewModel.shown = true;
+                        viewModel.ITempstimdur = dt - viewModel.ITemppausedur;
+                        viewModel.ITempstimtimearr.Add(viewModel.ITempstimdur);
+//                        fpsLabel.Text = "Stim Dur: " + viewModel.ITempstimdur.ToString("N0", CultureInfo.InvariantCulture) + " ms";
+                        viewModel.ITshown = true;
                     }
-                    if (dt < viewModel.emppausedur + viewModel.empstimdur + viewModel.maskdur - viewModel.minstimdur / 2) //keep mask onscreen
+                    if (dt < viewModel.ITemppausedur + viewModel.ITempstimdur + viewModel.ITmaskdur - viewModel.ITminstimdur / 2) //keep mask onscreen
                     {
                         pifigure = pifigure_mask;
                     }
                     else //You've shown stim and mask; clear screen
                     {
-                        viewModel.empmaskdur = dt - viewModel.emppausedur - viewModel.empstimdur;
+                        viewModel.ITempmaskdur = dt - viewModel.ITemppausedur - viewModel.ITempstimdur;
                         pifigure = null;
                         canvasView.InvalidateSurface();
                         return false;

@@ -114,7 +114,7 @@
                                   Text="Two-Minute Drill"
                                   Margin="4"
                                   HeightRequest="54"
-                                  BackgroundColor="Transparent" 
+                                  BackgroundColor="LightGoldenrodYellow"
                                   BorderColor="{StaticResource Primary}"
                                   BorderWidth="1"
                                   CornerRadius="32"

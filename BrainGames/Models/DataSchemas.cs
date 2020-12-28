@@ -12,6 +12,7 @@ namespace BrainGames.Models
     {
 
         public static List<string> GameTypes = new List<string> { "IT", "RT", "Stroop", "DS", "LS" };
+        public static List<string> GameNames = new List<string> { "Inspection Time", "Reaction Time", "Stroop Effect", "Digit Span", "Location Span" };
 
         public class UserSchema
         {

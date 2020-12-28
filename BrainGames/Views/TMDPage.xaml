@@ -3,26 +3,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="BrainGames.Views.TMDPage"
              Title="Two-Minute Drill!"
-             x:Name="TMDPage"
+             x:Name="TwoMinuteDrillPage"
              Visual="Material">
     <ContentPage.Content>
-        <Grid>
+        <Grid RowSpacing="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <Grid x:Name="TMDHeader" Grid.Row="0" BackgroundColor="Gray">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+<!--                    <ColumnDefinition Width="*"/> -->
                 </Grid.ColumnDefinitions>
-                <Label x:Name="fpsLabel" Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Stim Dur: " FontSize="Small" Margin="0,0"/>
-    <!--            <Label x:Name="corLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="Start" FontSize="Small" Margin="0,0"/>-->
-                <Label x:Name="asdLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Avg Dur: " FontSize="Small" Margin="0,0"/>
-                <Label x:Name="itLabel" Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="Start" FontSize="Small" Text="Est IT: " TextColor="LightGray" Margin="0,0"/>
+                <Label x:Name="fpsLabel" Grid.Column="0" HorizontalOptions="CenterAndExpand" VerticalOptions="Start" Text="{Binding GameCtrString}" BackgroundColor="{Binding RespColor}" FontSize="Small" Margin="0,0"/>
+                <Label x:Name="TimerLabel" 
+                                  Grid.Column="1"
+                                  BackgroundColor="Transparent"
+                                  FontSize="Small"
+                                  Margin="0,0"
+                                  VerticalOptions="CenterAndExpand"
+                                  HorizontalOptions="CenterAndExpand"
+                                  Text="{Binding ClockTime}"/>
             </Grid>
-            <ContentView x:Name="GameView" Grid.Row="1">
+            <ContentView Content="{Binding Game}" x:Name="GameView" Grid.Row="1">
             </ContentView>
         </Grid>
     </ContentPage.Content>

@@ -137,7 +137,7 @@ namespace BrainGames.ViewModels
         {
             if (App.mum.GameShares.Where(x => x.game == "Stroop")?.Count() > 0) Compare = true;
 
-            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema"); }
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema where trialnum > 0"); }
             catch (Exception ex)
             {
                 ;

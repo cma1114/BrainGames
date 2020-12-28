@@ -27,35 +27,46 @@ namespace BrainGames.Views
         {
             viewModel = new TMDViewModel();
             InitializeComponent();
-            var games = Enumerable.Range(0, DataSchemas.GameTypes.Count() - 1).ToList();
-            do
-            {
-                int i = MasterUtilityModel.RandomNumber(0, games.Count());
-                orderedgames.Add(DataSchemas.GameTypes[games[i]]);
-                games.RemoveAt(i);
-
-            } while (games.Count() > 0);
         }
 
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            RunIt();
+            //RunIt();
         }
 
-        private async void RunIt()
+ /*       private async void RunIt()
         {
-            foreach (string g in orderedgames)
+            int i = 0;
+            while (i < orderedgames.Count())
             {
+                if (viewModel.InProgress)
+                {
+                    break;// continue;
+                }
+                viewModel.InProgress = true;
                 this.GameView.Content = null;
-                switch (g)
+                switch (orderedgames[i])
                 {
                     case "IT":
                         this.GameView.Content = new ITView(viewModel);
                         break;
+                    case "RT":
+                        this.GameView.Content = new ITView(viewModel);
+                        break;
+                    case "Stroop":
+                        this.GameView.Content = new ITView(viewModel);
+                        break;
+                    case "DS":
+                        this.GameView.Content = new ITView(viewModel);
+                        break;
+                    case "LS":
+                        this.GameView.Content = new ITView(viewModel);
+                        break;
                 }
+                i++;
             }
-            await Navigation.PopAsync();
-        }
+            //await Navigation.PopAsync();
+        }*/
     }
 }

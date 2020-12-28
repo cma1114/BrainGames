@@ -4,7 +4,7 @@
              xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              xmlns:converters="clr-namespace:BrainGames.Converters"
              x:Class="BrainGames.Views.ITView"
-             x:Name="ITView"
+             x:Name="InspectionTimeView"
              Visual="Material">
         <Grid.Resources>
             <converters:InverseBoolConverter x:Key="not"/>
@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <skia:SKGLView x:Name="canvasView" Grid.Row="0" Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" PaintSurface="OnPainting"/>
         <Button Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" Style="{StaticResource buttonStyle}"
-                Command="{Binding ITReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
+                Command="{Binding ITReadyButtonCommand}" IsEnabled="{Binding IsITReadyEnabled}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
         <Button Grid.Row="1" Grid.Column="0" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="LeftButton_Clicked" Command="{Binding ITLeftButtonCommand}" Style="{StaticResource buttonStyle}"
                 IsVisible="{Binding IsRunning}" Text="Left"/>
         <Button Grid.Row="1" Grid.Column="1" HeightRequest="80" HorizontalOptions="FillAndExpand" Clicked="RightButton_Clicked" Command="{Binding ITRightButtonCommand}" Style="{StaticResource buttonStyle}"
