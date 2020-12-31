@@ -17,7 +17,7 @@
             <skia:SKGLView x:Name="canvasView" Grid.Row="0" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0,0" PaintSurface="OnPainting"/>
             <Button Grid.Row="1" HeightRequest="100" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
                 Command="{Binding RTReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready" BackgroundColor="Green"/>
-            <Button Grid.Row="1" HeightRequest="100" Clicked="ReactButton_Clicked" Command="{Binding RTReactButtonCommand}" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
+            <Button Grid.Row="1" HeightRequest="100" Clicked="ReactButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
                 IsVisible="{Binding RTShowReact1}" Text="React"/>
             <Grid Grid.Row="1" IsVisible="{Binding RTShowReact2}">
                 <Grid.ColumnDefinitions>

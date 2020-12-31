@@ -47,12 +47,17 @@
                                 <Span TextDecorations="Underline" TextColor="Blue" Text="challenge your friends.">
                                     <Span.GestureRecognizers><TapGestureRecognizer Tapped="TGR_Friends" /></Span.GestureRecognizers>
                                 </Span>
+                                <Span Text=" To get a quick checkup with the "/>
+                                <Span TextDecorations="Underline" TextColor="Blue" Text="Two-Minute Drill">
+                                    <Span.GestureRecognizers><TapGestureRecognizer Tapped="TGR_TMD" /></Span.GestureRecognizers>
+                                </Span>
                             </FormattedString>
                         </Label.FormattedText>
                     </Label>
                 </Grid>
                 <Grid x:Name="Contents">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -233,8 +238,33 @@
                             </Label.FormattedText>
                         </Label>
                     </Grid>
+                    <Grid x:Name="TMDGrid" Grid.Row="7" Grid.ColumnSpan="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="290*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label x:Name="TMDLabel" Grid.Row="0" Grid.ColumnSpan="2" LineHeight="1" FontSize="Body">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="Two-Minute Drill" FontAttributes="Bold"/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Label Grid.Row="1" Grid.Column="1" LineHeight="1" FontSize="Body">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="The Two-Minute Drill incoporates all the different games to give you an overall assessment of the current state of your memory and processing speed, compared to your past performance. Check in at different times of day to see whether you're at your best."/>
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </Grid>
                 </Grid>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>
+

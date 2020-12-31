@@ -51,5 +51,10 @@ namespace BrainGames.Views
 		{
 			await scrollView.ScrollToAsync(FriendsLabel, ScrollToPosition.Start, true);
 		}
+
+		async void TGR_TMD(System.Object sender, System.EventArgs e)
+		{
+			await scrollView.ScrollToAsync(TMDLabel, ScrollToPosition.Start, true);
+		}
 	}
 }

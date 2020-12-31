@@ -29,7 +29,7 @@ namespace BrainGames
             mum = new MasterUtilityModel();
 
             DependencyService.Register<MockDataStore>();
-            Material.Init(this, "Material.Configuration");
+            Material.Init(this);// , "Material.Configuration");
             MainPage = new MainPage();
 
             ScreenDensity = (int)DeviceDisplay.MainDisplayInfo.Density;

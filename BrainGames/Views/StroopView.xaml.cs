@@ -124,7 +124,7 @@ namespace BrainGames.Views
                 }
                 clicked = true;
 
-                viewModel.ResponseButton(Convert.ToInt32(viewModel.cor), viewModel.Stroopblocktrialctr == viewModel.Strooptrialsperset);
+                viewModel.StroopReactButton(0, Math.Min(rt - ontime, viewModel.Strooptimeout), 0, 0, viewModel.Stroopwords[viewModel.Stroopblocktrialctr - 1], viewModel.Stroopcolorwords[(int)viewModel.Strooptextcolors[viewModel.Stroopblocktrialctr - 1]], congruent, viewModel.cor);
             }
         }
 

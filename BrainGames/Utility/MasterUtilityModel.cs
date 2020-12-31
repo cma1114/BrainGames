@@ -78,6 +78,8 @@ namespace BrainGames.Utility
         public int it_errtrialstreak = 0;
         public int it_cortrialstreak = 0;
         public Dictionary<double, double> it_AvgCorPctByStimDur = null;
+        public int it_cortrialcnt = 0;
+        public double it_cumcorstimdur = 0;
 
 
         public int rt_trialctr = 0;
@@ -407,6 +409,8 @@ namespace BrainGames.Utility
                 Settings.IT_AvgCorDur = Settings.IT_CorTrials > 0 ? itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials : 0;
                 Settings.IT_LastStimDur = it_laststimtime;
                 Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
+                it_cortrialcnt = itgrs.Where(x => x.cor == true).Count();
+                it_cumcorstimdur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime);
                 it_AvgCorPctByStimDur = itgrs.GroupBy(x => x.stimtime).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Count())).OrderByDescending(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
             }
             #endregion

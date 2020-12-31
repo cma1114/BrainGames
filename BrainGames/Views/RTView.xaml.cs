@@ -253,7 +253,12 @@ namespace BrainGames.Views
                         else { crossfigure = crossfigure4D; }
                     }
                 }
-                viewModel.ResponseButton(viewModel.RTboxes == 1 ? -1 : Convert.ToInt32(viewModel.cor), viewModel.RTblocktrialctr == viewModel.RTtrialsperset);
+                if (viewModel.RTboxes == 1)
+                {
+                    viewModel.RTss1_trialcnt++;
+                    viewModel.RTss1_cumrt += viewModel.RTReactionTime;
+                }
+                viewModel.RTReactButton(0, viewModel.RTReactionTime, (float)viewModel.RTss1_cumrt / viewModel.RTss1_trialcnt, viewModel.RTcorboxes[viewModel.RTblocktrialctr - 1], viewModel.cor);
             }
         }
 

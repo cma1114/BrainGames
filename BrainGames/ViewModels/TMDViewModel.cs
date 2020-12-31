@@ -20,6 +20,137 @@ namespace BrainGames.ViewModels
 {
     public class TMDViewModel : ViewModelBase
     {
+        private double _itpoints = 0;
+        public double itpoints
+        {
+            get => _itpoints;
+            set
+            {
+                SetProperty(ref _itpoints, value);
+                SpeedScore = (itpoints + rtpoints + stpoints) * .667;//speed gets downweighted because there are 3 of them
+            }
+        }
+        private double _rtpoints = 0;
+        public double rtpoints
+        {
+            get => _rtpoints;
+            set
+            {
+                SetProperty(ref _rtpoints, value);
+                SpeedScore = (itpoints + rtpoints + stpoints) * .667;//speed gets downweighted because there are 3 of them;
+            }
+        }
+        private double _stpoints = 0;
+        public double stpoints
+        {
+            get => _stpoints;
+            set
+            {
+                SetProperty(ref _stpoints, value);
+                SpeedScore = (itpoints + rtpoints + stpoints) * .667;//speed gets downweighted because there are 3 of them;
+            }
+        }
+        private double _dspoints = 0;
+        public double dspoints
+        {
+            get => _dspoints;
+            set
+            {
+                SetProperty(ref _dspoints, value);
+                MemoryScore = (dspoints + lspoints);
+            }
+        }
+        private double _lspoints = 0;
+        public double lspoints
+        {
+            get => _lspoints;
+            set
+            {
+                SetProperty(ref _lspoints, value);
+                MemoryScore = (dspoints + lspoints);
+            }
+        }
+        private double _memoryScore = 0;
+        public double MemoryScore
+        {
+            get => _memoryScore;
+            set
+            {
+                SetProperty(ref _memoryScore, value);
+                MemoryScoreString = string.Format("Memory Score: {0}", Math.Round(_memoryScore, 1));
+                if (_memoryScore != 0)
+                {
+                    MemoryScoreColor = _memoryScore > 0 ? Color.ForestGreen : Color.OrangeRed;
+                }
+                TotalScore = (_memoryScore + SpeedScore) / 2;
+            }
+        }
+        private double _speedScore = 0;
+        public double SpeedScore
+        {
+            get => _speedScore;
+            set
+            {
+                SetProperty(ref _speedScore, value);
+                SpeedScoreString = string.Format("Speed Score: {0}", Math.Round(_speedScore, 1));
+                if (_speedScore != 0)
+                {
+                    SpeedScoreColor = _speedScore > 0 ? Color.ForestGreen : Color.OrangeRed;
+                }
+                TotalScore = (_speedScore + MemoryScore) / 2;
+            }
+        }
+        private double _totalScore = 0;
+        public double TotalScore
+        {
+            get => _totalScore;
+            set
+            {
+                SetProperty(ref _totalScore, value);
+                TotalScoreString = string.Format("Total Score: {0}", Math.Round(_totalScore, 1));
+                if (_totalScore != 0)
+                {
+                    TotalScoreColor = _totalScore > 0 ? Color.LightGreen : Color.IndianRed;
+                }
+            }
+        }
+        private string _memoryscoreString = "";
+        public string MemoryScoreString
+        {
+            get => _memoryscoreString;
+            set { SetProperty(ref _memoryscoreString, value); }
+        }
+        private Color _memoryscoreColor = Color.Transparent;
+        public Color MemoryScoreColor
+        {
+            get => _memoryscoreColor;
+            set { SetProperty(ref _memoryscoreColor, value); }
+        }
+        private string _speedscoreString = "";
+        public string SpeedScoreString
+        {
+            get => _speedscoreString;
+            set { SetProperty(ref _speedscoreString, value); }
+        }
+        private Color _speedscoreColor = Color.Transparent;
+        public Color SpeedScoreColor
+        {
+            get => _speedscoreColor;
+            set { SetProperty(ref _speedscoreColor, value); }
+        }
+        private string _totalscoreString = "";
+        public string TotalScoreString
+        {
+            get => _totalscoreString;
+            set { SetProperty(ref _totalscoreString, value); }
+        }
+        private Color _totalscoreColor = Color.Transparent;
+        public Color TotalScoreColor
+        {
+            get => _totalscoreColor;
+            set { SetProperty(ref _totalscoreColor, value); }
+        }
+
         private int _gameidx = 0;
         public int gameidx
         {
@@ -130,6 +261,8 @@ namespace BrainGames.ViewModels
         private int ITreversalthresh = 8;
         private int ITtrials = 6;
         public Dictionary<double, double> it_AvgCorPctByStimDur;
+        public int it_cortrialcnt = 0;
+        public double it_cumcorstimdur = 0;
         private bool _isITReadyEnabled = true;
         public bool IsITReadyEnabled
         {
@@ -329,13 +462,6 @@ namespace BrainGames.ViewModels
             set { SetProperty(ref _dSmaxlen, value); }
         }
 
-        private Color _dSansClr = Color.Gray;
-        public Color DSAnsClr
-        {
-            get => _dSansClr;
-            set { SetProperty(ref _dSansClr, value); }
-        }
-
         private int _dSspanlen = 0;
         public int DSspanlen
         {
@@ -453,13 +579,6 @@ namespace BrainGames.ViewModels
             set { SetProperty(ref _lSmaxlen, value); }
         }
 
-        private Color _lSansClr = Color.Gray;
-        public Color LSAnsClr
-        {
-            get => _lSansClr;
-            set { SetProperty(ref _lSansClr, value); }
-        }
-
         private int _lSspanlen = 0;
         public int LSspanlen
         {
@@ -518,13 +637,15 @@ namespace BrainGames.ViewModels
             ITRightButtonCommand = new Command(ITRightButton);
 
             it_AvgCorPctByStimDur = App.mum.it_AvgCorPctByStimDur;
-            if (Settings.IT_AvgCorDur == 0)
+            it_cumcorstimdur = App.mum.it_cumcorstimdur;
+            it_cortrialcnt = App.mum.it_cortrialcnt;
+            if (App.mum.it_cortrialcnt == 0)
             {
                 ITbasestimdur = ITminstimdur * 2 * Math.Round(100 / (ITminstimdur * 2));
             }
             else
             {
-                ITbasestimdur = Math.Floor(Settings.IT_AvgCorDur / ITminstimdur) * ITminstimdur;
+                ITbasestimdur = Math.Floor((App.mum.it_cumcorstimdur / App.mum.it_cortrialcnt) / ITminstimdur) * ITminstimdur;
             }
             ITstimtimearr = new List<double>();
             List<double> doublelisttmp = new List<double>();
@@ -566,7 +687,7 @@ namespace BrainGames.ViewModels
             RTss1_cumrt = App.mum.rt_ss1_cumrt;
             RTss1_trialcnt = App.mum.rt_ss1_trialcnt;
             RTReadyButtonCommand = new Command(RTReadyButton);
-            RTReactButtonCommand = new Command(RTReactButton);
+//            RTReactButtonCommand = new Command(RTReactButton);
             RTLeftButtonCommand = new Command(RTLeftButton);
             RTRightButtonCommand = new Command(RTRightButton);
             RTButton1Command = new Command(RTButton1);
@@ -938,10 +1059,10 @@ namespace BrainGames.ViewModels
             } while (games.Count() > 0);
             /*
             orderedgames.Clear();
+            orderedgames.Add("Stroop");
+            orderedgames.Add("RT");
             orderedgames.Add("IT");
-//            orderedgames.Add("RT");
-//            orderedgames.Add("Stroop");
-//            orderedgames.Add("DS");
+            orderedgames.Add("DS");
             orderedgames.Add("LS");
             */
             gameidx = 0;
@@ -983,7 +1104,7 @@ namespace BrainGames.ViewModels
         }
         #endregion
 
-        public async void ResponseButton(int cor, bool last)
+        public void ResponseButton(int cor, bool last)
         {
             if (cor == 1)
             {
@@ -994,12 +1115,12 @@ namespace BrainGames.ViewModels
                 RespColor = Color.OrangeRed;
             }
             if (last)
-            {
+            {/*
                 await Task.Run(() =>
                 {
                     var st = DateTime.Now;
                     while (DateTime.Now < st.AddMilliseconds(500)) {; }
-                });
+                });*/
 
                 RespColor = Color.Transparent;
                 if (DateTime.Now.Subtract(StartTime).Minutes >= 2)
@@ -1042,7 +1163,7 @@ namespace BrainGames.ViewModels
             LSanswered = false;
             LStimedout = false;
             LSEnableButtons = false;
-            LSAnsClr = Color.Gray;
+            RespColor = Color.Transparent;
 
             LSdigitlist.Clear();
             LSresponselist.Clear();
@@ -1123,7 +1244,6 @@ namespace BrainGames.ViewModels
                     LScortrialstreak++;
                     LSerrtrialstreak = 0;
                 }
-                LSAnsClr = Color.ForestGreen;
                 LSscores[LSspanlenarr[LStrialctr - 1]][0]++;
             }
             else
@@ -1139,7 +1259,6 @@ namespace BrainGames.ViewModels
                     LScortrialstreak = 0;
                     LSerrtrialstreak++;
                 }
-                LSAnsClr = Color.OrangeRed;
             }
 /*
             if (LSBackward)
@@ -1190,6 +1309,7 @@ namespace BrainGames.ViewModels
             }
 */
             ResponseButton(Convert.ToInt32(cor), LStrialctr == LStrials);
+            MasterUtilityModel.WriteLSGR(game_session_id, 0, LSspanlen, LSstimonms, LSstimoffms, LSgridsize, (int)LStimer.ElapsedMilliseconds, LSBackward ? "b" : "f", String.Join("~", LSdigitlist), LSrepeats_set, LSrepeats_cons, true, cor);
         }
         #endregion
 
@@ -1200,7 +1320,7 @@ namespace BrainGames.ViewModels
             DSanswered = false;
             DStimedout = false;
             DSEnableButtons = false;
-            DSAnsClr = Color.Gray;
+            RespColor = Color.Transparent;
 
             DSdigitlist.Clear();
             DSresponselist.Clear();
@@ -1279,13 +1399,11 @@ namespace BrainGames.ViewModels
             if (DSresponselist.Count() == DSdigitlist.Count() && DSMatchLists())
             {
                 cor = true;
-                DSAnsClr = Color.ForestGreen;
                 DSscores[DSspanlenarr[DStrialctr - 1]][0]++;
             }
             else
             {
                 cor = false;
-                DSAnsClr = Color.OrangeRed;
             }
 /*
             if (DSBackward)
@@ -1340,6 +1458,7 @@ namespace BrainGames.ViewModels
             }
 */
             ResponseButton(Convert.ToInt32(cor), DStrialctr == DStrials);
+            MasterUtilityModel.WriteDSGR(game_session_id, 0, DSspanlen, DSstimonms, DSstimoffms, (int)DStimer.ElapsedMilliseconds, DSBackward ? "b" : "f", String.Join("~", DSdigitlist), DSrepeats_set, DSrepeats_cons, true, cor);
         }
 
         #endregion
@@ -1517,11 +1636,19 @@ namespace BrainGames.ViewModels
 
             IsRunning = true;
         }
+
+        public void StroopReactButton(int tctr, double rt, double avgrt, double difrt, string word, string textcolor, bool congruent, bool correct)
+        {
+            ResponseButton(Convert.ToInt32(cor), Stroopblocktrialctr == Strooptrialsperset);
+            MasterUtilityModel.WriteStroopGR(game_session_id, tctr, rt, avgrt, difrt, word, textcolor, congruent, correct);
+        }
         #endregion
 
         #region RT
-        public void RTReactButton()
+        public void RTReactButton(int tctr, double rt, double avgrt, int corbox, bool correct)
         {
+            MasterUtilityModel.WriteRTGR(game_session_id, tctr, rt, avgrt, RTboxes, true, corbox, correct);
+            ResponseButton(RTboxes == 1 ? -1 : Convert.ToInt32(cor), RTblocktrialctr == RTtrialsperset);
         }
 
         public void RTLeftButton()
@@ -1694,10 +1821,13 @@ namespace BrainGames.ViewModels
                 ITerrtrialstreak = 0;
                 ITcortrialctr++;
                 ITscores[ITstimtimearr[ITtrialctr - 1]][0]++;
+                it_cortrialcnt++;
+                it_cumcorstimdur += ITempstimdur;
             }
             IsRunning = false;
             if (ITtrialctr == ITtrials) IsITReadyEnabled = false;
             ResponseButton(Convert.ToInt32(cor), ITtrialctr == ITtrials);
+            MasterUtilityModel.WriteITGR(game_session_id, 0, 0, ITstimtimearr[ITtrialctr - 1], ITempstimdur, it_cumcorstimdur / it_cortrialcnt, 0, (int)ITcor_ans, cor);
         }
         #endregion
     }
