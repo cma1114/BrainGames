@@ -277,6 +277,10 @@ namespace BrainGames.Views
             }
             else //clicked or timeout, done with trial
             {
+                if (!clicked)//timeout
+                {
+                    ReactButton_Clicked(null, null);
+                }
                 showcross = false;
                 firstshown = false;
                 _stopWatch.Restart();

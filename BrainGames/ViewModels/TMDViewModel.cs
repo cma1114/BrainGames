@@ -110,7 +110,10 @@ namespace BrainGames.ViewModels
                 TotalScoreString = string.Format("Total Score: {0}", Math.Round(_totalScore, 1));
                 if (_totalScore != 0)
                 {
-                    TotalScoreColor = _totalScore > 0 ? Color.LightGreen : Color.IndianRed;
+                    double tmin = -10, tmax = 10;
+                    double ts_cln = _totalScore < tmin ? tmin : _totalScore;
+                    ts_cln = _totalScore > tmax ? tmax : _totalScore;
+                    TotalScoreColor = misc.getgradient(Color.IndianRed, Color.LightGreen, (ts_cln - tmin) / (tmax - tmin));//_totalScore > 0 ? Color.LightGreen : Color.IndianRed;
                 }
             }
         }
@@ -1059,11 +1062,11 @@ namespace BrainGames.ViewModels
             } while (games.Count() > 0);
             /*
             orderedgames.Clear();
+            orderedgames.Add("LS");
             orderedgames.Add("Stroop");
             orderedgames.Add("RT");
             orderedgames.Add("IT");
             orderedgames.Add("DS");
-            orderedgames.Add("LS");
             */
             gameidx = 0;
             RespColor = Color.Transparent;
@@ -1633,7 +1636,7 @@ namespace BrainGames.ViewModels
             }
             //////////////////////////////////////////
             #endregion
-
+            cor = false;//set this for non-responses
             IsRunning = true;
         }
 
@@ -1722,7 +1725,7 @@ namespace BrainGames.ViewModels
 
         public void RTReadyButton()
         {
-            cor = true;//default to this in the 1-box case
+            cor = RTboxes == 1 ? true : false;//default to this in the 1-box case
             RTblocktrialctr = 0;
             RTboxes = 1;// (int)Math.Pow(2, MasterUtilityModel.RandomNumber(0, 3));
             if (RTboxes == 1)

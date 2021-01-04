@@ -20,16 +20,16 @@
                     <ValueConverters:DoubleToStringConverter x:Key="DoubleToString"/>
                 </Grid.Resources>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
-                    <RowDefinition Height="250*"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
+                    <RowDefinition Height="250"/>
                 </Grid.RowDefinitions>
                 <Frame Grid.Row="0"
                        HorizontalOptions="FillAndExpand"

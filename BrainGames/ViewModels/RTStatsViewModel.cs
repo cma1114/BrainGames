@@ -394,27 +394,30 @@ namespace BrainGames.ViewModels
         private List<ChartEntry> GetAvgCorRTByStimType()
         {
             List<ChartEntry> es = new List<ChartEntry>();
-            foreach (Tuple<int, double> rec in AvgCorRTByStimType)
+            if (AvgCorRTByStimType != null)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
-                e.TextColor = SKColors.Black;
-                if (rec.Item1 == 1)
+                foreach (Tuple<int, double> rec in AvgCorRTByStimType)
                 {
-                    e.Label = "1 Choice";
-                    e.Color = SKColor.Parse("#2c3e50");
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
+                    e.TextColor = SKColors.Black;
+                    if (rec.Item1 == 1)
+                    {
+                        e.Label = "1 Choice";
+                        e.Color = SKColor.Parse("#2c3e50");
+                    }
+                    else if (rec.Item1 == 2)
+                    {
+                        e.Label = "2 Choices";
+                        e.Color = SKColor.Parse("#77d065");
+                    }
+                    else
+                    {
+                        e.Label = "4 Choices";
+                        e.Color = SKColor.Parse("#b455b6");
+                    }
+                    es.Add(e);
                 }
-                else if(rec.Item1 == 2)
-                {
-                    e.Label = "2 Choices";
-                    e.Color = SKColor.Parse("#77d065");
-                }
-                else
-                {
-                    e.Label = "4 Choices";
-                    e.Color = SKColor.Parse("#b455b6");
-                }
-                es.Add(e);
             }
             return es;
         }
@@ -422,27 +425,30 @@ namespace BrainGames.ViewModels
         private List<ChartEntry> GetAvgCorPctByStimType()
         {
             List<ChartEntry> es = new List<ChartEntry>();
-            foreach (Tuple<int, double> rec in AvgCorPctByStimType)
+            if (AvgCorPctByStimType != null)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
-                e.TextColor = SKColors.Black;
-                if (rec.Item1 == 1)
+                foreach (Tuple<int, double> rec in AvgCorPctByStimType)
                 {
-                    e.Label = "1 Choice";
-                    e.Color = SKColor.Parse("#2c3e50");
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2 * 100, 1).ToString() + "%";
+                    e.TextColor = SKColors.Black;
+                    if (rec.Item1 == 1)
+                    {
+                        e.Label = "1 Choice";
+                        e.Color = SKColor.Parse("#2c3e50");
+                    }
+                    else if (rec.Item1 == 2)
+                    {
+                        e.Label = "2 Choices";
+                        e.Color = SKColor.Parse("#77d065");
+                    }
+                    else
+                    {
+                        e.Label = "4 Choices";
+                        e.Color = SKColor.Parse("#b455b6");
+                    }
+                    es.Add(e);
                 }
-                else if (rec.Item1 == 2)
-                {
-                    e.Label = "2 Choices";
-                    e.Color = SKColor.Parse("#77d065");
-                }
-                else
-                {
-                    e.Label = "4 Choices";
-                    e.Color = SKColor.Parse("#b455b6");
-                }
-                es.Add(e);
             }
             return es;
         }
@@ -621,7 +627,7 @@ namespace BrainGames.ViewModels
 
         public Chart TrialCountOverTimeChart => new BarChart()
         {
-            Entries = TrialCountOverTime.Select(CreateDayEntryCnt),
+            Entries = TrialCountOverTime.Count == 0 ? null : TrialCountOverTime.Select(CreateDayEntryCnt),
             Margin = 10,
             ValueLabelOrientation = Orientation.Horizontal
         };

@@ -4,6 +4,7 @@ using Xamarin.Forms.Xaml;
 using XF.Material.Forms;
 using XF.Material.Forms.UI.Dialogs.Configurations;
 using XF.Material.Forms.Resources;
+using XF.Material.Forms.Resources.Typography;
 using Xamarin.Essentials;
 using BrainGames.Services;
 using BrainGames.Views;
@@ -28,8 +29,11 @@ namespace BrainGames
             InitializeComponent();
             mum = new MasterUtilityModel();
 
+            if (Settings.UserId == "-1") Settings.UserId = MasterUtilityModel.RandomNumberLong().ToString();
+
             DependencyService.Register<MockDataStore>();
-            Material.Init(this);// , "Material.Configuration");
+            Material.Init(this);//, (MaterialConfiguration)Resources["Material.Configuration"]);
+            Material.Use("Material.Configuration");
             MainPage = new MainPage();
 
             ScreenDensity = (int)DeviceDisplay.MainDisplayInfo.Density;

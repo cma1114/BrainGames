@@ -189,6 +189,10 @@ namespace BrainGames.Views
             }
             else //clicked or timeout, done with trial
             {
+                if (!clicked)//timeout
+                {
+                    ReactButton_Clicked(null, null);
+                }
                 //if (viewModel.blocktrialctr < viewModel.trialsperset && dt >= viewModel.pausedurarr[viewModel.blocktrialctr] + viewModel.timeout) 
                 showstim = false;
                 firstshown = false;

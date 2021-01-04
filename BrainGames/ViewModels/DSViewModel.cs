@@ -433,8 +433,12 @@ namespace BrainGames.ViewModels
             {
                 ;
             }
-            estspan_f = estspans.Item1;
-            estspan_b = estspans.Item2;
+            if (estspans != null)
+            { 
+                estspan_f = estspans.Item1;
+                estspan_b = estspans.Item2;
+            }
+
             if (Backward) EstSpan = estspan_b;
             else EstSpan = estspan_f;
 

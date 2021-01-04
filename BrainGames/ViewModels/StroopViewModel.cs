@@ -284,7 +284,7 @@ namespace BrainGames.ViewModels
             }
             //////////////////////////////////////////
             #endregion
-
+            cor = false;//set this for non-responses
             IsRunning = true;
         }
 

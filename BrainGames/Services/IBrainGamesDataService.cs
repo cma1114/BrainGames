@@ -29,5 +29,6 @@ namespace BrainGames.Services
         Task<DataSchemas.ConnectedUsersSchema> UpdateConnectedEntryAsync(DataSchemas.ConnectedUsersSchema entry);
         Task<DataSchemas.UserStatsSchema> AddUserStatsEntryAsync(DataSchemas.UserStatsSchema entry);
         Task<DataSchemas.UserStatsSchema> UpdateUserStatsEntryAsync(DataSchemas.UserStatsSchema entry);
+        Task RemoveUserStatsEntryAsync(DataSchemas.UserStatsSchema entry);
     }
 }

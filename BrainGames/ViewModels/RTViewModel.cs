@@ -207,7 +207,7 @@ namespace BrainGames.ViewModels
 
         public void ReadyButton()
         {
-            cor = true;//default to this in the 1-box case
+            cor = boxes == 1 ? true : false;//default to this in the 1-box case
             blocktrialctr = 0;
             if (boxopt == "auto") boxes = (int)Math.Pow(2, MasterUtilityModel.RandomNumber(0, 3));
             else boxes = Convert.ToInt32(boxopt);

@@ -180,6 +180,12 @@ namespace BrainGames.Services
             return response;
         }
 
+        public async Task RemoveUserStatsEntryAsync(DataSchemas.UserStatsSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bguserstats/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.UserStatsSchema>(url, HttpMethod.Delete, _headers);
+        }
+
         public async Task<DataSchemas.BrainGameSessionSchema> AddBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry)
         {
             var url = new Uri(_baseUri, "/tables/bgsession");

@@ -42,9 +42,12 @@ namespace BrainGames.Views
         private void Init()
         {
             Grid g = this.FindByName<Grid>("BoardGrid");
+            Grid bg = (Grid)(g.Parent.Parent.Parent);
+            Grid pg = (Grid)g.Parent;
+            double gridheight = bg.Height - bg.Children[0].Height - pg.Children[1].Height;
             g.RowSpacing = spacing;
             g.ColumnSpacing = spacing;
-            TILE_SIZE = (float)Math.Floor((Math.Min(this.Width - 20, g.Height) - ((viewModel.LSgridsize - 1) * spacing/*row/col spacing*/)) / viewModel.LSgridsize);
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Width, gridheight) - ((viewModel.LSgridsize + 1) * spacing/*row/col spacing*/)) / viewModel.LSgridsize);
             for (var i = 0; i < viewModel.LSgridsize; i++)
             {
                 g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });
@@ -66,12 +69,15 @@ namespace BrainGames.Views
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
             Grid g = this.FindByName<Grid>("BoardGrid");
+            Grid bg = (Grid)(g.Parent.Parent.Parent);
+            Grid pg = (Grid)g.Parent;
+            double gridheight = bg.Height - bg.Children[0].Height - pg.Children[1].Height;
             g.ColumnDefinitions.Clear();
             g.RowDefinitions.Clear();
             g.Children.Clear();
             g.RowSpacing = spacing;
             g.ColumnSpacing = spacing;
-            TILE_SIZE = (float)Math.Floor((Math.Min(this.Width - 20, g.Height) - ((viewModel.LSgridsize - 1) * spacing/*row/col spacing*/)) / viewModel.LSgridsize);
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Width, gridheight) - ((viewModel.LSgridsize + 1) * spacing/*row/col spacing*/)) / viewModel.LSgridsize);
             for (var i = 0; i < viewModel.LSgridsize; i++)
             {
                 g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });

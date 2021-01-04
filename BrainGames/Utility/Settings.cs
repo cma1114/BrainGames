@@ -20,8 +20,8 @@ namespace BrainGames.Utility
         #region Setting Constants
 
         private const string UserIdKey = "userid_key";
-//        private static readonly string UserIdDefault = "-1";
-        private static readonly string UserIdDefault = "123";
+        private static readonly string UserIdDefault = "-1";
+//        private static readonly string UserIdDefault = "123";
 
         private const string ScreennameKey = "screenname_key";
         private static readonly string ScreennameDefault = "";

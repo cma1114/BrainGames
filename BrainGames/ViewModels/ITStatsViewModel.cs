@@ -199,8 +199,8 @@ namespace BrainGames.ViewModels
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = AvgCorITOverTime == null ? 0f : (float)Math.Max(0, AvgCorITOverTime.Min(x => x.Item2) - AvgCorITOverTime.Min(x => x.Item2) * sf),
-            MaxValue = AvgCorITOverTime == null ? 0f : (float)(AvgCorITOverTime.Max(x => x.Item2) + AvgCorITOverTime.Max(x => x.Item2) * sf)
+            MinValue = AvgCorITOverTime == null ? 0f : (float)Math.Max(0, (AvgCorITOverTime.Count == 0 ? 0 : AvgCorITOverTime.Min(x => x.Item2)) - (AvgCorITOverTime.Count == 0 ? 0 : AvgCorITOverTime.Min(x => x.Item2)) * sf),
+            MaxValue = AvgCorITOverTime == null ? 0f : (float)((AvgCorITOverTime.Count == 0 ? 0 : AvgCorITOverTime.Max(x => x.Item2)) + (AvgCorITOverTime.Count == 0 ? 0 : AvgCorITOverTime.Max(x => x.Item2)) * sf)
         };
 
         public Chart CumAvgCorITOverTimeChart => new LineChart()
@@ -210,8 +210,8 @@ namespace BrainGames.ViewModels
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = CumAvgCorITOverTime == null ? 0f : (float)Math.Max(0, CumAvgCorITOverTime.Min(x => x.Item2) - CumAvgCorITOverTime.Min(x => x.Item2) * sf),
-            MaxValue = CumAvgCorITOverTime == null ? 0f : (float)(CumAvgCorITOverTime.Max(x => x.Item2) + CumAvgCorITOverTime.Max(x => x.Item2) * sf)
+            MinValue = CumAvgCorITOverTime == null ? 0f : (float)Math.Max(0, (CumAvgCorITOverTime.Count == 0 ? 0 : CumAvgCorITOverTime.Min(x => x.Item2)) - (CumAvgCorITOverTime.Count == 0 ? 0 : CumAvgCorITOverTime.Min(x => x.Item2)) * sf),
+            MaxValue = CumAvgCorITOverTime == null ? 0f : (float)((CumAvgCorITOverTime.Count == 0 ? 0 : CumAvgCorITOverTime.Max(x => x.Item2)) + (CumAvgCorITOverTime.Count == 0 ? 0 : CumAvgCorITOverTime.Max(x => x.Item2)) * sf)
         };
 
         public Chart CumEstITOverTimeChart => new LineChart()
@@ -232,8 +232,8 @@ namespace BrainGames.ViewModels
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = CumAvgCorITByTrial == null ? 0f : (float)Math.Max(0, CumAvgCorITByTrial.Min() - CumAvgCorITByTrial.Min() * sf),
-            MaxValue = CumAvgCorITByTrial == null ? 0f : (float)(CumAvgCorITByTrial.Max() + CumAvgCorITByTrial.Max() * sf)
+            MinValue = CumAvgCorITByTrial == null ? 0f : (float)Math.Max(0, (CumAvgCorITByTrial.Count() == 0 ? 0 : CumAvgCorITByTrial.Min()) - (CumAvgCorITByTrial.Count() == 0 ? 0 : CumAvgCorITByTrial.Min()) * sf),
+            MaxValue = CumAvgCorITByTrial == null ? 0f : (float)((CumAvgCorITByTrial.Count() == 0 ? 0 : CumAvgCorITByTrial.Max()) + (CumAvgCorITByTrial.Count() == 0 ? 0 : CumAvgCorITByTrial.Max()) * sf)
         };
 
         public Chart CumEstITByTrialChart => new LineChart()
@@ -253,7 +253,7 @@ namespace BrainGames.ViewModels
                                                 SKColors.Indigo, SKColors.LightGreen, SKColors.Orange, SKColors.Olive, SKColors.Aquamarine, SKColors.Black };
             int idx = 1;
             List<ChartEntry> es = new List<ChartEntry>();
-            if (AvgCorITByDay != null && AvgCorITByDay.Last().Item1 == DateTime.Today) 
+            if (AvgCorITByDay != null && AvgCorITByDay.Count() > 0 && AvgCorITByDay.Last().Item1 == DateTime.Today) 
             {
                 ChartEntry e = new ChartEntry((float)AvgCorITByDay.Last().Item2);
                 e.ValueLabel = Math.Round(AvgCorITByDay.Last().Item2, 1).ToString() + " ms";
@@ -270,7 +270,7 @@ namespace BrainGames.ViewModels
                     ChartEntry e = new ChartEntry((float)rec.Item2);
                     e.ValueLabel = Math.Round(rec.Item2, 1).ToString() + " ms";
                     e.TextColor = SKColors.Black;
-                    e.Label = rec.Item1.ToString("M/dd"); ;
+                    e.Label = rec.Item1.ToString("M/dd"); 
                     e.Color = clrs[idx++];
                     es.Add(e);
                 }
@@ -284,7 +284,7 @@ namespace BrainGames.ViewModels
             Margin = 10,
             Entries = GetBestAvgCorITDays(),
             LabelOrientation = Orientation.Horizontal,
-            ValueLabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
         };
 
         private List<ChartEntry> GetAvgCorITByStimType()

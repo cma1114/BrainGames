@@ -14,7 +14,7 @@
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" x:Name="BoardGrid" Opacity = "1" HorizontalOptions="Center" Margin = "10" RowSpacing = "2" ColumnSpacing = "2" IsEnabled="{Binding LSEnableButtons}"></Grid>
+        <Grid Grid.Row="0" x:Name="BoardGrid" Opacity = "1" VerticalOptions="Center" HorizontalOptions="Center" Margin = "10" IsEnabled="{Binding LSEnableButtons}"></Grid>
         <Button Grid.Row="1" x:Name="ReadyButton" HeightRequest="80" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" FontSize="Large"
                 Command="{Binding LSReadyButtonCommand}" IsEnabled="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready"/>
     </Grid>
