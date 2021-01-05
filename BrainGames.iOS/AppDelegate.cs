@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using BrainGames.Utility;
 using Foundation;
 using UIKit;
 
@@ -22,6 +22,38 @@ namespace BrainGames.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+
+            bool bSucceeded = false;
+            string uid = null;
+            var oKeyValueStore = NSUbiquitousKeyValueStore.DefaultStore;
+            if (oKeyValueStore != null)
+            {
+                bSucceeded = oKeyValueStore.Synchronize();
+                uid = oKeyValueStore.GetString("UserId");
+            }
+
+            if (Settings.UserId == "-1" && uid == null) //a new user
+            {
+                Settings.UserId = MasterUtilityModel.RandomNumberLong().ToString();
+                if (oKeyValueStore != null)
+                {
+                    oKeyValueStore.SetString("UserId", Settings.UserId);
+                    bSucceeded = oKeyValueStore.Synchronize();
+                }
+            }
+            else if (Settings.UserId == "-1" && uid != null) //a new device
+            {
+                Settings.UserId = uid;
+            }
+            else if (Settings.UserId != "-1" && uid == null)// userid already on device but not in cloud - should only happen in dev
+            {
+                if (oKeyValueStore != null)
+                {
+                    oKeyValueStore.SetString("UserId", Settings.UserId);
+                    bSucceeded = oKeyValueStore.Synchronize();
+                }
+            }
+
             Rg.Plugins.Popup.Popup.Init();
             global::Xamarin.Forms.Forms.Init();
             global::Xamarin.Forms.FormsMaterial.Init();

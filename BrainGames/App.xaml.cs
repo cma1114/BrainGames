@@ -10,6 +10,7 @@ using BrainGames.Services;
 using BrainGames.Views;
 using BrainGames.Utility;
 
+
 namespace BrainGames
 {
     public partial class App : Application
@@ -28,8 +29,6 @@ namespace BrainGames
 
             InitializeComponent();
             mum = new MasterUtilityModel();
-
-            if (Settings.UserId == "-1") Settings.UserId = MasterUtilityModel.RandomNumberLong().ToString();
 
             DependencyService.Register<MockDataStore>();
             Material.Init(this);//, (MaterialConfiguration)Resources["Material.Configuration"]);
