@@ -398,20 +398,14 @@ namespace BrainGames.Utility
 
             if (itgrs.Count() > 0)
             {
-                itgrs = itgrs.OrderBy(x => x.datetime).ToList();
-                it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
-                int i = itgrs.Count() - 1;
-                while (i >= 0 && itgrs[i].cor == true && itgrs[i].stimtime == it_laststimtime)
-                {
-                    it_cortrialstreak++;
-                    i--;
-                }
-                i = itgrs.Count() - 1;
-                while (i >= 0 && itgrs[i].cor == false && itgrs[i].stimtime == it_laststimtime)
-                {
-                    it_errtrialstreak++;
-                    i--;
-                }
+                it_trialctr = itgrs.Max(x => x.trialnum);
+                it_reversalctr = itgrs.Max(x => x.reversalctr);
+                Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
+                Settings.IT_AvgCorDur = Settings.IT_CorTrials > 0 ? itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials : 0;
+                Settings.IT_LastStimDur = it_laststimtime;
+                it_cortrialcnt = itgrs.Where(x => x.cor == true).Count();
+                it_cumcorstimdur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime);
+                it_AvgCorPctByStimDur = itgrs.GroupBy(x => x.stimtime).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Count())).OrderByDescending(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
                 it_corarr = new List<bool>();
                 it_empstimtimearr = new List<double>();
                 foreach (DataSchemas.ITGameRecordSchema grs in itgrs)
@@ -419,15 +413,26 @@ namespace BrainGames.Utility
                     it_corarr.Add(grs.cor);
                     it_empstimtimearr.Add(grs.empstimtime);
                 }
-                it_trialctr = itgrs.Max(x => x.trialnum);
-                it_reversalctr = itgrs.Max(x => x.reversalctr);
-                Settings.IT_CorTrials = itgrs.Where(x => x.cor == true).Count();
-                Settings.IT_AvgCorDur = Settings.IT_CorTrials > 0 ? itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime) / Settings.IT_CorTrials : 0;
-                Settings.IT_LastStimDur = it_laststimtime;
-                Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
-                it_cortrialcnt = itgrs.Where(x => x.cor == true).Count();
-                it_cumcorstimdur = itgrs.Where(x => x.cor == true).Sum(x => x.empstimtime);
-                it_AvgCorPctByStimDur = itgrs.GroupBy(x => x.stimtime).Select(x => Tuple.Create(x.Key, (double)x.Where(y => y.cor == true).Count() / x.Count())).OrderByDescending(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
+
+                itgrs = itgrs.Where(x => x.trialnum > 0).ToList();
+                if (itgrs.Count() > 0)
+                {
+                    itgrs = itgrs.OrderBy(x => x.datetime).ToList();
+                    Settings.IT_EstIT = itgrs[itgrs.Count() - 1].estit;
+                    it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
+                    int i = itgrs.Count() - 1;
+                    while (i >= 0 && itgrs[i].cor == true && itgrs[i].stimtime == it_laststimtime)
+                    {
+                        it_cortrialstreak++;
+                        i--;
+                    }
+                    i = itgrs.Count() - 1;
+                    while (i >= 0 && itgrs[i].cor == false && itgrs[i].stimtime == it_laststimtime)
+                    {
+                        it_errtrialstreak++;
+                        i--;
+                    }
+                }
             }
             #endregion
         }
@@ -449,7 +454,6 @@ namespace BrainGames.Utility
             }
             if (rtgrs.Count() > 0)
             {
-                rtgrs = rtgrs.OrderBy(x => x.datetime).ToList();
                 rt_trialctr = rtgrs.Max(x => x.trialnum);
                 //                rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
                 rt_ss1_cumrt = rtgrs.Where(x => x.boxes == 1).Sum(x => x.reactiontime);
@@ -460,8 +464,14 @@ namespace BrainGames.Utility
                 rt_ss4_trialcnt = rtgrs.Where(x => x.boxes == 4).Count();
                 rt_ss4_cortrialcnt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Count();
                 rt_ss4_cumcorrt = rtgrs.Where(x => x.boxes == 4 && x.cor == true).Sum(x => x.reactiontime);
-                rt_lastboxes = rtgrs[rtgrs.Count() - 1].boxes;
-                rt_auto = rtgrs[rtgrs.Count() - 1].auto;
+
+                rtgrs = rtgrs.Where(x => x.trialnum > 0).ToList();
+                if (rtgrs.Count() > 0)
+                {
+                    rtgrs = rtgrs.OrderBy(x => x.datetime).ToList();
+                    rt_lastboxes = rtgrs[rtgrs.Count() - 1].boxes;
+                    rt_auto = rtgrs[rtgrs.Count() - 1].auto;
+                }
             }
             #endregion
         }
@@ -517,28 +527,35 @@ namespace BrainGames.Utility
             if (dsgrs.Count() > 0)
             {
                 dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
-                ds_lastspan = dsgrs[dsgrs.Count() - 1].itemcnt;
-                int i = dsgrs.Count() - 1;
-                while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan)
-                {
-                    ds_cortrialstreak++;
-                    i--;
-                }
-                i = dsgrs.Count() - 1;
-                while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan)
-                {
-                    ds_errtrialstreak++;
-                    i--;
-                }
                 ds_estspan_f = dsgrs[dsgrs.Count() - 1].estSpan_f;
                 ds_trialctr = dsgrs.Max(x => x.trialnum);
                 ds_last_ontimes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
                 ds_last_offtimes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ds_last_outcomes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                 ds_lastdir = "f";
-                ds_auto_f = dsgrs[dsgrs.Count() - 1].autoinc;
                 ds_AvgCorPctBySpanLen_f = dsgrs.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
+
+                dsgrs = dsgrs.Where(x => x.trialnum > 0).ToList();
+                if (dsgrs.Count() > 0)
+                {
+                    dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
+                    ds_lastspan = dsgrs[dsgrs.Count() - 1].itemcnt;
+                    int i = dsgrs.Count() - 1;
+                    while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan)
+                    {
+                        ds_cortrialstreak++;
+                        i--;
+                    }
+                    i = dsgrs.Count() - 1;
+                    while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan)
+                    {
+                        ds_errtrialstreak++;
+                        i--;
+                    }
+                    ds_auto_f = dsgrs[dsgrs.Count() - 1].autoinc;
+                }
             }
+
             try
             {
                 conn_sync.CreateTable<DataSchemas.DSGameRecordSchema>();
@@ -551,26 +568,32 @@ namespace BrainGames.Utility
             if (dsgrs.Count() > 0)
             {
                 dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
-                ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
-                int i = dsgrs.Count() - 1;
-                while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan_b)
-                {
-                    ds_cortrialstreak_b++;
-                    i--;
-                }
-                i = dsgrs.Count() - 1;
-                while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan_b)
-                {
-                    ds_errtrialstreak_b++;
-                    i--;
-                }
                 ds_estspan_b = dsgrs[dsgrs.Count() - 1].estSpan_b;
                 if (dsgrs.Max(x => x.trialnum) > ds_trialctr) ds_lastdir = "b";
                 ds_trialctr = Math.Max(ds_trialctr, dsgrs.Max(x => x.trialnum));
                 ds_last_ontimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
                 ds_last_offtimes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ds_last_outcomes_by_spanlen_b = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
-                ds_auto_b = dsgrs[dsgrs.Count() - 1].autoinc;
+
+                dsgrs = dsgrs.Where(x => x.trialnum > 0).ToList();
+                if (dsgrs.Count() > 0)
+                {
+                    dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
+                    ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
+                    int i = dsgrs.Count() - 1;
+                    while (i >= 0 && dsgrs[i].cor == true && dsgrs[i].itemcnt == ds_lastspan_b)
+                    {
+                        ds_cortrialstreak_b++;
+                        i--;
+                    }
+                    i = dsgrs.Count() - 1;
+                    while (i >= 0 && dsgrs[i].cor == false && dsgrs[i].itemcnt == ds_lastspan_b)
+                    {
+                        ds_errtrialstreak_b++;
+                        i--;
+                    }
+                    ds_auto_b = dsgrs[dsgrs.Count() - 1].autoinc;
+                }
             }
             #endregion
         }
@@ -595,28 +618,34 @@ namespace BrainGames.Utility
             if (lsgrs.Count() > 0)
             {
                 lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
-                ls_lastspan = lsgrs[lsgrs.Count() - 1].itemcnt;
-                ls_lastgridsize_f = lsgrs[lsgrs.Count() - 1].gridsize;
-                int i = lsgrs.Count() - 1;
-                while (i >= 0 && lsgrs[i].cor == true && lsgrs[i].itemcnt == ls_lastspan)
-                {
-                    ls_cortrialstreak++;
-                    i--;
-                }
-                i = lsgrs.Count() - 1;
-                while (i >= 0 && lsgrs[i].cor == false && lsgrs[i].itemcnt == ls_lastspan)
-                {
-                    ls_errtrialstreak++;
-                    i--;
-                }
                 ls_estspan_f = lsgrs[lsgrs.Count() - 1].estSpan_f;
                 ls_trialctr = lsgrs.Max(x => x.trialnum);
                 ls_last_ontimes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_offtimes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_outcomes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                 ls_lastdir = "f";
-                ls_auto_f = lsgrs[lsgrs.Count() - 1].autoinc;
                 ls_AvgCorPctBySpanLen_f = lsgrs.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToDictionary(x => x.Item1, x => x.Item2);
+
+                lsgrs = lsgrs.Where(x => x.trialnum > 0).ToList();
+                if (lsgrs.Count() > 0)
+                {
+                    lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
+                    ls_lastspan = lsgrs[lsgrs.Count() - 1].itemcnt;
+                    ls_lastgridsize_f = lsgrs[lsgrs.Count() - 1].gridsize;
+                    int i = lsgrs.Count() - 1;
+                    while (i >= 0 && lsgrs[i].cor == true && lsgrs[i].itemcnt == ls_lastspan)
+                    {
+                        ls_cortrialstreak++;
+                        i--;
+                    }
+                    i = lsgrs.Count() - 1;
+                    while (i >= 0 && lsgrs[i].cor == false && lsgrs[i].itemcnt == ls_lastspan)
+                    {
+                        ls_errtrialstreak++;
+                        i--;
+                    }
+                    ls_auto_f = lsgrs[lsgrs.Count() - 1].autoinc;
+                }
             }
             try
             {
@@ -630,27 +659,32 @@ namespace BrainGames.Utility
             if (lsgrs.Count() > 0)
             {
                 lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
-                ls_lastspan_b = lsgrs[lsgrs.Count() - 1].itemcnt;
-                ls_lastgridsize_b = lsgrs[lsgrs.Count() - 1].gridsize;
-                int i = lsgrs.Count() - 1;
-                while (i >= 0 && lsgrs[i].cor == true && lsgrs[i].itemcnt == ls_lastspan_b)
-                {
-                    ls_cortrialstreak_b++;
-                    i--;
-                }
-                i = lsgrs.Count() - 1;
-                while (i >= 0 && lsgrs[i].cor == false && lsgrs[i].itemcnt == ls_lastspan_b)
-                {
-                    ls_errtrialstreak_b++;
-                    i--;
-                }
                 ls_estspan_b = lsgrs[lsgrs.Count() - 1].estSpan_b;
                 if (lsgrs.Max(x => x.trialnum) > ls_trialctr) ls_lastdir = "b";
                 ls_trialctr = Math.Max(ls_trialctr, lsgrs.Max(x => x.trialnum));
                 ls_last_ontimes_by_spanlen_b = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().ontimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_offtimes_by_spanlen_b = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().offtimems)).OrderBy(x => x.Item1).ToList();
                 ls_last_outcomes_by_spanlen_b = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
-                ls_auto_b = lsgrs[lsgrs.Count() - 1].autoinc;
+
+                lsgrs = lsgrs.Where(x => x.trialnum > 0).ToList();
+                if (lsgrs.Count() > 0)
+                {
+                    ls_lastspan_b = lsgrs[lsgrs.Count() - 1].itemcnt;
+                    ls_lastgridsize_b = lsgrs[lsgrs.Count() - 1].gridsize;
+                    int i = lsgrs.Count() - 1;
+                    while (i >= 0 && lsgrs[i].cor == true && lsgrs[i].itemcnt == ls_lastspan_b)
+                    {
+                        ls_cortrialstreak_b++;
+                        i--;
+                    }
+                    i = lsgrs.Count() - 1;
+                    while (i >= 0 && lsgrs[i].cor == false && lsgrs[i].itemcnt == ls_lastspan_b)
+                    {
+                        ls_errtrialstreak_b++;
+                        i--;
+                    }
+                    ls_auto_b = lsgrs[lsgrs.Count() - 1].autoinc;
+                }
             }
             #endregion
         }

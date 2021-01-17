@@ -126,7 +126,11 @@ namespace BrainGames.Views
             }
             else //entered response or timeout, done with trial, return to ready screen
             {
-                if (dt >= viewModel.LStimeout) viewModel.LStimedout = true;
+                if (dt >= viewModel.LStimeout)
+                {
+                    viewModel.LStimedout = true;
+                    viewModel.LSResponseButton();
+                }
                 viewModel.IsRunning = false;
                 viewModel.LSEnableButtons = false;
                 viewModel.LStimer.Stop();

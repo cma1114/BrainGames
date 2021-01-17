@@ -256,7 +256,7 @@ namespace BrainGames.Views
                 if (viewModel.RTboxes == 1)
                 {
                     viewModel.RTss1_trialcnt++;
-                    viewModel.RTss1_cumrt += viewModel.RTReactionTime;
+                    viewModel.RTss1_cumrt += Math.Min(rt - ontime, viewModel.RTtimeout);
                 }
                 viewModel.RTReactButton(0, viewModel.RTReactionTime, (float)viewModel.RTss1_cumrt / viewModel.RTss1_trialcnt, viewModel.RTcorboxes[viewModel.RTblocktrialctr - 1], viewModel.cor);
             }

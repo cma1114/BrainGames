@@ -10,6 +10,9 @@ using BrainGames.Services;
 using BrainGames.Views;
 using BrainGames.Utility;
 
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace BrainGames
 {
@@ -25,7 +28,7 @@ namespace BrainGames
 
         public App()
         {
-            Device.SetFlags(new string[] { "RadioButton_Experimental" });
+            Xamarin.Forms.Device.SetFlags(new string[] { "RadioButton_Experimental" });
 
             InitializeComponent();
             mum = new MasterUtilityModel();
@@ -41,7 +44,11 @@ namespace BrainGames
         protected override void OnStart()
         {
             // Handle when your app starts
-        }
+            AppCenter.Start("ios=abc625ee-28f5-4cad-bf37-f8367eccfcaa;" +
+                              "uwp={Your UWP App secret here};" +
+                              "android={Your Android App secret here}",
+                              typeof(Analytics), typeof(Crashes));
+                }
 
         protected override void OnSleep()
         {

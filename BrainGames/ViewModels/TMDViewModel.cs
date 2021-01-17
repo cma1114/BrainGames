@@ -395,7 +395,7 @@ namespace BrainGames.ViewModels
 
         public ICommand DSButton9Command { get; protected set; }
 
-        public int DStimeout = 60000;
+        public int DStimeout = 10000;
         public bool DStimedout = false;
         public Stopwatch DStimer = new Stopwatch();
 
@@ -508,7 +508,7 @@ namespace BrainGames.ViewModels
 
         #region LS
         public ICommand LSReadyButtonCommand { get; protected set; }
-        public int LStimeout = 60000;
+        public int LStimeout = 10000;
         public bool LStimedout = false;
         public Stopwatch LStimer = new Stopwatch();
 

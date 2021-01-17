@@ -17,7 +17,7 @@ namespace BrainGames.ViewModels
     {
         public ICommand ReadyButtonCommand { get; protected set; }
 
-        public int timeout = 60000;
+        public int timeout = 10000;
         public bool timedout = false;
         public Stopwatch timer = new Stopwatch();
 
