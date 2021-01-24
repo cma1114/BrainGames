@@ -120,7 +120,7 @@ namespace BrainGames.ViewModels
             ss4_cumcorrt = App.mum.rt_ss4_cumcorrt;
             if (App.mum.rt_auto) boxopt = "auto";
             else boxopt = Convert.ToString(App.mum.rt_lastboxes);
-
+            /*
             if (ss2_trialcnt >= 10 && (float)ss2_cortrialcnt / ss2_trialcnt >= 0.9 && ss4_trialcnt >= 10 && (float)ss4_cortrialcnt / ss4_trialcnt >= 0.9)
             {
                 AvgRT = ((float)ss1_cumrt / ss1_trialcnt + (float)ss2_cumcorrt / ss2_cortrialcnt + (float)ss4_cumcorrt / ss4_cortrialcnt) / 3.0;
@@ -133,7 +133,7 @@ namespace BrainGames.ViewModels
             {
                 AvgRT = ((float)ss1_cumrt / ss1_trialcnt + (float)ss4_cumcorrt / ss4_cortrialcnt) / 2.0;
             }
-            else { AvgRT = (float)ss1_cumrt / ss1_trialcnt; }
+            else { AvgRT = (float)ss1_cumrt / ss1_trialcnt; }*/
         }
 
         public void LeftButton()
@@ -207,7 +207,6 @@ namespace BrainGames.ViewModels
 
         public void ReadyButton()
         {
-            cor = boxes == 1 ? true : false;//default to this in the 1-box case
             blocktrialctr = 0;
             if (boxopt == "auto") boxes = (int)Math.Pow(2, MasterUtilityModel.RandomNumber(0, 3));
             else boxes = Convert.ToInt32(boxopt);

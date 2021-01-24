@@ -175,7 +175,7 @@ namespace BrainGames.ViewModels
 
         public /*async*/ void FlipTile(string t)
         {
-                Console.WriteLine("flipping");
+//                Console.WriteLine("flipping");
             int ti = Convert.ToInt32(t);
 //            await _tiles[t % gridsize, (int)Math.Floor((double)t / gridsize)].Flip();
             _tiles[ti % gridsize, (int)Math.Floor((double)ti / gridsize)].FlipIt();
@@ -241,8 +241,8 @@ namespace BrainGames.ViewModels
                 stimoffms_b = last_offtimes_by_spanlen_b.Count() == 0 ? initofftimems : last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
                 gridsize_f = 4;// App.mum.ls_lastgridsize_f == 0 ? initgridsize : App.mum.ls_lastgridsize_f;
                 gridsize_b = 4;// App.mum.ls_lastgridsize_b == 0 ? initgridsize : App.mum.ls_lastgridsize_b;
-                estspan_f = App.mum.ds_estspan_f;
-                estspan_b = App.mum.ds_estspan_b;
+                estspan_f = App.mum.ls_estspan_f;
+                estspan_b = App.mum.ls_estspan_b;
                 auto_f = App.mum.ls_auto_f;
                 auto_b = App.mum.ls_auto_b;
                 if (App.mum.ls_lastdir == "f") AutoIncrement = auto_f;

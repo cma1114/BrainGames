@@ -14,7 +14,7 @@
         <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
     </ContentPage.ToolbarItems>
 
-    <Grid x:Name="MasterGrid">
+    <Grid x:Name="MasterGrid" RowSpacing="0">
         <Grid.Resources>
             <converters:InverseBoolConverter x:Key="not"/>
             <converters:DoubleToBoolConverter x:Key="dtb"/>

@@ -777,10 +777,10 @@ namespace BrainGames.ViewModels
                 //                DSspanlen_b = App.mum.ds_lastspan_b == 0 ? DSinitspanlen : App.mum.ds_lastspan_b;
                 DSspanlen_f = App.mum.ds_estspan_f == 0 ? DSinitspanlen : (int)Math.Ceiling(App.mum.ds_estspan_f);
                 DSspanlen_b = App.mum.ds_estspan_b == 0 ? DSinitspanlen : (int)Math.Ceiling(App.mum.ds_estspan_b);
-                DSstimonms_f = DSlast_ontimes_by_spanlen.Count() == 0 ? DSinitontimems : DSlast_ontimes_by_spanlen.Where(x => x.Item1 == DSspanlen_f).First().Item2;
-                DSstimoffms_f = DSlast_offtimes_by_spanlen.Count() == 0 ? DSinitofftimems : DSlast_offtimes_by_spanlen.Where(x => x.Item1 == DSspanlen_f).First().Item2;
-                DSstimonms_b = DSlast_ontimes_by_spanlen_b.Count() == 0 ? DSinitontimems : DSlast_ontimes_by_spanlen_b.Where(x => x.Item1 == DSspanlen_b).First().Item2;
-                DSstimoffms_b = DSlast_offtimes_by_spanlen_b.Count() == 0 ? DSinitofftimems : DSlast_offtimes_by_spanlen_b.Where(x => x.Item1 == DSspanlen_b).First().Item2;
+                DSstimonms_f = DSlast_ontimes_by_spanlen.Where(x => x.Item1 <= DSspanlen_f).Count() == 0 ? DSinitontimems : DSlast_ontimes_by_spanlen.Where(x => x.Item1 <= DSspanlen_f).OrderByDescending(x => x.Item1).First().Item2;
+                DSstimoffms_f = DSlast_offtimes_by_spanlen.Where(x => x.Item1 <= DSspanlen_f).Count() == 0 ? DSinitofftimems : DSlast_offtimes_by_spanlen.Where(x => x.Item1 <= DSspanlen_f).OrderByDescending(x => x.Item1).First().Item2;
+                DSstimonms_b = DSlast_ontimes_by_spanlen_b.Where(x => x.Item1 <= DSspanlen_b).Count() == 0 ? DSinitontimems : DSlast_ontimes_by_spanlen_b.Where(x => x.Item1 <= DSspanlen_b).OrderByDescending(x => x.Item1).First().Item2;
+                DSstimoffms_b = DSlast_offtimes_by_spanlen_b.Where(x => x.Item1 <= DSspanlen_b).Count() == 0 ? DSinitofftimems : DSlast_offtimes_by_spanlen_b.Where(x => x.Item1 <= DSspanlen_b).OrderByDescending(x => x.Item1).First().Item2;
                 DSestspan_f = App.mum.ds_estspan_f;
                 DSestspan_b = App.mum.ds_estspan_b;
 
@@ -924,10 +924,10 @@ namespace BrainGames.ViewModels
 //                spanlen_b = App.mum.ls_lastspan_b == 0 ? initspanlen : App.mum.ls_lastspan_b;
                 LSspanlen_f = App.mum.ls_estspan_f == 0 ? LSinitspanlen : (int)Math.Ceiling(App.mum.ls_estspan_f);
                 LSspanlen_b = App.mum.ls_estspan_b == 0 ? LSinitspanlen : (int)Math.Ceiling(App.mum.ls_estspan_b);
-                LSstimonms_f = LSlast_ontimes_by_spanlen.Count() == 0 ? LSinitontimems : LSlast_ontimes_by_spanlen.Where(x => x.Item1 == LSspanlen_f).First().Item2;
-                LSstimoffms_f = LSlast_offtimes_by_spanlen.Count() == 0 ? LSinitofftimems : LSlast_offtimes_by_spanlen.Where(x => x.Item1 == LSspanlen_f).First().Item2;
-                LSstimonms_b = LSlast_ontimes_by_spanlen_b.Count() == 0 ? LSinitontimems : LSlast_ontimes_by_spanlen_b.Where(x => x.Item1 == LSspanlen_b).First().Item2;
-                LSstimoffms_b = LSlast_offtimes_by_spanlen_b.Count() == 0 ? LSinitofftimems : LSlast_offtimes_by_spanlen_b.Where(x => x.Item1 == LSspanlen_b).First().Item2;
+                LSstimonms_f = LSlast_ontimes_by_spanlen.Where(x => x.Item1 <= LSspanlen_f).Count() == 0 ? LSinitontimems : LSlast_ontimes_by_spanlen.Where(x => x.Item1 <= LSspanlen_f).OrderByDescending(x => x.Item1).First().Item2;
+                LSstimoffms_f = LSlast_offtimes_by_spanlen.Where(x => x.Item1 <= LSspanlen_f).Count() == 0 ? LSinitofftimems : LSlast_offtimes_by_spanlen.Where(x => x.Item1 <= LSspanlen_f).OrderByDescending(x => x.Item1).First().Item2;
+                LSstimonms_b = LSlast_ontimes_by_spanlen_b.Where(x => x.Item1 <= LSspanlen_b).Count() == 0 ? LSinitontimems : LSlast_ontimes_by_spanlen_b.Where(x => x.Item1 <= LSspanlen_b).OrderByDescending(x => x.Item1).First().Item2;
+                LSstimoffms_b = LSlast_offtimes_by_spanlen_b.Where(x => x.Item1 <= LSspanlen_b).Count() == 0 ? LSinitofftimems : LSlast_offtimes_by_spanlen_b.Where(x => x.Item1 <= LSspanlen_b).OrderByDescending(x => x.Item1).First().Item2;
                 LSgridsize_f = 4;// App.mum.ls_lastgridsize_f == 0 ? initgridsize : App.mum.ls_lastgridsize_f;
                 LSgridsize_b = 4;// App.mum.ls_lastgridsize_b == 0 ? initgridsize : App.mum.ls_lastgridsize_b;
 

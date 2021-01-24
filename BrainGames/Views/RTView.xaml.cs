@@ -31,6 +31,7 @@ namespace BrainGames.Views
         bool clicked = false;
         bool firstshown = false;
         double ontime = 0;
+        bool timedout = false;
 
         List<SkiaRectangleDrawingFigure> boxfigures;
         SkiaRectangleDrawingFigure boxfigure1, boxfigure2A, boxfigure2B, boxfigure4A, boxfigure4B, boxfigure4C, boxfigure4D;
@@ -216,6 +217,7 @@ namespace BrainGames.Views
                 else { crossfigure = crossfigure4D; }
             }
 
+            timedout = false;
             clicked = false;
             firstshown = false;
             showbox = true;
@@ -253,12 +255,17 @@ namespace BrainGames.Views
                         else { crossfigure = crossfigure4D; }
                     }
                 }
-                if (viewModel.RTboxes == 1)
+                if (timedout)
                 {
+                    viewModel.cor = false;
+                }
+                else if (viewModel.RTboxes == 1)
+                {
+                    viewModel.cor = true;
                     viewModel.RTss1_trialcnt++;
                     viewModel.RTss1_cumrt += Math.Min(rt - ontime, viewModel.RTtimeout);
                 }
-                viewModel.RTReactButton(0, viewModel.RTReactionTime, (float)viewModel.RTss1_cumrt / viewModel.RTss1_trialcnt, viewModel.RTcorboxes[viewModel.RTblocktrialctr - 1], viewModel.cor);
+                viewModel.RTReactButton(0, Math.Min(rt - ontime, viewModel.RTtimeout), (float)viewModel.RTss1_cumrt / viewModel.RTss1_trialcnt, viewModel.RTcorboxes[viewModel.RTblocktrialctr - 1], viewModel.cor);
             }
         }
 
@@ -279,8 +286,10 @@ namespace BrainGames.Views
             {
                 if (!clicked)//timeout
                 {
+                    timedout = true;
                     ReactButton_Clicked(null, null);
                 }
+                timedout = false;
                 showcross = false;
                 firstshown = false;
                 _stopWatch.Restart();

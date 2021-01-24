@@ -15,7 +15,7 @@
         <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
     </ContentPage.ToolbarItems>
 
-    <Grid>
+    <Grid RowSpacing="0">
         <Grid.Resources>
             <converters:InverseBoolConverter x:Key="not"/>
             <converters:DoubleToBoolConverter x:Key="dtb"/>

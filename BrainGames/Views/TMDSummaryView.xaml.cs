@@ -63,6 +63,8 @@ namespace BrainGames.Views
             this.TwoMinuteDrillSummaryView.Children.Add(fr);
 
             double points = 0;
+            viewModel.MemoryScore = 0;
+            viewModel.SpeedScore = 0;
             foreach (string gamename in viewModel.GamesPlayed)
             {
                 var f = new Frame
