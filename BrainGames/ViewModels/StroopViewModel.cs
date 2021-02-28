@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using Xamarin.Forms;
 
@@ -90,6 +91,7 @@ namespace BrainGames.ViewModels
 
         public StroopViewModel()
         {
+            App.mum.LoadStroopGR();
             textcolors = new textcolortypes[trialsperset];
             ReadyButtonCommand = new Command(ReadyButton);
             //            ReactButtonCommand = new Command(ReactButton);
@@ -283,13 +285,37 @@ namespace BrainGames.ViewModels
             }
             //////////////////////////////////////////
             #endregion
-
+            cor = false;//set this for non-responses
             IsRunning = true;
         }
 
         public void ReactButton(int tctr, double rt, double avgrt, double difrt, string word, string textcolor, bool congruent, bool correct)
         {
             MasterUtilityModel.WriteStroopGR(game_session_id, tctr, rt, avgrt, difrt, word, textcolor, congruent, correct);
+        }
+
+        public void OnDisappearing()
+        {
+            List<DataSchemas.StroopGameRecordSchema> ur = new List<DataSchemas.StroopGameRecordSchema>();
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema"); }
+            catch (Exception ex) {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<double> avgs = new List<double>();
+                List<double> bests = new List<double>();
+                if (ur.Where(x => x.cor == true && x.congruent == true).Count() > 0 && ur.Where(x => x.cor == true && x.congruent == false).Count() > 0)
+                {
+                    avgs.Add(Utilities.MovingAverage(ur.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, ((x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()) + (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count())) / 2)).OrderBy(x => x.Item1).ToList(), 1).Last().Item2);
+                    avgs.Add(Utilities.MovingAverage(ur.Where(x => x.cor == true).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, (x.Where(y => y.congruent == false).Sum(y => y.reactiontime) / x.Where(y => y.congruent == false).Count()) - (x.Where(y => y.congruent == true).Sum(y => y.reactiontime) / x.Where(y => y.congruent == true).Count()))).OrderBy(x => x.Item1).ToList(), 1).Last().Item2);
+                }
+                else
+                {
+                    avgs.Add(9999);
+                    avgs.Add(9999);
+                }
+                Thread t = new Thread(() => App.mum.UpdateUserStats("Stroop", avgs, bests));
+                t.Start();
+            }
         }
     }
 }

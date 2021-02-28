@@ -32,12 +32,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Fastest Block: Forward"
+                        <Label Text="Longest Span: Forward"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="FastestF" Chart="{Binding FastestFChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="LongestF" Chart="{Binding LongestFChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="1"
@@ -47,12 +47,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Fastest Block: Backward"
+                        <Label Text="Longest Span: Backward"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="FastestB" Chart="{Binding FastestBChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="LongestB" Chart="{Binding LongestBChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="2"
@@ -62,12 +62,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average: Forward"
+                        <Label Text="Fastest Time at Longest Span: Forward"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AverageF" Chart="{Binding AverageFChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="FastestF" Chart="{Binding FastestFChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="3"
@@ -77,12 +77,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average: Backward"
+                        <Label Text="Fastest Time at Longest Span: Backward"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AverageB" Chart="{Binding AverageBChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="FastestB" Chart="{Binding FastestBChart}" />
                     </StackLayout>
                 </Frame>
             </Grid>

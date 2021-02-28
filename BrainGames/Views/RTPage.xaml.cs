@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Globalization;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
 
-using BrainGames.Models;
 using BrainGames.Controls;
-using BrainGames.Views;
-using BrainGames.Utility;
 using BrainGames.ViewModels;
+using BrainGames.Utility;
 
 namespace BrainGames.Views
 {
@@ -40,6 +33,7 @@ namespace BrainGames.Views
         bool firstshown = false;
         double blockcumrt = 0;
         double ontime = 0;
+        bool timedout = false;
 
         List<SkiaRectangleDrawingFigure> boxfigures;
         SkiaRectangleDrawingFigure boxfigure1, boxfigure2A, boxfigure2B, boxfigure4A, boxfigure4B, boxfigure4C, boxfigure4D;
@@ -61,7 +55,6 @@ namespace BrainGames.Views
 
         public RTPage()
         {
-            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new RTViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
@@ -74,8 +67,18 @@ namespace BrainGames.Views
             Init();
         }
 
+        protected override void OnDisappearing()
+        {
+            viewModel.OnDisappearing();
+            base.OnDisappearing();
+        }
+
         private void Init()
         {
+            if (viewModel.boxopt == "1") ((RadioButton)FindByName("box1opt")).IsChecked = true;
+            if (viewModel.boxopt == "2") ((RadioButton)FindByName("box2opt")).IsChecked = true;
+            if (viewModel.boxopt == "4") ((RadioButton)FindByName("box4opt")).IsChecked = true;
+            if (viewModel.boxopt == "auto") ((RadioButton)FindByName("autoopt")).IsChecked = true;
 
             if (viewModel.AvgRT > 0)
             {
@@ -225,9 +228,21 @@ namespace BrainGames.Views
             crossfigure4D.Path.LineTo(new SKPoint(boxfigure4D.Rectangle.Left + crossmargin, boxfigure4D.Rectangle.Top + crossmargin));
         }
 
+        void BoxOptChanged(object sender, CheckedChangedEventArgs e)
+        {
+            if (((RadioButton)FindByName("box1opt")).IsChecked) viewModel.boxopt = "1";
+            if (((RadioButton)FindByName("box2opt")).IsChecked) viewModel.boxopt = "2";
+            if (((RadioButton)FindByName("box4opt")).IsChecked) viewModel.boxopt = "4";
+            if (((RadioButton)FindByName("autoopt")).IsChecked) viewModel.boxopt = "auto";
+        }
+
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
+            App.AnalyticsService.TrackEvent("RTStatsView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new RTStatsPage()));
         }
 
@@ -264,6 +279,7 @@ namespace BrainGames.Views
                 else { crossfigure = crossfigure4D; }
             }
 
+            timedout = false;
             clicked = false;
             firstshown = false;
             showbox = true;
@@ -286,13 +302,7 @@ namespace BrainGames.Views
                 artLabel.Text = "Block RT: " + (blockcumrt / viewModel.blocktrialctr).ToString("N1", CultureInfo.InvariantCulture) + " ms";
                 clicked = true;
 
-                if (viewModel.boxes == 1)
-                {
-                    viewModel.ss1_trialcnt++;
-                    viewModel.ss1_cumrt += viewModel.ReactionTime;
-                    viewModel.AvgRT = viewModel.ss1_cumrt / viewModel.ss1_trialcnt;
-                }
-                else if (viewModel.boxes == 2)
+                if (viewModel.boxes == 2)
                 {
                     viewModel.ss2_trialcnt++;
                     if (viewModel.cor)
@@ -342,10 +352,20 @@ namespace BrainGames.Views
                 }
 
                 //                viewModel.ReactButtonCommand.Execute(null);
+                if (timedout)
+                {
+                    viewModel.cor = false;
+                }
+                else if (viewModel.boxes == 1)
+                {
+                    viewModel.cor = true;
+                    viewModel.ss1_trialcnt++;
+                    viewModel.ss1_cumrt += viewModel.ReactionTime;
+                    viewModel.AvgRT = viewModel.ss1_cumrt / viewModel.ss1_trialcnt;
+                }
                 viewModel.ReactButton(viewModel.trialctr, viewModel.ReactionTime, viewModel.AvgRT, viewModel.corboxes[viewModel.blocktrialctr -1], viewModel.cor);
             }
         }
-
 
         private bool TimerLoop()
         {
@@ -362,7 +382,13 @@ namespace BrainGames.Views
             }
             else //clicked or timeout, done with trial
             {
+                if (!clicked)//timeout
+                {
+                    timedout = true;
+                    ReactButton_Clicked(null, null);
+                }
                 //if (viewModel.blocktrialctr < viewModel.trialsperset && dt >= viewModel.pausedurarr[viewModel.blocktrialctr] + viewModel.timeout) 
+                timedout = false;
                 showcross = false;
                 firstshown = false;
                 _stopWatch.Restart();
@@ -405,5 +431,8 @@ namespace BrainGames.Views
             }
         }
 
+        void box1opt_CheckedChanged(System.Object sender, Xamarin.Forms.CheckedChangedEventArgs e)
+        {
+        }
     }
 }

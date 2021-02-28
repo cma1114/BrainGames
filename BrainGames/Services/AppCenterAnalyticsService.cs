@@ -16,7 +16,14 @@ namespace BrainGames.Services
 
         public void TrackEvent(string eventKey, IDictionary<string, string> data)
         {
-            Analytics.TrackEvent(eventKey, data);
+            try
+            {
+                Analytics.TrackEvent(eventKey, data);
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
         }
 
         public void TrackError(Exception exception)

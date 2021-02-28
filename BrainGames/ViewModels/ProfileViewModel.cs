@@ -14,6 +14,20 @@ namespace BrainGames.ViewModels
 {
     public class ProfileViewModel : ViewModelBase
     {
+        private bool _editable = false;
+        public bool Editable
+        {
+            get => _editable;
+            set { SetProperty(ref _editable, value); }
+        }
+
+        private bool _edit = false;
+        public bool Edit
+        {
+            get => _edit;
+            set { SetProperty(ref _edit, value); }
+        }
+
         public bool CheckName(string name)
         {
 /*            Task<bool> task = MasterUtilityModel.CheckScreenname(name);
@@ -49,6 +63,10 @@ namespace BrainGames.ViewModels
 
         public ProfileViewModel()
         {
+            if (Settings.Screenname != "")
+            {
+                Editable = true;
+            }
         }
     }
 }

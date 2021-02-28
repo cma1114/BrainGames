@@ -141,6 +141,51 @@ namespace BrainGames.Services
             return response;
         }
 
+        public async Task<DataSchemas.ConnectedUsersSchema> AddConnectedEntryAsync(DataSchemas.ConnectedUsersSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bgconnectedusers");
+            try
+            {
+                var response = await SendRequestAsync<DataSchemas.ConnectedUsersSchema>(url, HttpMethod.Post, _headers, entry);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                ;
+            }
+            return null;
+        }
+
+        public async Task<DataSchemas.ConnectedUsersSchema> UpdateConnectedEntryAsync(DataSchemas.ConnectedUsersSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bgconnectedusers/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.ConnectedUsersSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.UserStatsSchema> AddUserStatsEntryAsync(DataSchemas.UserStatsSchema entry)
+        {
+            var url = new Uri(_baseUri, "/tables/bguserstats");
+            var response = await SendRequestAsync<DataSchemas.UserStatsSchema>(url, HttpMethod.Post, _headers, entry);
+
+            return response;
+        }
+
+        public async Task<DataSchemas.UserStatsSchema> UpdateUserStatsEntryAsync(DataSchemas.UserStatsSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bguserstats/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.UserStatsSchema>(url, new HttpMethod("PATCH"), _headers, entry);
+
+            return response;
+        }
+
+        public async Task RemoveUserStatsEntryAsync(DataSchemas.UserStatsSchema entry)
+        {
+            var url = new Uri(_baseUri, string.Format("/tables/bguserstats/{0}", entry.Id));
+            var response = await SendRequestAsync<DataSchemas.UserStatsSchema>(url, HttpMethod.Delete, _headers);
+        }
+
         public async Task<DataSchemas.BrainGameSessionSchema> AddBrainGameSessionEntryAsync(DataSchemas.BrainGameSessionSchema entry)
         {
             var url = new Uri(_baseUri, "/tables/bgsession");

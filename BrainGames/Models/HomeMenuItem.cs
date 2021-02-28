@@ -10,6 +10,7 @@ namespace BrainGames.Models
         Invite,
         Invitations,
         Profile,
+        Sharing,
         About
     }
     public class HomeMenuItem

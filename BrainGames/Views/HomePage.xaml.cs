@@ -7,6 +7,7 @@ using Rg.Plugins.Popup.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using BrainGames.Controls;
+using BrainGames.Utility;
 using BrainGames.ViewModels;
 
 namespace BrainGames.Views
@@ -22,6 +23,7 @@ namespace BrainGames.Views
 
         public HomePage()
         {
+            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new HomePageViewModel(Navigation);
             InitializeComponent();
 //            BindingContext = new HomePageViewModel(Navigation);
@@ -74,27 +76,65 @@ namespace BrainGames.Views
 
         public async void ITPressed(object sender, EventArgs args)
         {
+            App.AnalyticsService.TrackEvent("ITPage", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushAsync(new ITPage());
         }
 
         public async void RTPressed(object sender, EventArgs args)
         {
+            App.AnalyticsService.TrackEvent("RTPage", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushAsync(new RTPage());
         }
 
         public async void StroopPressed(object sender, EventArgs args)
         {
+            App.AnalyticsService.TrackEvent("StroopPage", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushAsync(new StroopPage());
         }
 
         public async void DSPressed(object sender, EventArgs args)
         {
+            App.AnalyticsService.TrackEvent("DSPage", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushAsync(new DSPage());
         }
 
         public async void LSPressed(object sender, EventArgs args)
         {
+            App.AnalyticsService.TrackEvent("LSPage", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushAsync(new LSPage());
+        }
+
+        public async void TMDPressed(object sender, EventArgs args)
+        {
+            App.AnalyticsService.TrackEvent("TMDPage", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
+            await Navigation.PushAsync(new TMDPage());
+        }
+
+        public async void ComparePressed(object sender, EventArgs args)
+        {
+            App.AnalyticsService.TrackEvent("ComparePage", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
+            await Navigation.PushAsync(new ComparePage());
         }
     }
 }

@@ -60,7 +60,7 @@ namespace BrainGames.ViewModels
         private IEnumerable<Tuple<int, double>> FastestCorStimTimeBySpanLen_f;
         private IEnumerable<Tuple<int, double>> FastestCorStimTimeBySpanLen_b;
 
-        private double estSpan_f, estStimTime_f, estSpan_b, estStimTime_b;
+        private List<double> pf, pb;
         private int longestcorspan_f, fastestcorstimtimeatlongestcorspan_f, fastestcorstimtime_f, longestcorspanatfastestcorstimetime_f;
         private int longestcorspan_b, fastestcorstimtimeatlongestcorspan_b, fastestcorstimtime_b, longestcorspanatfastestcorstimetime_b;
         private int tdy_longestcorspan_f, tdy_fastestcorstimtimeatlongestcorspan_f, tdy_fastestcorstimtime_f, tdy_longestcorspanatfastestcorstimetime_f;
@@ -165,101 +165,12 @@ namespace BrainGames.ViewModels
         {
             if (App.mum.GameShares.Where(x => x.game == "DS")?.Count() > 0) Compare = true;
 
-            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where trialnum > 0"); }
             catch (Exception ex) {; }
             if (ur != null && ur.Count() > 0)
             {
-                #region get est spans and times
-                List<bool> corarr = ur.Where(x => x.direction == "f").Select(x => x.cor).ToList();
-                List<int> spanlenarr = ur.Where(x => x.direction == "f").Select(x => x.itemcnt).ToList();
-                Tuple<double, double> p;
-                List<Tuple<int, double>> AvgCorStatsBySpan;
-
-                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estSpan_f = 0.0;
-                    }
-                    else
-                    {
-                        estSpan_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estSpan_f = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-
-                corarr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.cor).ToList();
-                List<int> stimtimearr = ur.Where(x => x.itemcnt <= estSpan_f && x.direction == "f").Select(x => x.ontimems + x.offtimems).ToList();
-                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "f").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9 || corarr.Count() == 0)
-                    {
-                        estStimTime_f = 0.0;
-                    }
-                    else
-                    {
-                        estStimTime_f = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estStimTime_f = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-                corarr = ur.Where(x => x.direction == "b").Select(x => x.cor).ToList();
-                spanlenarr = ur.Where(x => x.direction == "b").Select(x => x.itemcnt).ToList();
-                try { p = Fit.Line(spanlenarr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.itemcnt).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9)
-                    {
-                        estSpan_b = 0.0;
-                    }
-                    else
-                    {
-                        estSpan_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estSpan_b = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? spanlenarr.Max() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-
-                corarr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.cor).ToList();
-                stimtimearr = ur.Where(x => x.itemcnt <= estSpan_b && x.direction == "b").Select(x => x.ontimems + x.offtimems).ToList();
-                try { p = Fit.Line(stimtimearr.Select(Convert.ToDouble).ToArray(), corarr.Select(Convert.ToDouble).ToArray()); }
-                catch (Exception ex) { p = Tuple.Create<double, double>(0.0, 0.0); }
-
-                if (p.Item2 >= 0 || p.Item1 <= 0.9)
-                {
-                    AvgCorStatsBySpan = ur.Where(x => x.direction == "b").GroupBy(x => x.ontimems + x.offtimems).Where(grp => grp.Count() >= 3).Select(x => Tuple.Create(x.Key, x.Where(y => y.cor == true).Count() / (double)Math.Max(x.Count(), 1))).OrderBy(x => x.Item1).ToList();
-                    if (AvgCorStatsBySpan.Count() == 0 || AvgCorStatsBySpan.Select(x => x.Item2).Max() < 0.9 || corarr.Count() == 0)
-                    {
-                        estStimTime_b = 0.0;
-                    }
-                    else
-                    {
-                        estStimTime_b = AvgCorStatsBySpan.Where(x => x.Item2 == AvgCorStatsBySpan.Select(y => y.Item2).Max()).Select(x => x.Item1).Last();
-                    }
-                }
-                else
-                {
-                    estStimTime_b = (p.Item2 == 0 || Double.IsNaN(p.Item2)) ? ((corarr.Count() > 0 && corarr[0] == true) ? stimtimearr.Min() : 0) : (0.9 - p.Item1) / p.Item2;
-                }
-                #endregion
+                pf = MasterUtilityModel.GetEstSpanStats(ur, "f");
+                pb = MasterUtilityModel.GetEstSpanStats(ur, "b");
 
                 try
                 {
@@ -393,7 +304,7 @@ namespace BrainGames.ViewModels
         public Chart EstSpanChart => new BarChart()
         {
             Margin = 10,
-            Entries = GetEstimates(estSpan_f, estSpan_b, ""),
+            Entries = (pf == null || pb == null) ? null : GetEstimates(pf[0], pb[0], ""),
             LabelOrientation = Orientation.Horizontal,
             ValueLabelOrientation = Orientation.Horizontal
         };
@@ -401,57 +312,57 @@ namespace BrainGames.ViewModels
         public Chart EstStimTimeChart => new BarChart()
         {
             Margin = 10,
-            Entries = GetEstimates(estStimTime_f, estStimTime_b, " ms"),
+            Entries = (pf == null || pb == null) ? null : GetEstimates(pf[1], pb[1], " ms"),
             LabelOrientation = Orientation.Horizontal,
             ValueLabelOrientation = Orientation.Horizontal
         };
 
         public Chart CumEstSpanFOverTimeChart => new LineChart()
         {
-            Entries = CumEstSpanFOverTime.Select(CreateDayEntry),
+            Entries = CumEstSpanFOverTime?.Select(CreateDayEntry),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = CumEstSpanFOverTime.Count() == 0 ? 0 : (float)(CumEstSpanFOverTime.Min(x => x.Item2) - CumEstSpanFOverTime.Min(x => x.Item2) * sf),
-            MaxValue = CumEstSpanFOverTime.Count() == 0 ? 0 : (float)(CumEstSpanFOverTime.Max(x => x.Item2) + CumEstSpanFOverTime.Max(x => x.Item2) * sf)
+            MinValue = CumEstSpanFOverTime == null ? 0f : (float)Math.Max(0, (CumEstSpanFOverTime.Count == 0 ? 0 : CumEstSpanFOverTime.Min(x => x.Item2)) - (CumEstSpanFOverTime.Count == 0 ? 0 : CumEstSpanFOverTime.Min(x => x.Item2)) * sf),
+            MaxValue = CumEstSpanFOverTime == null ? 0f : (float)((CumEstSpanFOverTime.Count == 0 ? 0 : CumEstSpanFOverTime.Max(x => x.Item2)) + (CumEstSpanFOverTime.Count == 0 ? 0 : CumEstSpanFOverTime.Max(x => x.Item2)) * sf)
         };
 
         public Chart CumEstSpanBOverTimeChart => new LineChart()
         {
-            Entries = CumEstSpanBOverTime.Select(CreateDayEntry),
+            Entries = CumEstSpanBOverTime?.Select(CreateDayEntry),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = CumEstSpanBOverTime.Count() == 0 ? 0 : (float)(CumEstSpanBOverTime.Min(x => x.Item2) - CumEstSpanBOverTime.Min(x => x.Item2) * sf),
-            MaxValue = CumEstSpanBOverTime.Count() == 0 ? 0 : (float)(CumEstSpanBOverTime.Max(x => x.Item2) + CumEstSpanBOverTime.Max(x => x.Item2) * sf)
+            MinValue = CumEstSpanBOverTime == null ? 0f : (float)Math.Max(0, (CumEstSpanBOverTime.Count == 0 ? 0 : CumEstSpanBOverTime.Min(x => x.Item2)) - (CumEstSpanBOverTime.Count == 0 ? 0 : CumEstSpanBOverTime.Min(x => x.Item2)) * sf),
+            MaxValue = CumEstSpanBOverTime == null ? 0f : (float)((CumEstSpanBOverTime.Count == 0 ? 0 : CumEstSpanBOverTime.Max(x => x.Item2)) + (CumEstSpanBOverTime.Count == 0 ? 0 : CumEstSpanBOverTime.Max(x => x.Item2)) * sf)
         };
 
         public Chart CumEstStimTimeFOverTimeChart => new LineChart()
         {
-            Entries = CumEstStimTimeFOverTime.Select(CreateDayEntryMS),
+            Entries = CumEstStimTimeFOverTime?.Select(CreateDayEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = CumEstStimTimeFOverTime.Count() == 0 ? 0 : (float)(CumEstStimTimeFOverTime.Min(x => x.Item2) - CumEstStimTimeFOverTime.Min(x => x.Item2) * sf),
-            MaxValue = CumEstStimTimeFOverTime.Count() == 0 ? 0 : (float)(CumEstStimTimeFOverTime.Max(x => x.Item2) + CumEstStimTimeFOverTime.Max(x => x.Item2) * sf)
+            MinValue = CumEstStimTimeFOverTime == null ? 0f : (float)Math.Max(0, (CumEstStimTimeFOverTime.Count == 0 ? 0 : CumEstStimTimeFOverTime.Min(x => x.Item2)) - (CumEstStimTimeFOverTime.Count == 0 ? 0 : CumEstStimTimeFOverTime.Min(x => x.Item2)) * sf),
+            MaxValue = CumEstStimTimeFOverTime == null ? 0f : (float)((CumEstStimTimeFOverTime.Count == 0 ? 0 : CumEstStimTimeFOverTime.Max(x => x.Item2)) + (CumEstStimTimeFOverTime.Count == 0 ? 0 : CumEstStimTimeFOverTime.Max(x => x.Item2)) * sf)
         };
 
         public Chart CumEstStimTimeBOverTimeChart => new LineChart()
         {
-            Entries = CumEstStimTimeBOverTime.Select(CreateDayEntryMS),
+            Entries = CumEstStimTimeBOverTime?.Select(CreateDayEntryMS),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
             PointSize = 18,
-            MinValue = CumEstStimTimeBOverTime.Count() == 0 ? 0 : (float)(CumEstStimTimeBOverTime.Min(x => x.Item2) - CumEstStimTimeBOverTime.Min(x => x.Item2) * sf),
-            MaxValue = CumEstStimTimeBOverTime.Count() == 0 ? 0 : (float)(CumEstStimTimeBOverTime.Max(x => x.Item2) + CumEstStimTimeBOverTime.Max(x => x.Item2) * sf)
+            MinValue = CumEstStimTimeBOverTime == null ? 0f : (float)Math.Max(0, (CumEstStimTimeBOverTime.Count == 0 ? 0 : CumEstStimTimeBOverTime.Min(x => x.Item2)) - (CumEstStimTimeBOverTime.Count == 0 ? 0 : CumEstStimTimeBOverTime.Min(x => x.Item2)) * sf),
+            MaxValue = CumEstStimTimeBOverTime == null ? 0f : (float)((CumEstStimTimeBOverTime.Count == 0 ? 0 : CumEstStimTimeBOverTime.Max(x => x.Item2)) + (CumEstStimTimeBOverTime.Count == 0 ? 0 : CumEstStimTimeBOverTime.Max(x => x.Item2)) * sf)
         };
         public Chart MaxCorFwdSpanLenOverTimeChart => new LineChart()
         {
-            Entries = MaxCorFwdSpanLenOverTime.Select(CreateDayEntryCnt),
+            Entries = MaxCorFwdSpanLenOverTime?.Select(CreateDayEntryCnt),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
@@ -460,7 +371,7 @@ namespace BrainGames.ViewModels
 
         public Chart MaxCorBwdSpanLenOverTimeChart => new LineChart()
         {
-            Entries = MaxCorBwdSpanLenOverTime.Select(CreateDayEntryCnt),
+            Entries = MaxCorBwdSpanLenOverTime?.Select(CreateDayEntryCnt),
             LineMode = LineMode.Straight,
             LineSize = 8,
             PointMode = PointMode.Circle,
@@ -482,7 +393,7 @@ namespace BrainGames.ViewModels
 
         public Chart TrialCountOverTimeChart => new BarChart()
         {
-            Entries = TrialCountOverTime.Select(CreateDayEntryCnt),
+            Entries = TrialCountOverTime?.Select(CreateDayEntryCnt),
             Margin = 10,
             ValueLabelOrientation = Orientation.Horizontal
         };
@@ -667,15 +578,18 @@ namespace BrainGames.ViewModels
                                                 SKColors.Indigo, SKColors.LightGreen, SKColors.Orange, SKColors.Olive, SKColors.Aquamarine, SKColors.Black };
             int idx = 0;
             List<ChartEntry> es = new List<ChartEntry>();
-            foreach (Tuple<int, double> rec in v)
+            if (v != null)
             {
-                ChartEntry e = new ChartEntry((float)rec.Item2);
-                e.ValueLabel = Math.Round(rec.Item2 * (suf == "%" ? 100 : 1), 1).ToString() + suf;
-                e.TextColor = SKColors.Black;
-                e.Label = rec.Item1.ToString();
-                e.Color = clrs[idx];
-                idx = idx == clrs.Count() - 1 ? 0 : idx + 1;
-                es.Add(e);
+                foreach (Tuple<int, double> rec in v)
+                {
+                    ChartEntry e = new ChartEntry((float)rec.Item2);
+                    e.ValueLabel = Math.Round(rec.Item2 * (suf == "%" ? 100 : 1), 1).ToString() + suf;
+                    e.TextColor = SKColors.Black;
+                    e.Label = rec.Item1.ToString();
+                    e.Color = clrs[idx];
+                    idx = idx == clrs.Count() - 1 ? 0 : idx + 1;
+                    es.Add(e);
+                }
             }
             return es;
         }

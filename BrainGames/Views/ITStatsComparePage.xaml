@@ -30,12 +30,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Fastest Block"
+                        <Label Text="Average Correct IT"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Fastest" Chart="{Binding FastestChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="AvgCorIT" Chart="{Binding AvgCorITChart}" />
                     </StackLayout>
                 </Frame>
                 <Frame Grid.Row="1"
@@ -45,12 +45,12 @@
                        Padding="0"
                        CornerRadius="0">
                     <StackLayout Spacing="20" Padding="15">
-                        <Label Text="Average Block"
+                        <Label Text="Estimated Correct IT"
                                             FontSize="Medium"
                                             LineHeight="1"
                                             TextColor="Black"
                                             HorizontalOptions="CenterAndExpand"/>
-                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="Average" Chart="{Binding AverageChart}" />
+                        <microcharts:ChartView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" BackgroundColor="Transparent" x:Name="EstCorIT" Chart="{Binding EstCorITChart}" />
                     </StackLayout>
                 </Frame>
             </Grid>

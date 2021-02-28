@@ -39,7 +39,6 @@ namespace BrainGames.Views
 
         public DSPage()
         {
-            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new DSViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
@@ -49,6 +48,12 @@ namespace BrainGames.Views
         {
             base.OnAppearing();
             Init();
+        }
+
+        protected override void OnDisappearing()
+        {
+            viewModel.OnDisappearing();
+            base.OnDisappearing();
         }
 
         private SkiaTextFigure MakeWord(string w, float fsize, SKColor clr)
@@ -85,16 +90,20 @@ namespace BrainGames.Views
         {
             centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
             centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
-
+            /*
             if (viewModel.EstSpan > 0)
             {
-                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
-            }
+                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 1).ToString("N0", CultureInfo.InvariantCulture) + " items";
+            }*/
         }
 
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
+            App.AnalyticsService.TrackEvent("DSStatsView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new DSStatsPage()));
         }
 
@@ -135,7 +144,11 @@ namespace BrainGames.Views
             }
             else //entered response or timeout, done with trial, return to ready screen
             {
-                if (dt >= viewModel.timeout) viewModel.timedout = true;
+                if (dt >= viewModel.timeout)
+                {
+                    viewModel.timedout = true;
+                    viewModel.ResponseButton();
+                }
                 viewModel.IsRunning = false;
                 viewModel.EnableButtons = false;
                 viewModel.timer.Stop();

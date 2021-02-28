@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics;
+using System.Threading;
 
 using Xamarin.Forms;
 
@@ -71,6 +72,7 @@ namespace BrainGames.ViewModels
 
         public ITViewModel()
         {
+            App.mum.LoadITGR();
             ReadyButtonCommand = new Command(ReadyButton);
             LeftButtonCommand = new Command(LeftButton);
             RightButtonCommand = new Command(RightButton);
@@ -190,6 +192,22 @@ namespace BrainGames.ViewModels
                 estit = Settings.IT_EstIT;
             }
             MasterUtilityModel.WriteITGR(game_session_id, trialctr, reversalctr, curstimdur, empstimdur, Settings.IT_AvgCorDur, Settings.IT_EstIT, (int)cor_ans, cor);
+        }
+
+        public void OnDisappearing()
+        {
+            List<DataSchemas.ITGameRecordSchema> ur = new List<DataSchemas.ITGameRecordSchema>();
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema"); }
+            catch (Exception ex) {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<double> avgs = new List<double>();
+                List<double> bests = new List<double>();
+                avgs.Add(ur.Where(x => x.avgcorit > 0).Count() == 0 ? 9999 : ur.Where(x => x.avgcorit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgcorit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
+                avgs.Add(ur.Where(x => x.estit > 0).Count() == 0 ? 9999 : ur.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
+                Thread t = new Thread(() => App.mum.UpdateUserStats("IT", avgs, bests));
+                t.Start();
+            }
         }
 
         public void ReadyButton()

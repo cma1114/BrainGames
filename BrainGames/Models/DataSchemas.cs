@@ -10,6 +10,10 @@ namespace BrainGames.Models
 {
     public abstract class DataSchemas
     {
+
+        public static List<string> GameTypes = new List<string> { "IT", "RT", "Stroop", "DS", "LS" };
+        public static List<string> GameNames = new List<string> { "Inspection Time", "Reaction Time", "Stroop Effect", "Digit Span", "Location Span" };
+
         public class UserSchema
         {
             [PrimaryKey, JsonProperty("id")]
@@ -29,6 +33,27 @@ namespace BrainGames.Models
             public double SignupScreenDensity { get; set; }
         }
 
+        public class UserStatsSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId { get; set; }
+            public string game { get; set; }
+            public string avgs { get; set; }
+            public string bests { get; set; }
+        }
+
+        public class ConnectedUsersSchema
+        {
+            [PrimaryKey, JsonProperty("id")]
+            public string Id { get; set; }
+            public string UserId1 { get; set; }
+            public string UserId2 { get; set; }
+            public bool connected { get; set; }
+            public bool blocked1 { get; set; }
+            public bool blocked2 { get; set; }
+        }
+
         public class SharingUsersSchema
         {
             [PrimaryKey, JsonProperty("id")]
@@ -36,8 +61,10 @@ namespace BrainGames.Models
             public string UserId1 { get; set; }
             public string UserId2 { get; set; }
             public string game { get; set; }
-            public bool Accepted { get; set; }
-            public bool Declined { get; set; }
+            public bool Accepted1 { get; set; }
+            public bool Declined1 { get; set; }
+            public bool Accepted2 { get; set; }
+            public bool Declined2 { get; set; }
         }
 
         public class BrainGameSessionSchema
@@ -101,6 +128,7 @@ namespace BrainGames.Models
             public double avgrt { get; set; }
             public int boxes { get; set; }
             public int corbox { get; set; }
+            public bool auto { get; set; }
             public bool cor { get; set; }
         }
 
@@ -121,7 +149,7 @@ namespace BrainGames.Models
             public bool cor { get; set; }
         }
 
-        public class DSGameRecordSchema
+        public class SpanGameRecordSchema
         {
             [PrimaryKey, JsonProperty("id")]
             public string Id { get; set; }
@@ -145,29 +173,11 @@ namespace BrainGames.Models
             public bool cor { get; set; }
         }
 
-        public class LSGameRecordSchema
+        public class DSGameRecordSchema : SpanGameRecordSchema { }
+
+        public class LSGameRecordSchema : SpanGameRecordSchema
         {
-            [PrimaryKey, JsonProperty("id")]
-            public string Id { get; set; }
-            public string UserId { get; set; }
-            public string SessionId { get; set; }
-            public string datetime { get; set; }
-            public int trialnum { get; set; }
-            public double estSpan_f { get; set; }
-            public double estStimTime_f { get; set; }
-            public double estSpan_b { get; set; }
-            public double estStimTime_b { get; set; }
-            public int itemcnt { get; set; }
-            public int ontimems { get; set; }
-            public int offtimems { get; set; }
             public int gridsize { get; set; }
-            public int resptimems { get; set; }
-            public string direction { get; set; }
-            public string items { get; set; }
-            public bool repeats { get; set; }
-            public bool repeats_cons { get; set; }
-            public bool autoinc { get; set; }
-            public bool cor { get; set; }
         }
     }
 }

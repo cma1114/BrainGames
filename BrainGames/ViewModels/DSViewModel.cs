@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using Xamarin.Forms;
 
@@ -32,7 +33,7 @@ namespace BrainGames.ViewModels
 
         public ICommand Button9Command { get; protected set; }
 
-        public int timeout = 60000;
+        public int timeout = 10000;
         public bool timedout = false;
         public Stopwatch timer = new Stopwatch();
 
@@ -62,6 +63,8 @@ namespace BrainGames.ViewModels
         private List<Tuple<int, int>> last_offtimes_by_spanlen;
         private List<Tuple<int, bool>> last_outcomes_by_spanlen;
         private int spanlen_f, spanlen_b, stimonms_f, stimonms_b, stimoffms_f, stimoffms_b;
+        private double estspan_f = 0, estspan_b = 0;
+        private bool auto_f = true, auto_b = true;
         private int cortrialstreak_b, errtrialstreak_b;
         private List<Tuple<int, int>> last_ontimes_by_spanlen_b;
         private List<Tuple<int, int>> last_offtimes_by_spanlen_b;
@@ -81,18 +84,24 @@ namespace BrainGames.ViewModels
                     spanlen_b = spanlen;
                     stimonms_b = stimonms;
                     stimoffms_b = stimoffms;
+                    estspan_b = EstSpan;
+                    auto_b = AutoIncrement;
                 }
                 else
                 {
                     spanlen_f = spanlen;
                     stimonms_f = stimonms;
                     stimoffms_f = stimoffms;
+                    estspan_f = EstSpan;
+                    auto_f = AutoIncrement;
                 }
                 SetProperty(ref _backward, value);
                 //restore values
                 spanlen = _backward ? spanlen_b : spanlen_f;
                 stimonms = _backward ? stimonms_b : stimonms_f;
                 stimoffms = _backward ? stimoffms_b : stimoffms_f;
+                EstSpan = _backward ? estspan_b : estspan_f;
+                AutoIncrement = _backward ? auto_b : auto_f;
             }
         }
 
@@ -103,6 +112,8 @@ namespace BrainGames.ViewModels
             set
             {
                 SetProperty(ref _autoIncrement, value);
+                if (Backward) auto_b = AutoIncrement;
+                else auto_f = AutoIncrement;
             }
         }
 
@@ -170,6 +181,7 @@ namespace BrainGames.ViewModels
 
         public DSViewModel()
         {
+            App.mum.LoadDSGR();
             ReadyButtonCommand = new Command(ReadyButton);
             Button0Command = new Command(Button0);
             Button1Command = new Command(Button1);
@@ -225,6 +237,12 @@ namespace BrainGames.ViewModels
                 stimoffms_f = last_offtimes_by_spanlen.Count() == 0 ? initofftimems : last_offtimes_by_spanlen.Where(x => x.Item1 == spanlen_f).First().Item2;
                 stimonms_b = last_ontimes_by_spanlen_b.Count() == 0 ? initontimems : last_ontimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
                 stimoffms_b = last_offtimes_by_spanlen_b.Count() == 0 ? initofftimems : last_offtimes_by_spanlen_b.Where(x => x.Item1 == spanlen_b).First().Item2;
+                estspan_f = App.mum.ds_estspan_f;
+                estspan_b = App.mum.ds_estspan_b;
+                auto_f = App.mum.ds_auto_f;
+                auto_b = App.mum.ds_auto_b;
+                if (App.mum.ds_lastdir == "f") AutoIncrement = auto_f;
+                else AutoIncrement = auto_b;
 
                 if (AutoIncrement)
                 {
@@ -254,6 +272,8 @@ namespace BrainGames.ViewModels
                 spanlen = spanlen_f;
                 stimonms = stimonms_f;
                 stimoffms = stimoffms_f;
+                EstSpan = estspan_f;
+                AutoIncrement = auto_f;
                 if (App.mum.ds_lastdir == "f")
                 {
                     Backward = false;
@@ -334,6 +354,24 @@ namespace BrainGames.ViewModels
             return true;
         }
 
+        public void OnDisappearing()
+        {
+            List<DataSchemas.DSGameRecordSchema> ur = new List<DataSchemas.DSGameRecordSchema>();
+            try { ur = MasterUtilityModel.conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema"); }
+            catch (Exception ex) {; }
+            if (ur != null && ur.Count() > 0)
+            {
+                List<double> avgs = new List<double>();
+                List<double> bests = new List<double>();
+                bests.Add(ur.Where(x => x.cor == true && x.direction == "f").Count() == 0 ? 0 : ur.Where(x => x.cor == true && x.direction == "f").Select(x => x.itemcnt).Max());
+                bests.Add(ur.Where(x => x.cor == true && x.direction == "b").Count() == 0 ? 0 : ur.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max());
+                bests.Add(bests[0] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == bests[0]).Select(x => x.ontimems + x.offtimems).Min());
+                bests.Add(bests[1] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == bests[1]).Select(x => x.ontimems + x.offtimems).Min());
+                Thread t = new Thread(() => App.mum.UpdateUserStats("DS", avgs, bests));
+                t.Start();
+            }
+        }
+
         public void ResponseButton()
         {
             if (responselist.Count() < digitlist.Count() && MatchLists() && !timedout) return; //no errors yet, and you haven't timed out
@@ -379,7 +417,32 @@ namespace BrainGames.ViewModels
                 }
                 AnsClr = Color.OrangeRed;
             }
-            MasterUtilityModel.WriteDSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
+            Tuple<double, double> estspans = null;
+            bool done = false;
+            Task.Run(async () => {
+                try
+                {
+                    estspans = await MasterUtilityModel.WriteDSGR(game_session_id, ++trialctr, spanlen, stimonms, stimoffms, (int)timer.ElapsedMilliseconds, Backward ? "b" : "f", String.Join("~", digitlist), repeats_set, repeats_cons, AutoIncrement, cor);
+                    done = true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("error: " + ex.Message);
+                    done = true;
+                }
+            });
+            while (!done)
+            {
+                ;
+            }
+            if (estspans != null)
+            { 
+                estspan_f = estspans.Item1;
+                estspan_b = estspans.Item2;
+            }
+
+            if (Backward) EstSpan = estspan_b;
+            else EstSpan = estspan_f;
 
             if (AutoIncrement)
             {

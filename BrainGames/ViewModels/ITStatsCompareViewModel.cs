@@ -21,7 +21,7 @@ namespace BrainGames.ViewModels
             if (ur != null && ur.Count() > 0)
             {
                 cumavg = ur.Where(x => x.avgcorit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgcorit) / x.Count())).OrderBy(x => x.Item1).Last().Item2;
-                cumit = ur.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1).Last().Item2;
+                if (ur.Where(x => x.estit > 0).Count() > 0) cumit = ur.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1).Last().Item2;
             }
         }
 
@@ -53,13 +53,13 @@ namespace BrainGames.ViewModels
             {
                 if (avg)
                 {
-                    e = new ChartEntry((float)gs.avgscore[0]);
-                    e.ValueLabel = Math.Round(gs.avgscore[0], 1).ToString() + " ms";
+                    e = new ChartEntry((float)gs.avgscores[0]);
+                    e.ValueLabel = Math.Round(gs.avgscores[0], 1).ToString() + " ms";
                 }
                 else
                 {
-                    e = new ChartEntry((float)gs.avgscore[1]);
-                    e.ValueLabel = Math.Round(gs.avgscore[1], 1).ToString() + " ms";
+                    e = new ChartEntry((float)gs.avgscores[1]);
+                    e.ValueLabel = Math.Round(gs.avgscores[1], 1).ToString() + " ms";
                 }
                 e.TextColor = SKColors.Black;
                 e.Label = gs.Screenname;
@@ -68,6 +68,22 @@ namespace BrainGames.ViewModels
             }
             return es;
         }
+
+        public Chart AvgCorITChart => new BarChart()
+        {
+            Margin = 10,
+            Entries = GetCompetitors(true),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
+        };
+
+        public Chart EstCorITChart => new BarChart()
+        {
+            Margin = 10,
+            Entries = GetCompetitors(false),
+            LabelOrientation = Orientation.Horizontal,
+            ValueLabelOrientation = Orientation.Horizontal
+        };
 
     }
 }

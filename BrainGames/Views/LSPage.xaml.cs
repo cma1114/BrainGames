@@ -35,7 +35,6 @@ namespace BrainGames.Views
 
         public LSPage()
         {
-            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new LSViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
@@ -46,9 +45,11 @@ namespace BrainGames.Views
             base.OnAppearing();
 
             Grid g = this.Content.FindByName<Grid>("BoardGrid");
+            Grid bg = this.Content.FindByName<Grid>("MasterGrid");
+            double gridheight = bg.Height - bg.Children[0].Height - bg.Children[1].Height - bg.Children[3].Height;
             g.RowSpacing = spacing;
             g.ColumnSpacing = spacing;
-            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * spacing/*row/col spacing*/)) / viewModel.gridsize);
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, gridheight) - ((viewModel.gridsize + 1) * spacing/*row/col spacing*/)) / viewModel.gridsize);
             for (var i = 0; i < viewModel.gridsize; i++)
             {
                 g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });
@@ -69,30 +70,42 @@ namespace BrainGames.Views
             Init();
         }
 
+        protected override void OnDisappearing()
+        {
+            viewModel.OnDisappearing();
+            base.OnDisappearing();
+        }
+
         private void Init()
         {
-
+            /*
             if (viewModel.EstSpan > 0)
             {
-                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 0).ToString("N0", CultureInfo.InvariantCulture) + " ms";
-            }
+                estspanLabel.Text = "Est Span: " + Math.Round(viewModel.EstSpan, 1).ToString("N0", CultureInfo.InvariantCulture) + " items";
+            }*/
         }
 
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
+            App.AnalyticsService.TrackEvent("LSStatsView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new LSStatsPage()));
         }
 
         public void ReadyButton_Clicked(object sender, EventArgs e)
         {
             Grid g = this.Content.FindByName<Grid>("BoardGrid");
+            Grid bg = this.Content.FindByName<Grid>("MasterGrid");
+            double gridheight = bg.Height - bg.Children[0].Height - bg.Children[1].Height - bg.Children[3].Height;
             g.ColumnDefinitions.Clear();
             g.RowDefinitions.Clear();
             g.Children.Clear();
             g.RowSpacing = spacing;
             g.ColumnSpacing = spacing;
-            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, g.Height) - ((viewModel.gridsize - 1) * spacing/*row/col spacing*/)) / viewModel.gridsize);
+            TILE_SIZE = (float)Math.Floor((Math.Min(this.Content.Width, gridheight) - ((viewModel.gridsize + 1) * spacing/*row/col spacing*/)) / viewModel.gridsize);
             for (var i = 0; i < viewModel.gridsize; i++)
             {
                 g.RowDefinitions.Add(new RowDefinition { Height = new GridLength(TILE_SIZE) });
@@ -142,7 +155,11 @@ namespace BrainGames.Views
             }
             else //entered response or timeout, done with trial, return to ready screen
             {
-                if (dt >= viewModel.timeout) viewModel.timedout = true;
+                if (dt >= viewModel.timeout)
+                {
+                    viewModel.timedout = true;
+                    viewModel.ResponseButton();
+                }
                 viewModel.IsRunning = false;
                 viewModel.EnableButtons = false;
                 viewModel.timer.Stop();

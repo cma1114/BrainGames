@@ -52,16 +52,27 @@ namespace BrainGames.Views
                     if (game == "Location Span") games += "LS,";
                 }
             }
+            if (games.Length == 0)
+            {
+                DisplayAlert("No Games Selected!", "Select one or more games to share.", "OK");
+                return;
+            }
             games = games.Substring(0, games.Length - 1);
             string screenname = ((Label)(((StackLayout)((Button)sender).Parent.Parent)).Children[0]).Text.Split(new[] { " has " }, StringSplitOptions.None)[0];
             viewModel.AcceptInvite(screenname, games);
             GamesToAccept = false;
+            DisplayAlert("Sharing started!", "You are now sharing with " + screenname + ". You can modify this at any time on the Manage Sharing page.", "OK");
+            ((Frame)((Button)sender).Parent.Parent.Parent).BackgroundColor = Color.LightGreen;
+            ((Frame)((Button)sender).Parent.Parent.Parent).IsEnabled = false;
         }
 
         void RejectButtonPressed(object sender, EventArgs e)
         {
             string screenname = ((Label)(((StackLayout)((Button)sender).Parent.Parent)).Children[0]).Text.Split(new[] { " has " }, StringSplitOptions.None)[0];
             viewModel.RejectInvite(screenname);
+            DisplayAlert("Sharing rejected!", "You have declined to share with " + screenname + ".", "OK");
+            ((Frame)((Button)sender).Parent.Parent.Parent).BackgroundColor = Color.OrangeRed;
+            ((Frame)((Button)sender).Parent.Parent.Parent).IsEnabled = false;
         }
 
         public InvitationsPage()
@@ -76,9 +87,9 @@ namespace BrainGames.Views
             else
             {
                 lblHeadline.Text = "Invitations";
-                foreach (SharingInvitation su in App.mum.Invitations)
+                foreach (SharingUserRecord su in App.mum.Invitations)
                 {
-                    su.games.Sort();
+//                    su.games.Sort();
                     var f = new Frame
                     {
                         HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -144,10 +155,10 @@ namespace BrainGames.Views
                             new ColumnDefinition()
                         }
                     };
-                    var b = new Button { Text = "Accept Selected", WidthRequest = 100, HorizontalOptions = LayoutOptions.Center, IsEnabled = GamesToAccept};
+                    var b = new Button { Text = "Accept Selected", HorizontalOptions = LayoutOptions.CenterAndExpand, IsEnabled = GamesToAccept};
                     b.Clicked += AcceptButtonPressed;
                     g.Children.Add(b, 0, 0);
-                    b = new Button { Text = "Reject All", WidthRequest = 100, HorizontalOptions = LayoutOptions.Center };
+                    b = new Button { Text = "Reject All", HorizontalOptions = LayoutOptions.CenterAndExpand };
                     b.Clicked += RejectButtonPressed;
                     g.Children.Add(b, 1, 0);
                     sl.Children.Add(g);

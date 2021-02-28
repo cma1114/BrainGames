@@ -4,10 +4,15 @@ using Xamarin.Forms.Xaml;
 using XF.Material.Forms;
 using XF.Material.Forms.UI.Dialogs.Configurations;
 using XF.Material.Forms.Resources;
+using XF.Material.Forms.Resources.Typography;
 using Xamarin.Essentials;
 using BrainGames.Services;
 using BrainGames.Views;
 using BrainGames.Utility;
+
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 
 namespace BrainGames
 {
@@ -23,11 +28,14 @@ namespace BrainGames
 
         public App()
         {
+            Xamarin.Forms.Device.SetFlags(new string[] { "RadioButton_Experimental" });
+
             InitializeComponent();
             mum = new MasterUtilityModel();
 
             DependencyService.Register<MockDataStore>();
-            Material.Init(this, "Material.Configuration");
+            Material.Init(this);//, (MaterialConfiguration)Resources["Material.Configuration"]);
+            Material.Use("Material.Configuration");
             MainPage = new MainPage();
 
             ScreenDensity = (int)DeviceDisplay.MainDisplayInfo.Density;
@@ -36,7 +44,11 @@ namespace BrainGames
         protected override void OnStart()
         {
             // Handle when your app starts
-        }
+            AppCenter.Start("ios=abc625ee-28f5-4cad-bf37-f8367eccfcaa;" +
+                              "uwp={Your UWP App secret here};" +
+                              "android={Your Android App secret here}",
+                              typeof(Analytics), typeof(Crashes));
+                }
 
         protected override void OnSleep()
         {

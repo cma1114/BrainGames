@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.Forms;
+using BrainGames.Utility;
 using BrainGames.Views;
 
 namespace BrainGames.ViewModels
@@ -11,6 +12,13 @@ namespace BrainGames.ViewModels
     public class HomePageViewModel : BaseViewModel
     {
         private static bool first = true;
+
+        private bool _hasStats = false;
+        public bool HasStats
+        {
+            get => _hasStats;
+            set { SetProperty(ref _hasStats, value); }
+        }
 
         private bool _isNotificationsEnabled = false;
         public bool IsNotificationsEnabled
@@ -42,7 +50,8 @@ namespace BrainGames.ViewModels
         {
             if (first)
             {
-                await App.mum.CheckInvitations();
+                await App.mum.HandleSharingAndSync();
+//                await App.mum.CheckSharing();
                 first = false;
             }
 
@@ -56,6 +65,8 @@ namespace BrainGames.ViewModels
                 NotificationsText = "";
                 IsNotificationsEnabled = false;
             }
+
+            HasStats = MasterUtilityModel.UserStatsDict.Count > 0;
         }
         public async Task GoToInvitationsPage()
         {

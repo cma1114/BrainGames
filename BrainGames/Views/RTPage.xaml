@@ -10,6 +10,7 @@
              Title="Reaction Time"
              x:Name="ReactionTimePage"
              Visual="Material">
+
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Stats" Clicked="Stats_Clicked" />
     </ContentPage.ToolbarItems>
@@ -19,6 +20,7 @@
                 <converters:InverseBoolConverter x:Key="not"/>
             </Grid.Resources>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
                 <RowDefinition Height="Auto"/>
@@ -33,12 +35,26 @@
                 <Label x:Name="artLabel" Grid.Column="1" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Block RT: " FontSize="Small" Margin="0,0"/>
                 <Label x:Name="crtLabel" Grid.Column="2" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Text="Avg Cor RT: " FontSize="Small" Margin="0,0"/>
             </Grid>
-            <skia:SKGLView x:Name="canvasView" Grid.Row="1" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0,0" PaintSurface="OnPainting"/>
-            <Button Grid.Row="2" HeightRequest="100" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
+            <Grid Grid.Row="1" BackgroundColor="DarkGray">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Text="Boxes: " FontSize="Medium" Margin="0,0"/>
+                <RadioButton x:Name="box1opt" BackgroundColor="Transparent" CheckedChanged="BoxOptChanged" FontSize="Small" TextColor="Black" Content="1" Grid.Column="1" IsChecked="False"></RadioButton>
+                <RadioButton x:Name="box2opt" BackgroundColor="Transparent" CheckedChanged="BoxOptChanged" FontSize="Small" TextColor="Black" Content="2" Grid.Column="2" IsChecked="False"></RadioButton>
+                <RadioButton x:Name="box4opt" BackgroundColor="Transparent" CheckedChanged="BoxOptChanged" FontSize="Small" TextColor="Black" Content="4" Grid.Column="3" IsChecked="False"></RadioButton>
+                <RadioButton x:Name="autoopt" BackgroundColor="Transparent" CheckedChanged="BoxOptChanged" FontSize="Small" TextColor="Black" Content="Auto" Grid.Column="4" IsChecked="False"></RadioButton>
+            </Grid>
+            <skia:SKGLView x:Name="canvasView" Grid.Row="2" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0,0" PaintSurface="OnPainting"/>
+            <Button Grid.Row="3" HeightRequest="100" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
                 Command="{Binding ReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready" BackgroundColor="Green"/>
-            <Button Grid.Row="2" HeightRequest="100" Clicked="ReactButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
+            <Button Grid.Row="3" HeightRequest="100" Clicked="ReactButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
                 IsVisible="{Binding ShowReact1}" Text="React"/>
-            <Grid Grid.Row="2" IsVisible="{Binding ShowReact2}">
+            <Grid Grid.Row="3" IsVisible="{Binding ShowReact2}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
@@ -48,7 +64,7 @@
                 <Button Grid.Column="1" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding RightButtonCommand}" Style="{StaticResource buttonStyle}"
                     IsVisible="{Binding ShowReact2}" Text="Right"/>
             </Grid>
-            <Grid Grid.Row="2" IsVisible="{Binding ShowReact4}">
+            <Grid Grid.Row="3" IsVisible="{Binding ShowReact4}">
 <!--                <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>

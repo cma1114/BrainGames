@@ -55,6 +55,12 @@ namespace BrainGames.Views
             Init();
         }
 
+        protected override void OnDisappearing()
+        {
+            viewModel.OnDisappearing();
+            base.OnDisappearing();
+        }
+
         private SkiaTextFigure MakeWord(string w, float fsize, SKColor clr)
         {
             float tl_x, tl_y, br_x, br_y;
@@ -104,6 +110,10 @@ namespace BrainGames.Views
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
+            App.AnalyticsService.TrackEvent("StroopStatsView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new StroopStatsPage()));
         }
 
@@ -183,6 +193,10 @@ namespace BrainGames.Views
             }
             else //clicked or timeout, done with trial
             {
+                if (!clicked)//timeout
+                {
+                    ReactButton_Clicked(null, null);
+                }
                 //if (viewModel.blocktrialctr < viewModel.trialsperset && dt >= viewModel.pausedurarr[viewModel.blocktrialctr] + viewModel.timeout) 
                 showstim = false;
                 firstshown = false;

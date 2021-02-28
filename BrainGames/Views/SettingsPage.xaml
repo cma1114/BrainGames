@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BrainGames.Views.SettingsPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <Grid>
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <x:Double x:Key="LeftBuf">20</x:Double>
+                        <x:Double x:Key="TopBuf">10</x:Double>
+                    </ResourceDictionary>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{StaticResource TopBuf}"/>
+                    <RowDefinition Height="70"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{StaticResource LeftBuf}"/>
+                    <ColumnDefinition Width="250*"/>
+                    <ColumnDefinition Width="100*"/>
+                </Grid.ColumnDefinitions>
+<!--                <Label Grid.Row="1" Grid.Column="1" Text="Show Full Scenario By Default" HorizontalOptions="Start" VerticalOptions="CenterAndExpand" FontSize="Default" LineHeight="1" TextColor="Black" />
+                <Switch IsEnabled="True" Grid.Row="1" Grid.Column="2" x:Name="ShowFullScenarioSwitch" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" IsToggled="False" Toggled="ShowFullScenarioToggled"/>-->
+                <Label Grid.Row="1" Grid.Column="1" Text="Auto-Increment Difficulty" HorizontalOptions="Start" VerticalOptions="CenterAndExpand" FontSize="Default" LineHeight="1" TextColor="Black" />
+                <Switch IsEnabled="True" Grid.Row="1" Grid.Column="2" x:Name="AutoIncrementSwitch" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" IsToggled="False" Toggled="AutoIncrementToggled"/>
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

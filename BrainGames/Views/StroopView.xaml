@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Grid xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:skia="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:converters="clr-namespace:BrainGames.Converters"
+             x:Class="BrainGames.Views.StroopView"
+             x:Name="StroopEffectView"
+             Visual="Material"
+             RowSpacing="0">
+        <Grid.Resources>
+            <converters:InverseBoolConverter x:Key="not"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <skia:SKGLView x:Name="canvasView" Grid.Row="0" BackgroundColor="Transparent" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0,0" PaintSurface="OnPainting"/>
+        <Button Grid.Row="1" HeightRequest="100" Clicked="ReadyButton_Clicked" HorizontalOptions="FillAndExpand" BorderRadius="0" Style="{StaticResource buttonStyle}"
+            Command="{Binding StroopReadyButtonCommand}" IsVisible="{Binding IsRunning, Converter={StaticResource not}}" Text="Ready" BackgroundColor="Green"/>
+        <Grid Grid.Row="1" IsVisible="{Binding IsRunning}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding StroopButton1Command}" Style="{StaticResource buttonStyle}"
+                IsVisible="{Binding IsRunning}" Text="R"/>
+            <Button Grid.Column="1" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding StroopButton2Command}" Style="{StaticResource buttonStyle}"
+                IsVisible="{Binding IsRunning}" Text="G"/>
+            <Button Grid.Column="2" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding StroopButton3Command}" Style="{StaticResource buttonStyle}"
+                IsVisible="{Binding IsRunning}" Text="B"/>
+            <Button Grid.Column="3" HeightRequest="100" HorizontalOptions="FillAndExpand" Clicked="ReactButton_Clicked" Command="{Binding StroopButton4Command}" Style="{StaticResource buttonStyle}"
+                IsVisible="{Binding IsRunning}" Text="Y"/>
+        </Grid>
+</Grid>

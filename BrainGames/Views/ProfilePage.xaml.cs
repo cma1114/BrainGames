@@ -36,7 +36,7 @@ namespace BrainGames.Views
             }
         }
 
-        void Entry_Completed(object sender, EventArgs e)
+        async void Entry_Completed(object sender, EventArgs e)
         {
             string s = ((Entry)sender).Text.Trim();
             if (s.Length > 0 && viewModel.CheckName(s)) //cast sender to access the properties of the Entry
@@ -45,6 +45,8 @@ namespace BrainGames.Views
                 ScreennameEntry.Placeholder = "Screenname";
                 ScreennameEntry.IsEnabled = false;
                 ScreennameLabel.Text = "";
+                if (viewModel.Edit) await DisplayAlert("Success", "Screenname changed successfully!", "OK");
+                else await DisplayAlert("Success", "Screenname set successfully!", "OK");
             }
             else
             {
@@ -52,6 +54,12 @@ namespace BrainGames.Views
                 ScreennameEntry.Placeholder = "Choose Screenname";
                 ScreennameLabel.Text = "That Screenname is already taken";
             }
+        }
+
+        void EditButton_Clicked(object sender, EventArgs e)
+        {
+            ScreennameEntry.IsEnabled = true;
+            viewModel.Edit = true;
         }
 
         public void OnFocus(object sender, EventArgs e)

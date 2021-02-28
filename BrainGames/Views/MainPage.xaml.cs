@@ -150,6 +150,9 @@ namespace BrainGames.Views
                     case (int)MenuItemType.Profile:
                         MenuPages.Add(id, new NavigationPage(new ProfilePage()));
                         break;
+                    case (int)MenuItemType.Sharing:
+                        MenuPages.Add(id, new NavigationPage(new ManageSharingPage()));
+                        break;
                     case (int)MenuItemType.About:
                         MenuPages.Add(id, new NavigationPage(new AboutPage()));
                         break;

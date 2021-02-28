@@ -63,9 +63,8 @@ namespace BrainGames.Views
 
         private TimeSpan ts;
 
-        public ITPage()
+        public ITPage(int _cnt = 0)
         {
-            NavigationPage.SetBackButtonTitle(this, "");
             viewModel = new ITViewModel();
             InitializeComponent();
             ts = TimeSpan.FromMilliseconds(1000.0 / _fpsWanted);
@@ -75,6 +74,10 @@ namespace BrainGames.Views
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
+            App.AnalyticsService.TrackEvent("ITStatsView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new ITStatsPage()));
         }
 
@@ -142,6 +145,12 @@ namespace BrainGames.Views
                 viewModel.LoadItemsCommand.Execute(null);*/
 
             Init();
+        }
+
+        protected override void OnDisappearing()
+        {
+            viewModel.OnDisappearing();
+            base.OnDisappearing();
         }
 
         private void Init()

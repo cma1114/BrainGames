@@ -87,36 +87,36 @@ namespace BrainGames.ViewModels
                 {
                     if (boxes == 1)
                     {
-                        e = new ChartEntry((float)gs.bestscore[0]);
-                        e.ValueLabel = Math.Round(gs.bestscore[0], 1).ToString() + " ms";
+                        e = new ChartEntry((float)gs.bestscores[0]);
+                        e.ValueLabel = Math.Round(gs.bestscores[0], 1).ToString() + " ms";
                     }
                     else if (boxes == 2)
                     {
-                        e = new ChartEntry((float)gs.bestscore[1]);
-                        e.ValueLabel = Math.Round(gs.bestscore[1], 1).ToString() + " ms";
+                        e = new ChartEntry((float)gs.bestscores[1]);
+                        e.ValueLabel = Math.Round(gs.bestscores[1], 1).ToString() + " ms";
                     }
                     else
                     {
-                        e = new ChartEntry((float)gs.bestscore[2]);
-                        e.ValueLabel = Math.Round(gs.bestscore[2], 1).ToString() + " ms";
+                        e = new ChartEntry((float)gs.bestscores[2]);
+                        e.ValueLabel = Math.Round(gs.bestscores[2], 1).ToString() + " ms";
                     }
                 }
                 else
                 {
                     if (boxes == 1)
                     {
-                        e = new ChartEntry((float)gs.avgscore[0]);
-                        e.ValueLabel = Math.Round(gs.avgscore[0], 1).ToString() + " ms";
+                        e = new ChartEntry((float)gs.avgscores[0]);
+                        e.ValueLabel = Math.Round(gs.avgscores[0], 1).ToString() + " ms";
                     }
                     else if (boxes == 2)
                     {
-                        e = new ChartEntry((float)gs.avgscore[1]);
-                        e.ValueLabel = Math.Round(gs.avgscore[1], 1).ToString() + " ms";
+                        e = new ChartEntry((float)gs.avgscores[1]);
+                        e.ValueLabel = Math.Round(gs.avgscores[1], 1).ToString() + " ms";
                     }
                     else
                     {
-                        e = new ChartEntry((float)gs.avgscore[2]);
-                        e.ValueLabel = Math.Round(gs.avgscore[2], 1).ToString() + " ms";
+                        e = new ChartEntry((float)gs.avgscores[2]);
+                        e.ValueLabel = Math.Round(gs.avgscores[2], 1).ToString() + " ms";
                     }
                 }
                 e.TextColor = SKColors.Black;
