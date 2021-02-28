@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using Xamarin.Forms;
 
@@ -312,7 +313,8 @@ namespace BrainGames.ViewModels
                     avgs.Add(9999);
                     avgs.Add(9999);
                 }
-                App.mum.UpdateUserStats("Stroop", avgs, bests);
+                Thread t = new Thread(() => App.mum.UpdateUserStats("Stroop", avgs, bests));
+                t.Start();
             }
         }
     }

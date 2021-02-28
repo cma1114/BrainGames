@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using Xamarin.Forms;
 
@@ -262,7 +263,8 @@ namespace BrainGames.ViewModels
                 avgs.Add(ur.Where(x => x.boxes == 1 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 1 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 1 && x.cor == true).Count());
                 avgs.Add(ur.Where(x => x.boxes == 2 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 2 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 2 && x.cor == true).Count());
                 avgs.Add(ur.Where(x => x.boxes == 4 && x.cor == true).Count() < 5 ? 0 : ur.Where(x => x.boxes == 4 && x.cor == true).Sum(y => y.reactiontime) / ur.Where(x => x.boxes == 4 && x.cor == true).Count());
-                App.mum.UpdateUserStats("RT", avgs, bests);
+                Thread t = new Thread(() => App.mum.UpdateUserStats("RT", avgs, bests));
+                t.Start();
             }
         }
     }

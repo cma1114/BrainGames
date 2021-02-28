@@ -28,6 +28,24 @@ namespace BrainGames.Utility
 
     public class misc
     {
+        public static double RangeTrim(double v, double t)
+        {
+            double tmin = -t, tmax = t;
+            double ts_cln = v < tmin ? tmin : v;
+            ts_cln = v > tmax ? tmax : v;
+            return ts_cln;
+        }
+
+        public static double ComputeSD(List<double> vals, double mean)
+        {
+            double sd = 0;
+            for(int i = 0; i < vals.Count; i++)
+            {
+                sd += Math.Pow(vals[i] - mean, 2);
+            }
+
+            return Math.Sqrt(sd / (vals.Count - 1));
+        }
 
         public static Color getgradient(Color c1, Color c2, double p)
         {

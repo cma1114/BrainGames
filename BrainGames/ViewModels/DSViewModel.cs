@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using Xamarin.Forms;
 
@@ -366,7 +367,8 @@ namespace BrainGames.ViewModels
                 bests.Add(ur.Where(x => x.cor == true && x.direction == "b").Count() == 0 ? 0 : ur.Where(x => x.cor == true && x.direction == "b").Select(x => x.itemcnt).Max());
                 bests.Add(bests[0] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "f" && x.itemcnt == bests[0]).Select(x => x.ontimems + x.offtimems).Min());
                 bests.Add(bests[1] == 0 ? 9999 : ur.Where(x => x.cor == true && x.direction == "b" && x.itemcnt == bests[1]).Select(x => x.ontimems + x.offtimems).Min());
-                App.mum.UpdateUserStats("DS", avgs, bests);
+                Thread t = new Thread(() => App.mum.UpdateUserStats("DS", avgs, bests));
+                t.Start();
             }
         }
 

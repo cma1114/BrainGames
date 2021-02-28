@@ -146,6 +146,8 @@ namespace BrainGames.Utility
         public Dictionary<int, double> ls_AvgCorPctBySpanLen_f = null;
 
         public static Dictionary<string,string> UserStatsDict = new Dictionary<string, string>();//which games you have stats for
+        public static Dictionary<string, double> OtherUserStats = new Dictionary<string, double>();//overall stats for comparison
+        public static Dictionary<string, double> OtherUserSDs = new Dictionary<string, double>();//overall stats for comparison
 
         public bool has_notifications = false;//for notifications panel
         public List<GameShare> GameShares = new List<GameShare>();//for compare pages
@@ -162,6 +164,7 @@ namespace BrainGames.Utility
         //Function to get random number
         private static readonly Random random = new Random();
         private static readonly object syncLock = new object();
+        private bool UD1 = false, UD2 = false;
         public static int RandomNumber(int min, int max)
         {
             lock (syncLock)
@@ -346,11 +349,13 @@ namespace BrainGames.Utility
             catch (Exception ex2)
             {
                 ;
+                return;
             }
             foreach (DataSchemas.UserStatsSchema us in uss)
             {
                 UserStatsDict.Add(us.game, us.Id);
             }
+            UD1 = true;
             #endregion
         }
 
@@ -753,7 +758,11 @@ namespace BrainGames.Utility
             {
                 ;
             }
-            /*
+
+            int itctr = 0, rtctr1 = 0, rtctr2 = 0, rtctr3 = 0, stroopctr = 0, dsctr1 = 0, dsctr2 = 0, lsctr1 = 0, lsctr2 = 0;
+            double d, ITsum = 0, RTsum1 = 0, RTsum2 = 0, RTsum3 = 0, Stroopsum1 = 0, Stroopsum2 = 0, DSsum1 = 0, DSsum2 = 0, LSsum1 = 0, LSsum2 = 0;
+            Dictionary<string, List<double>> dcounts = new Dictionary<string, List<double>>();
+
             IsBusyUserStats = true;
             try
             {
@@ -765,13 +774,110 @@ namespace BrainGames.Utility
                 _headers = new Dictionary<string, string>();
                 // TODO: Add header with auth-based token in chapter 7
                 _headers.Add("zumo-api-version", "2.0.0");
-
-                untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20eq%20'" + Settings.UserId + "'", _headers);
-                for (int j = 0; j < untypedItems.Count(); j++)
+                List<string> scores = new List<string>();
+                do
                 {
-                    DataSchemas.UserStatsSchema BGUserStats = untypedItems[j].ToObject<DataSchemas.UserStatsSchema>();
-                    UserStatsDict.Add(BGUserStats.game, BGUserStats.Id);
-                }
+//                    untypedItems = await bguserrecord.ReadAsync("$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                    untypedItems = await bguserrecord.ReadAsync("$filter=UserId%20ne%20'" + Settings.UserId + "'&$skip=" + pagesize * ctr++ + "&$take=" + pagesize, _headers);
+                    for (int j = 0; j < untypedItems.Count(); j++)
+                    {
+                        DataSchemas.UserStatsSchema BGUserStats = untypedItems[j].ToObject<DataSchemas.UserStatsSchema>();
+//                        if (BGUserStats.UserId == Settings.UserId) continue;
+                        switch (BGUserStats.game)
+                        {
+                            case "IT":
+                                scores = BGUserStats.avgs.Split('~').ToList();
+                                d = Convert.ToDouble(scores[0]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("IT")) { dcounts.Add("IT", new List<double>()); }
+                                    dcounts["IT"].Add(d);
+                                    ITsum += d;
+                                    itctr++;
+                                }
+                                break;
+                            case "RT":
+                                scores = BGUserStats.avgs.Split('~').ToList();
+                                d = Convert.ToDouble(scores[0]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("RT1")) { dcounts.Add("RT1", new List<double>()); }
+                                    dcounts["RT1"].Add(d);
+                                    RTsum1 += d;
+                                    rtctr1++;
+                                }
+                                d = Convert.ToDouble(scores[1]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("RT2")) { dcounts.Add("RT2", new List<double>()); }
+                                    dcounts["RT2"].Add(d);
+                                    RTsum2 += d;
+                                    rtctr2++;
+                                }
+                                d = Convert.ToDouble(scores[2]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("RT3")) { dcounts.Add("RT3", new List<double>()); }
+                                    dcounts["RT3"].Add(d);
+                                    RTsum3 += d;
+                                    rtctr3++;
+                                }
+                                break;
+                            case "Stroop":
+                                scores = BGUserStats.avgs.Split('~').ToList();
+                                d = Convert.ToDouble(scores[0]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("Stroop1")) { dcounts.Add("Stroop1", new List<double>()); }
+                                    dcounts["Stroop1"].Add(d);
+                                    if (!dcounts.ContainsKey("Stroop2")) { dcounts.Add("Stroop2", new List<double>()); }
+                                    dcounts["Stroop2"].Add(Convert.ToDouble(scores[1]));
+                                    Stroopsum1 += d;
+                                    Stroopsum2 += Convert.ToDouble(scores[1]);
+                                    stroopctr++;
+                                }
+                                break;
+                            case "DS":
+                                scores = BGUserStats.bests.Split('~').ToList();
+                                d = Convert.ToDouble(scores[0]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("DS1")) { dcounts.Add("DS1", new List<double>()); }
+                                    dcounts["DS1"].Add(d);
+                                    DSsum1 += d;
+                                    dsctr1++;
+                                }
+                                d = Convert.ToDouble(scores[1]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("DS2")) { dcounts.Add("DS2", new List<double>()); }
+                                    dcounts["DS2"].Add(d);
+                                    DSsum2 += d;
+                                    dsctr2++;
+                                }
+                                break;
+                            case "LS":
+                                scores = BGUserStats.bests.Split('~').ToList();
+                                d = Convert.ToDouble(scores[0]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("LS1")) { dcounts.Add("LS1", new List<double>()); }
+                                    dcounts["LS1"].Add(d);
+                                    LSsum1 += d;
+                                    lsctr1++;
+                                }
+                                d = Convert.ToDouble(scores[1]);
+                                if (d > 0 && d < 9999)
+                                {
+                                    if (!dcounts.ContainsKey("LS2")) { dcounts.Add("LS2", new List<double>()); }
+                                    dcounts["LS2"].Add(d);
+                                    LSsum2 += d;
+                                    lsctr2++;
+                                }
+                                break;
+                        }
+                    }
+                } while (untypedItems.Count() > 0);
 
             }
             catch (Exception ex)
@@ -779,7 +885,16 @@ namespace BrainGames.Utility
                 ;
             }
             IsBusyUserStats = false;
-            */
+            if(itctr > 4) { OtherUserStats.Add("IT", ITsum / itctr); OtherUserSDs.Add("IT", misc.ComputeSD(dcounts["IT"], ITsum / itctr)); }
+            if (rtctr1 > 4) { OtherUserStats.Add("RT1", RTsum1 / rtctr1); OtherUserSDs.Add("RT1", misc.ComputeSD(dcounts["RT1"], RTsum1 / rtctr1)); }
+            if (rtctr2 > 4) { OtherUserStats.Add("RT2", RTsum2 / rtctr2); OtherUserSDs.Add("RT2", misc.ComputeSD(dcounts["RT2"], RTsum2 / rtctr2)); }
+            if (rtctr3 > 4) { OtherUserStats.Add("RT3", RTsum3 / rtctr3); OtherUserSDs.Add("RT3", misc.ComputeSD(dcounts["RT3"], RTsum3 / rtctr3)); }
+            if (stroopctr > 4) { OtherUserStats.Add("Stroop1", Stroopsum1 / stroopctr); OtherUserStats.Add("Stroop2", Stroopsum2 / stroopctr); OtherUserSDs.Add("Stroop1", misc.ComputeSD(dcounts["Stroop1"], Stroopsum1 / stroopctr)); OtherUserSDs.Add("Stroop2", misc.ComputeSD(dcounts["Stroop2"], Stroopsum2 / stroopctr)); }
+            if (dsctr1 > 4) { OtherUserStats.Add("DS1", DSsum1 / dsctr1); OtherUserSDs.Add("DS1", misc.ComputeSD(dcounts["DS1"], DSsum1 / dsctr1)); }
+            if (dsctr2 > 4) { OtherUserStats.Add("DS2", DSsum2 / dsctr2); OtherUserSDs.Add("DS2", misc.ComputeSD(dcounts["DS2"], DSsum2 / dsctr2)); }
+            if (lsctr1 > 4) { OtherUserStats.Add("LS1", LSsum1 / lsctr1); OtherUserSDs.Add("LS1", misc.ComputeSD(dcounts["LS1"], LSsum1 / lsctr1)); }
+            if (lsctr2 > 4) { OtherUserStats.Add("LS2", LSsum2 / lsctr2); OtherUserSDs.Add("LS2", misc.ComputeSD(dcounts["LS2"], LSsum2 / lsctr2)); }
+
             IsBusySharingUser = true;
             var sharingrecs = new List<DataSchemas.SharingUsersSchema>();
             try
@@ -1275,7 +1390,11 @@ namespace BrainGames.Utility
                     if (added)
                     {
                         List<DataSchemas.ITGameRecordSchema> itgrs = new List<DataSchemas.ITGameRecordSchema>();
-                        itgrs = conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema");
+//                        itgrs = conn_sync.Query<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema");
+                        Task<List<DataSchemas.ITGameRecordSchema>> t_it = null;
+                        t_it = conn.QueryAsync<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema");
+                        itgrs = t_it.Result;
+
                         itgrs = itgrs.OrderBy(x => x.datetime).ToList();
                         it_laststimtime = itgrs[itgrs.Count() - 1].stimtime;
                         int i = itgrs.Count() - 1;
@@ -1422,7 +1541,10 @@ namespace BrainGames.Utility
                     if (added)
                     {
                         List<DataSchemas.RTGameRecordSchema> rtgrs = new List<DataSchemas.RTGameRecordSchema>();
-                        rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
+//                        rtgrs = conn_sync.Query<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
+                        Task<List<DataSchemas.RTGameRecordSchema>> t_rt = null;
+                        t_rt = conn.QueryAsync<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema");
+                        rtgrs = t_rt.Result;
                         rtgrs = rtgrs.OrderBy(x => x.datetime).ToList();
                         rt_trialctr = rtgrs.Max(x => x.trialnum);
                         //rt_avgrt = rtgrs[rtgrs.Count() - 1].avgrt;
@@ -1554,7 +1676,10 @@ namespace BrainGames.Utility
                     if (added)
                     {
                         List<DataSchemas.StroopGameRecordSchema> stgrs = new List<DataSchemas.StroopGameRecordSchema>();
-                        stgrs = conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema");
+//                        stgrs = conn_sync.Query<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema");
+                        Task<List<DataSchemas.StroopGameRecordSchema>> t_st = null;
+                        t_st = conn.QueryAsync<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema");
+                        stgrs = t_st.Result;
                         stgrs = stgrs.OrderBy(x => x.datetime).ToList();
                         st_trialctr = stgrs.Max(x => x.trialnum);
                         st_cortrialcnt = stgrs.Where(x => x.cor == true).Count();
@@ -1684,7 +1809,10 @@ namespace BrainGames.Utility
                     if (added)
                     {
                         List<DataSchemas.DSGameRecordSchema> dsgrs = new List<DataSchemas.DSGameRecordSchema>();
-                        dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'f'");
+//                        dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'f'");
+                        Task<List<DataSchemas.DSGameRecordSchema>> t_ds = null;
+                        t_ds = conn.QueryAsync<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'f'");
+                        dsgrs = t_ds.Result;
                         dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
                         ds_lastspan = dsgrs[dsgrs.Count() - 1].itemcnt;
                         int i = dsgrs.Count() - 1;
@@ -1705,7 +1833,9 @@ namespace BrainGames.Utility
                         ds_last_outcomes_by_spanlen = dsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                         ds_lastdir = "f";
 
-                        dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'b'");
+//                        dsgrs = conn_sync.Query<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'b'");
+                        t_ds = conn.QueryAsync<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where direction = 'b'");
+                        dsgrs = t_ds.Result;
                         dsgrs = dsgrs.OrderBy(x => x.datetime).ToList();
                         ds_lastspan_b = dsgrs[dsgrs.Count() - 1].itemcnt;
                         i = dsgrs.Count() - 1;
@@ -1844,7 +1974,10 @@ namespace BrainGames.Utility
                     if (added)
                     {
                         List<DataSchemas.LSGameRecordSchema> lsgrs = new List<DataSchemas.LSGameRecordSchema>();
-                        lsgrs = conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'f'");
+//                        lsgrs = conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'f'");
+                        Task<List<DataSchemas.LSGameRecordSchema>> t_ls = null;
+                        t_ls = conn.QueryAsync<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'f'");
+                        lsgrs = t_ls.Result;
                         lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
                         ls_lastspan = lsgrs[lsgrs.Count() - 1].itemcnt;
                         ls_lastgridsize_f = lsgrs[lsgrs.Count() - 1].gridsize;
@@ -1866,7 +1999,9 @@ namespace BrainGames.Utility
                         ls_last_outcomes_by_spanlen = lsgrs.GroupBy(x => x.itemcnt).Select(x => Tuple.Create(x.Key, x.Last().cor)).OrderBy(x => x.Item1).ToList();
                         ls_lastdir = "f";
 
-                        lsgrs = conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'b'");
+//                        lsgrs = conn_sync.Query<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'b'");
+                        t_ls = conn.QueryAsync<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where direction = 'b'");
+                        lsgrs = t_ls.Result;
                         lsgrs = lsgrs.OrderBy(x => x.datetime).ToList();
                         ls_lastspan_b = lsgrs[lsgrs.Count() - 1].itemcnt;
                         ls_lastgridsize_b = lsgrs[lsgrs.Count() - 1].gridsize;
@@ -2122,16 +2257,11 @@ namespace BrainGames.Utility
 
             #region UserStatsSchema;
             ///////  CheckServerForDBUpdates
-            try { await db.CreateTableAsync<DataSchemas.UserStatsSchema>(); }
-            catch (Exception ex3)
-            {
-                ;
-            }
             Task<List<DataSchemas.UserStatsSchema>> t_q3 = null;
             List<DataSchemas.UserStatsSchema> q3 = new List<DataSchemas.UserStatsSchema>();
             lock (locker)
             {
-                t_q3 = db.QueryAsync<DataSchemas.UserStatsSchema>("select * from UserStatsSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
+                t_q3 = db.QueryAsync<DataSchemas.UserStatsSchema>("select * from UserStatsSchema");
             }
             try
             {
@@ -2177,6 +2307,7 @@ namespace BrainGames.Utility
 
                     }
                 }
+                UD2 = true;
 
                 if (!dbexception)
                 {
@@ -2193,13 +2324,14 @@ namespace BrainGames.Utility
                                 ;
                             }
                         }
-                        if (BGUserStats.Any(x => x.game == q3[i].game))//if the remote server has this game, update it with local, which should be most recent
+                        else/*if (BGUserStats.Any(x => x.game == q3[i].game))*///if the remote server has this game, update it with local, which should be most recent
                         {
                             try
                             {
-                                var bgus = BGUserStats.Where(x => x.game == q3[i].game).ToList();
-                                await bguserinfoService.RemoveUserStatsEntryAsync(bgus[0]);
-                                await bguserinfoService.AddUserStatsEntryAsync(q3[i]);
+//                                var bgus = BGUserStats.Where(x => x.game == q3[i].game).ToList();
+//                                await bguserinfoService.RemoveUserStatsEntryAsync(bgus[0]);
+//                                await bguserinfoService.AddUserStatsEntryAsync(q3[i]);
+                                await bguserinfoService.UpdateUserStatsEntryAsync(q3[i]);
                             }
                             catch (Exception exA)
                             {
@@ -2675,6 +2807,11 @@ namespace BrainGames.Utility
             s.avgs = avgstr;
             s.bests = beststr;
 
+            while (!UD1 || !UD2 || IsBusyUserStats)
+            {
+                Thread.Sleep(1000);
+            }
+
             IsBusyUserStats = true;
 
             try
@@ -2701,7 +2838,6 @@ namespace BrainGames.Utility
             {
                 IsBusyUserStats = false;
             }
-
         }
 
         public async static void WriteITGR(Guid sessionid, int trialctr, int reversalctr, double curstimdur, double empstimdur, double avgcorit, double estit, int cor_ans, bool cor)

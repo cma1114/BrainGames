@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
 using MathNet.Numerics;
+using System.Threading;
 
 using Xamarin.Forms;
 
@@ -204,7 +205,8 @@ namespace BrainGames.ViewModels
                 List<double> bests = new List<double>();
                 avgs.Add(ur.Where(x => x.avgcorit > 0).Count() == 0 ? 9999 : ur.Where(x => x.avgcorit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.avgcorit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
                 avgs.Add(ur.Where(x => x.estit > 0).Count() == 0 ? 9999 : ur.Where(x => x.estit > 0).GroupBy(x => DateTime.Parse(x.datetime).Date).Select(x => Tuple.Create(x.Key, x.Sum(y => y.estit) / x.Count())).OrderBy(x => x.Item1).Last().Item2);
-                App.mum.UpdateUserStats("IT", avgs, bests);
+                Thread t = new Thread(() => App.mum.UpdateUserStats("IT", avgs, bests));
+                t.Start();
             }
         }
 

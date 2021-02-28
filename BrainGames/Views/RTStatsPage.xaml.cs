@@ -4,6 +4,7 @@ using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using BrainGames.ViewModels;
+using BrainGames.Utility;
 
 namespace BrainGames.Views
 {
@@ -37,6 +38,10 @@ namespace BrainGames.Views
 
         async void Compare_Clicked(object sender, EventArgs e)
         {
+            App.AnalyticsService.TrackEvent("RTStatsCompareView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new RTStatsComparePage()));
         }
     }

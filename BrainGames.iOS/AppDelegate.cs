@@ -21,8 +21,7 @@ namespace BrainGames.iOS
         // You have 17 seconds to return from this method, or iOS will terminate your application.
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
-        {
-
+        {            
             bool bSucceeded = false;
             string uid = null;
             var oKeyValueStore = NSUbiquitousKeyValueStore.DefaultStore;
@@ -53,7 +52,7 @@ namespace BrainGames.iOS
                     bSucceeded = oKeyValueStore.Synchronize();
                 }
             }
-
+            
             Rg.Plugins.Popup.Popup.Init();
             global::Xamarin.Forms.Forms.Init();
             global::Xamarin.Forms.FormsMaterial.Init();

@@ -8,6 +8,7 @@ using SkiaSharp.Views.Forms;
 
 using BrainGames.Controls;
 using BrainGames.ViewModels;
+using BrainGames.Utility;
 
 namespace BrainGames.Views
 {
@@ -238,6 +239,10 @@ namespace BrainGames.Views
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
+            App.AnalyticsService.TrackEvent("RTStatsView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new RTStatsPage()));
         }
 

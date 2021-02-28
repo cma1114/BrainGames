@@ -212,6 +212,30 @@
     <ImageAsset Include="Assets.xcassets\profile.imageset\profile%403x.png">
       <Visible>false</Visible>
     </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\timer.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\timer.imageset\timer%401x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\timer.imageset\timer%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\timer.imageset\timer%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\compare.imageset\Contents.json">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\compare.imageset\compare%401x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\compare.imageset\compare%402x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
+    <ImageAsset Include="Assets.xcassets\compare.imageset\compare%403x.png">
+      <Visible>false</Visible>
+    </ImageAsset>
     <ImageAsset Include="Assets.xcassets\invite.imageset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
@@ -327,6 +351,8 @@
     <Folder Include="Assets.xcassets\settings.imageset\" />
     <Folder Include="Assets.xcassets\tutorials.imageset\" />
     <Folder Include="Assets.xcassets\profile.imageset\" />
+    <Folder Include="Assets.xcassets\timer.imageset\" />
+    <Folder Include="Assets.xcassets\compare.imageset\" />
     <Folder Include="Assets.xcassets\invite.imageset\" />
     <Folder Include="Assets.xcassets\invitations.imageset\" />
   </ItemGroup>

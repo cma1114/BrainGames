@@ -108,7 +108,7 @@ namespace BrainGames.Views
             }
             else //entered response or timeout, done with trial, return to ready screen
             {
-                if (dt >= viewModel.DStimeout)
+                if (dt >= viewModel.DStimeout && !viewModel.DSanswered)
                 {
                     viewModel.DStimedout = true;
                     viewModel.DSResponseButton();

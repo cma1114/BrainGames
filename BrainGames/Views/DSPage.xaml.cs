@@ -100,6 +100,10 @@ namespace BrainGames.Views
         async void Stats_Clicked(object sender, EventArgs e)
         {
             if (viewModel.trialctr == 0) return;
+            App.AnalyticsService.TrackEvent("DSStatsView", new Dictionary<string, string> {
+                    { "Type", "PageView" },
+                    { "UserID", Settings.UserId.ToString()}
+                });
             await Navigation.PushModalAsync(new NavigationPage(new DSStatsPage()));
         }
 
