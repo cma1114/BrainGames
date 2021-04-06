@@ -43,7 +43,7 @@ namespace BrainGames.Views
         protected override void OnSizeAllocated(double w, double h)
         {
             base.OnSizeAllocated(w, h);
-            if (w != -1 && h != -1) Init();
+            if (canvasView.CanvasSize.Width != 0 && canvasView.CanvasSize.Height != 0 && centerx == 0) Init();
         }
 
         private SkiaTextFigure MakeWord(string w, float fsize, SKColor clr)

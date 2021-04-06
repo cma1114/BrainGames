@@ -1643,6 +1643,7 @@ namespace BrainGames.ViewModels
         public void StroopReactButton(int tctr, double rt, double avgrt, double difrt, string word, string textcolor, bool congruent, bool correct)
         {
             ResponseButton(Convert.ToInt32(cor), Stroopblocktrialctr == Strooptrialsperset);
+            cor = false;
             MasterUtilityModel.WriteStroopGR(game_session_id, tctr, rt, avgrt, difrt, word, textcolor, congruent, correct);
         }
         #endregion

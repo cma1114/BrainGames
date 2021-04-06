@@ -292,6 +292,7 @@ namespace BrainGames.ViewModels
         public void ReactButton(int tctr, double rt, double avgrt, double difrt, string word, string textcolor, bool congruent, bool correct)
         {
             MasterUtilityModel.WriteStroopGR(game_session_id, tctr, rt, avgrt, difrt, word, textcolor, congruent, correct);
+            cor = false;
         }
 
         public void OnDisappearing()

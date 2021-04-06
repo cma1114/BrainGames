@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -15,7 +15,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AndroidEnableSGenConcurrent>true</AndroidEnableSGenConcurrent>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
@@ -34,6 +34,10 @@
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,6 +47,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidManagedSymbols>true</AndroidManagedSymbols>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidKeyStore>true</AndroidKeyStore>
+    <AndroidSigningKeyStore>C:\Users\chris\AppData\Local\Xamarin\Mono for Android\Keystore\braingames\braingames.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>$Section67</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>braingames</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>$Section67</AndroidSigningKeyPass>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
@@ -164,6 +178,16 @@
     <AndroidResource Include="Resources\drawable-xhdpi\invitations.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\invitations.png" />
     <AndroidResource Include="Resources\drawable-xxxhdpi\invitations.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\compare.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\compare.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\compare.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\compare.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\compare.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\timer.png" />
+    <AndroidResource Include="Resources\drawable-mdpi\timer.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\timer.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\timer.png" />
+    <AndroidResource Include="Resources\drawable-xxxhdpi\timer.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BrainGames\BrainGames.csproj">
@@ -205,4 +229,9 @@
     <AndroidResource Include="Resources\drawable-hdpi\tutorials.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties TriggeredFromHotReload="False" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

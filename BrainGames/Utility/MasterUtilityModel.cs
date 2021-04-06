@@ -1334,12 +1334,13 @@ namespace BrainGames.Utility
             }
             Task<List<DataSchemas.ITGameRecordSchema>> t_q = null;
             List<DataSchemas.ITGameRecordSchema> q = new List<DataSchemas.ITGameRecordSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q = db.QueryAsync<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
-            }
+            }*/
             try
             {
+                t_q = db.QueryAsync<DataSchemas.ITGameRecordSchema>("select * from ITGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
                 q = t_q.Result;
             }
             catch (Exception ex)
@@ -1485,12 +1486,13 @@ namespace BrainGames.Utility
             }
             Task<List<DataSchemas.RTGameRecordSchema>> t_q_rt = null;
             List<DataSchemas.RTGameRecordSchema> q_rt = new List<DataSchemas.RTGameRecordSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q_rt = db.QueryAsync<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
-            }
+            }*/
             try
             {
+                t_q_rt = db.QueryAsync<DataSchemas.RTGameRecordSchema>("select * from RTGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
                 q_rt = t_q_rt.Result;
             }
             catch (Exception ex)
@@ -1620,12 +1622,13 @@ namespace BrainGames.Utility
             }
             Task<List<DataSchemas.StroopGameRecordSchema>> t_q_st = null;
             List<DataSchemas.StroopGameRecordSchema> q_st = new List<DataSchemas.StroopGameRecordSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q_st = db.QueryAsync<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
-            }
+            }*/
             try
             {
+                t_q_st = db.QueryAsync<DataSchemas.StroopGameRecordSchema>("select * from StroopGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
                 q_st = t_q_st.Result;
             }
             catch (Exception ex)
@@ -1753,12 +1756,13 @@ namespace BrainGames.Utility
             }
             Task<List<DataSchemas.DSGameRecordSchema>> t_q_ds = null;
             List<DataSchemas.DSGameRecordSchema> q_ds = new List<DataSchemas.DSGameRecordSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q_ds = db.QueryAsync<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
-            }
+            }*/
             try
             {
+                t_q_ds = db.QueryAsync<DataSchemas.DSGameRecordSchema>("select * from DSGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
                 q_ds = t_q_ds.Result;
             }
             catch (Exception ex)
@@ -1918,12 +1922,13 @@ namespace BrainGames.Utility
             }
             Task<List<DataSchemas.LSGameRecordSchema>> t_q_ls = null;
             List<DataSchemas.LSGameRecordSchema> q_ls = new List<DataSchemas.LSGameRecordSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q_ls = db.QueryAsync<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
-            }
+            }*/
             try
             {
+                t_q_ls = db.QueryAsync<DataSchemas.LSGameRecordSchema>("select * from LSGameRecordSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
                 q_ls = t_q_ls.Result;
             }
             catch (Exception ex)
@@ -2085,12 +2090,13 @@ namespace BrainGames.Utility
             }
             Task<List<DataSchemas.BrainGameSessionSchema>> t_q3 = null;
             List<DataSchemas.BrainGameSessionSchema> q3 = new List<DataSchemas.BrainGameSessionSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q3 = db.QueryAsync<DataSchemas.BrainGameSessionSchema>("select * from BrainGameSessionSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
-            }
+            }*/
             try
             {
+                t_q3 = db.QueryAsync<DataSchemas.BrainGameSessionSchema>("select * from BrainGameSessionSchema where UserId = ?", Settings.UserId);//ultimately userid will be set at login and will be unique to a user across devices
                 q3 = t_q3.Result;
             }
             catch (Exception ex)
@@ -2185,12 +2191,13 @@ namespace BrainGames.Utility
             bool onremote = false;
             Task<List<DataSchemas.UserSchema>> t_q5 = null;
             List<DataSchemas.UserSchema> q5 = new List<DataSchemas.UserSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q5 = db.QueryAsync<DataSchemas.UserSchema>("select * from UserSchema where UserId = ?", Settings.UserId);
-            }
+            }*/
             try
             {
+                t_q5 = db.QueryAsync<DataSchemas.UserSchema>("select * from UserSchema where UserId = ?", Settings.UserId);
                 q5 = t_q5.Result;
                 if (q5?.Count() > 0)
                     onlocal = true;
@@ -2259,12 +2266,13 @@ namespace BrainGames.Utility
             ///////  CheckServerForDBUpdates
             Task<List<DataSchemas.UserStatsSchema>> t_q3 = null;
             List<DataSchemas.UserStatsSchema> q3 = new List<DataSchemas.UserStatsSchema>();
-            lock (locker)
+/*            lock (locker)
             {
                 t_q3 = db.QueryAsync<DataSchemas.UserStatsSchema>("select * from UserStatsSchema");
-            }
+            }*/
             try
             {
+                t_q3 = db.QueryAsync<DataSchemas.UserStatsSchema>("select * from UserStatsSchema");
                 q3 = t_q3.Result;
             }
             catch (Exception ex)

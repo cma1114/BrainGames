@@ -144,7 +144,13 @@ namespace BrainGames.Views
             if (viewModel.Items.Count == 0)
                 viewModel.LoadItemsCommand.Execute(null);*/
 
-            Init();
+            //Init();
+        }
+
+        protected override void OnSizeAllocated(double w, double h)
+        {
+            base.OnSizeAllocated(w, h);
+            if (canvasView.CanvasSize.Width != 0 && canvasView.CanvasSize.Height != 0 && centerx == 0) Init();
         }
 
         protected override void OnDisappearing()

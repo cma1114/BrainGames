@@ -46,7 +46,7 @@ namespace BrainGames
             // Handle when your app starts
             AppCenter.Start("ios=abc625ee-28f5-4cad-bf37-f8367eccfcaa;" +
                               "uwp={Your UWP App secret here};" +
-                              "android={Your Android App secret here}",
+                              "android=d647dd2e-9b67-4eff-bdaa-3486be68318e;",
                               typeof(Analytics), typeof(Crashes));
                 }
 

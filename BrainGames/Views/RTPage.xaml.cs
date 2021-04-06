@@ -64,7 +64,22 @@ namespace BrainGames.Views
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            Init();
+            //            Init();
+            if (viewModel.boxopt == "1") ((RadioButton)FindByName("box1opt")).IsChecked = true;
+            if (viewModel.boxopt == "2") ((RadioButton)FindByName("box2opt")).IsChecked = true;
+            if (viewModel.boxopt == "4") ((RadioButton)FindByName("box4opt")).IsChecked = true;
+            if (viewModel.boxopt == "auto") ((RadioButton)FindByName("autoopt")).IsChecked = true;
+
+            if (viewModel.AvgRT > 0)
+            {
+                crtLabel.Text = "Avg Cor RT: " + viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
+            }
+        }
+
+        protected override void OnSizeAllocated(double w, double h)
+        {
+            base.OnSizeAllocated(w, h);
+            if (canvasView.CanvasSize.Width != 0 && canvasView.CanvasSize.Height != 0 && centerx == 0) Init();
         }
 
         protected override void OnDisappearing()
@@ -75,15 +90,6 @@ namespace BrainGames.Views
 
         private void Init()
         {
-            if (viewModel.boxopt == "1") ((RadioButton)FindByName("box1opt")).IsChecked = true;
-            if (viewModel.boxopt == "2") ((RadioButton)FindByName("box2opt")).IsChecked = true;
-            if (viewModel.boxopt == "4") ((RadioButton)FindByName("box4opt")).IsChecked = true;
-            if (viewModel.boxopt == "auto") ((RadioButton)FindByName("autoopt")).IsChecked = true;
-
-            if (viewModel.AvgRT > 0)
-            {
-                crtLabel.Text = "Avg Cor RT: " + viewModel.AvgRT.ToString("N1", CultureInfo.InvariantCulture) + " ms";
-            }
             centerx = canvasView.CanvasSize.Width == 0 ? (float)canvasView.Width : canvasView.CanvasSize.Width / 2;
             centery = canvasView.CanvasSize.Height == 0 ? (float)canvasView.Height : canvasView.CanvasSize.Height / 2;
 

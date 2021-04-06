@@ -25,7 +25,19 @@ namespace BrainGames.Views
             InitializeComponent();
             if (ViewModel.Compare)
             {
-                ToolbarItems.Add(new ToolbarItem { Text = "Compare", Order = ToolbarItemOrder.Secondary, Priority = 1 });
+                if (Device.RuntimePlatform == Device.Android)
+                {
+                    ToolbarItems.Add(new ToolbarItem()
+                    {
+                        Text = "Compare",
+                        Order = ToolbarItemOrder.Primary,
+                        Priority = 1
+                    });
+                }
+                else
+                {
+                    ToolbarItems.Add(new ToolbarItem { Text = "Compare", Order = ToolbarItemOrder.Secondary, Priority = 1 });
+                }
                 ToolbarItems[1].Clicked += Compare_Clicked;
             }
         }
